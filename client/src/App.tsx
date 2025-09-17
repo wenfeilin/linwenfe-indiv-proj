@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Message from "./Message";
 
 function App() {
   const [message, setMessage] = useState("loading...");
@@ -13,6 +14,7 @@ function App() {
   return (
     <div>
       <h1>{message}</h1>
+      <Message />
     </div>
   );
 }
