@@ -1,7 +1,7 @@
 # Brainstorming
 
 ## Technique 1: Mind Mapping
-
+![A mind map of a music journal](./assets/images/mind-mapping.jpg)
 
 ## Technique 2: World's Worst Idea
 
