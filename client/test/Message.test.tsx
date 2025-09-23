@@ -1,4 +1,4 @@
-import Message from "./Message";
+import Message from "../src/Message";
 import { render } from "@testing-library/react";
 
 describe("First tests", () => {
