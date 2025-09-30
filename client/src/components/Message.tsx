@@ -1,3 +1,5 @@
+// Note: this was originally in top level of the src folder
+
 function Message() {
   const name = "Wenfei";
 

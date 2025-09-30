@@ -1,7 +1,20 @@
 import React, { useEffect, useState } from "react";
+/* For API part
 import Message from "./Message";
+ */
 
+// This defines the overall page layout.
 function App() {
+
+
+  return(
+    <div>
+      <h2 className="text-red-500">Hi, Wenfei!</h2>
+    </div>
+  );
+
+  /*
+  // Uncomment this section to connect to and retrieve data from API.
   const [message, setMessage] = useState("loading...");
 
   useEffect(() => {
@@ -18,6 +31,7 @@ function App() {
       <h2 className="text-red-500">Hi</h2>
     </div>
   );
+  */
 }
 
 export default App;
