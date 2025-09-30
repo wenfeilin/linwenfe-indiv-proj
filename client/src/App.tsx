@@ -15,6 +15,7 @@ function App() {
     <div>
       <h1>{message}</h1>
       <Message />
+      <h2 className="text-red-500">Hi</h2>
     </div>
   );
 }
