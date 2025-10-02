@@ -9,7 +9,8 @@ function PageHeader() {
       <NavLink className="" to="/">
         {/* Credit for temporary icon: "https://www.flaticon.com/free-icons/smile" created by 
         Illosalz */}
-        <img className="w-14" src="/happy.png" alt=""></img>
+        <img className="w-14" src="/happy.png" alt="https://www.flaticon.com/free-icons/smile created by 
+        Illosalz"></img>
       </NavLink>
 
       {/* Nav bar */}
