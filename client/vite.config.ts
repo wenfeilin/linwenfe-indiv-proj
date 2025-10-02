@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  server: {
+  server: { // useful when i was using a backend in the beginning
     proxy: {
       "/api": {
         target: "http://localhost:5000",
