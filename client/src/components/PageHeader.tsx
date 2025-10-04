@@ -1,4 +1,3 @@
-import { isValidElement } from "react";
 import { NavLink } from "react-router";
 
 function PageHeader() {
