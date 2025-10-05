@@ -1,10 +1,12 @@
 import { createContext, useContext, useReducer } from "react";
 import type { ReactNode, Dispatch } from "react";
 
+// All context and reducer wiring is in here!
+
 // Structure of an entry
 type Entry = {
   id: string;
-  date: string;
+  date: string; // in the form "year-month-day"
   content: string;
   // songSelection: Song | null
   songNotes: string;
@@ -12,7 +14,8 @@ type Entry = {
 
 // Define the structure for an Action for the reducer.
 type Action =
-  | { type: "upsertEntry"; payload: Entry } // entry to be added
+  | { type: "createEntry"; payload: Entry }
+  | { type: "updateEntry"; payload: { id: string, content: string }} // entry to be added
   | { type: "deleteEntry"; payload: { id: string } }; // the id of the entry being deleted
 
 // Create a context to store the list of entries (to avoid prop drilling the actions and to store
@@ -42,29 +45,29 @@ export function EntriesProvider({ children }: { children: ReactNode }) {
 }
 
 export function useEntries() {
-    return useContext(EntriesContext);
+  return useContext(EntriesContext);
 }
 
 export function useEntriesDispatch() {
-    return useContext(EntriesDispatchContext);
+  return useContext(EntriesDispatchContext);
 }
 
 // The entry list context is only updated when entries are created/edited or deleted.
+// Note: reducer should not have side-effects; must stay pure, so it is deterministic!
 function entriesReducer(entries: Entry[], action: Action): Entry[] {
   switch (action.type) {
-    case "upsertEntry": {
-      const newEntry = action.payload;
+    case "createEntry": {
+      // Add the entry to the list.
+      return [...entries, action.payload];
+    }
+    case "updateEntry": {
+      const entryID = action.payload.id;
+      const entryToUpdate = entries.find((entry) => entry.id === entryID)!;
+
       const entryIds = entries.map((entry) => entry.id);
 
-      // Update the entry if it already exists in the list
-      if (entryIds.includes(newEntry.id)) {
-        return entries.map((entry) =>
-          entry.id === newEntry.id ? newEntry : entry,
-        );
-      } else {
-        // Add the entry to the list if it is entirely new
-        return [...entries, newEntry];
-      }
+      // Update the entry if it already exists in the list.
+      return entries.map((entry) => entry.id === entryID ? {...entryToUpdate, content: action.payload.content} : entry);
     }
     case "deleteEntry": {
       const entryToBeDeleted = action.payload;
