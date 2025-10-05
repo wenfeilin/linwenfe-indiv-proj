@@ -5,10 +5,10 @@ import { Outlet } from "react-router";
 function PageLayout() {
 
   return (
-    <div>
+    <div className="h-full flex flex-col">
       <PageHeader />
       {/* Renders content of the child route */}
-      <main>
+      <main className="flex-1">
         <Outlet />
       </main>
     </div>

@@ -16,7 +16,7 @@
 }
 
 /* #root = where React renders the component tree = the React app (wrapper)*/
-#root {
+html, body, #root {
   /* Make the app fill the entire width of the page. */
   width: 100%;
   height: 100%;
