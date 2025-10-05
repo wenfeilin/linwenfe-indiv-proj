@@ -4,7 +4,7 @@ import type { ReactNode, Dispatch } from "react";
 // All context and reducer wiring is in here!
 
 // Structure of an entry
-type Entry = {
+export type EntryType = {
   id: string;
   date: string; // in the form "year-month-day"
   content: string;
@@ -14,13 +14,13 @@ type Entry = {
 
 // Define the structure for an Action for the reducer.
 type Action =
-  | { type: "createEntry"; payload: Entry }
+  | { type: "createEntry"; payload: EntryType }
   | { type: "updateEntry"; payload: { id: string, content: string }} // entry to be added
   | { type: "deleteEntry"; payload: { id: string } }; // the id of the entry being deleted
 
 // Create a context to store the list of entries (to avoid prop drilling the actions and to store
 // data in a single place = single source of truth). Entries are initially empty.
-const EntriesContext = createContext<Entry[]>([]);
+const EntriesContext = createContext<EntryType[]>([]);
 
 // Create a context to store the actions (to avoid prop drilling the actions). Action is be
 // initially be undefined when user hasn't done anything.
@@ -54,7 +54,7 @@ export function useEntriesDispatch() {
 
 // The entry list context is only updated when entries are created/edited or deleted.
 // Note: reducer should not have side-effects; must stay pure, so it is deterministic!
-function entriesReducer(entries: Entry[], action: Action): Entry[] {
+function entriesReducer(entries: EntryType[], action: Action): EntryType[] {
   switch (action.type) {
     case "createEntry": {
       // Add the entry to the list.
@@ -63,8 +63,6 @@ function entriesReducer(entries: Entry[], action: Action): Entry[] {
     case "updateEntry": {
       const entryID = action.payload.id;
       const entryToUpdate = entries.find((entry) => entry.id === entryID)!;
-
-      const entryIds = entries.map((entry) => entry.id);
 
       // Update the entry if it already exists in the list.
       return entries.map((entry) => entry.id === entryID ? {...entryToUpdate, content: action.payload.content} : entry);
