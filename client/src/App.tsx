@@ -2,6 +2,7 @@ import React, { useEffect, useContext } from "react";
 import { BrowserRouter, Routes, Route } from "react-router";
 import PageLayout from "./pages/PageLayout";
 import CalendarPage from "./pages/CalendarPage";
+import EntryPage from "./pages/EntryPage";
 import MyJournalPage from "./pages/MyJournalPage";
 import EntriesPage from "./pages/EntriesPage";
 import DecorationsPage from "./pages/DecorationsPage";
@@ -26,6 +27,7 @@ function App() {
             <Route index element={<CalendarPage />} />
             <Route path="my-calendar" element={<CalendarPage />} />
             <Route path="my-calendar/:year/:month" element={<CalendarPage />} />
+            <Route path="entry/:year/:month/:day" element={<EntryPage />} />
             <Route path="my-journal" element={<MyJournalPage />} />
             <Route path="my-entries" element={<EntriesPage />} />
             <Route path="decorations" element={<DecorationsPage />} />

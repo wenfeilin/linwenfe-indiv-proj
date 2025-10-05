@@ -1,4 +1,4 @@
-import { useParams } from 'react-router';
+import { useParams, Link } from 'react-router';
 
 function CalendarBlock({blockDate}: {blockDate: Date}) {
   // Use date prop to find proper entry's song selection to render (and figure out if it is filled 
@@ -25,13 +25,15 @@ function CalendarBlock({blockDate}: {blockDate: Date}) {
   return ( 
     // Clicking on it should link to the entry view of the entry associated w/ the date.
     // <Link></Link>
-    <div className={`h-21 pt-0.5 pl-1.5 
-                     ${isInCurrMonth? "bg-white text-gray-900" :"bg-gray-500 text-gray-300"} 
-                     ${isToday && "bg-yellow-300"}`}>
-      <div className={`inline-block`}>
-        {blockDay}
+    <Link to={`/entry/${blockYear}/${blockMonth}/${blockDay}`}>
+      <div className={`h-21 pt-0.5 pl-1.5
+                       ${isInCurrMonth? "bg-white text-gray-900" :"bg-gray-500 text-gray-300"}
+                       ${isToday && "bg-yellow-300"}`}>
+        <div className={`inline-block`}>
+          {blockDay}
+        </div>
       </div>
-    </div>
+    </Link>
   );
 
 }
