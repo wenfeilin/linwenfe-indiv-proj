@@ -73,7 +73,7 @@ function Entry() {
       {/* Song Selection */}
       <div className="col-start-5 col-end-6 w-full justify-self-end">
         <div className="m-auto flex w-2/3 flex-col gap-2">
-          <SongSelection /*onEdit={onEditHandler}*/></SongSelection>
+          <SongSelection isDisabled={!isEditing}/*onEdit={onEditHandler}*/></SongSelection>
         </div>
       </div>
     </div>
