@@ -1,62 +1,35 @@
 import { useState } from 'react';
-import { useEntries, useEntriesDispatch } from '../../context/EntriesContext';
+import { useEntries } from '../../context/EntriesContext';
 import type { SongSelection } from './SongSelection';
 import SaveButton from './SaveButton';
-import type { EntryType } from "../../context/EntriesContext";
+import { useParams } from 'react-router';
 
 // The entry content (entry and song selection)
-function Entry({year, month, day}: {year: number, month: number, day: number}) {
+function Entry() {
   const entries = useEntries();
+  const { year, month, day } = useParams();
 
-  // For now, the entry's content will be saved here, but this should be moved to the Edit button
-  // action later when that is made.
-  const dispatch = useEntriesDispatch()!;
+  // Keep track of changes to this local copy of the entry.
+  const entryDate = `${year}-${month}-${day}`
+  const entry = entries.find((entry) => entry.date === entryDate);
+
+  // Initially render content of entry or nothing if this entry is not filled.
+  const [entryContent, setEntryContent] = useState(entry? entry.content : "");
   
-  // Load entry's content from localStorage
-  const storedEntriesJSON = localStorage.getItem("entries");
-  const storedEntries: EntryType[] = storedEntriesJSON? JSON.parse(storedEntriesJSON) : [];
-  const currEntry: EntryType | undefined = storedEntries.find((entry: EntryType) => entry.date === `${year}-${month}-${day}`);
-  const [entryContent, setEntryContent] = useState(currEntry? currEntry.content :  ""); // to save edits
-
-  // For the save button
-  const [hasChanges, setHasChanges] = useState(false);
   // const [songSelection, setSongSelection] = useState(); // for later
 
-  const entryContentBeforeEdit = entryContent;
-  
   return(
     <div className="h-full flex flex-col">
       <div className="mb-2">
-        <SaveButton hasChanges={hasChanges}></SaveButton>
+        <SaveButton newEntryContent={entryContent} entryBeingSaved={entry}></SaveButton>
       </div>
       
+      {/* Update the state of the text box's content with each edit. (Do this for now. Change 
+      later when the edit btn is implemented.) */}
       <textarea className="border-2 border-blue-400 rounded focus:outline-none 
       focus:border-blue-500 w-2/3 h-2/3" name="entry-content" id="entry-content"
-      value={entryContent} onChange={(event) => {
-        // Update the state of the text box's content with each edit. (Do this for now. Change 
-        // later when the edit btn is implemented.)
-        setEntryContent(event.target.value); // btw this is an async process?
-        setHasChanges(true);
-
-        if (entryContentBeforeEdit === "" && event.target.value !== "") { // have to change this later when considering existence of song selection
-          // Create the entry if content is added (to an "empty"/nonexistent entry).
-          const newEntry = {
-            id: crypto.randomUUID(),
-            date: `${year}-${month}-${day}`,
-            content: event.target.value,
-            songNotes: "" // for now
-          }
-
-          dispatch({type: "createEntry", payload: newEntry});
-        } else if (entryContentBeforeEdit !== "" && event.target.value !== "") {
-          // Update the entry if the content is still there but just changed.
-          const entryToUpdate = entries.find((entry) => entry.date === `${year}-${month}-${day}`)!;
-          dispatch({type: "updateEntry", payload: {id: entryToUpdate.id, content: event.target.value}});
-        } else if (entryContentBeforeEdit !== "" && event.target.value === "") {
-          // Remove the entry if all content was deleted.
-          const entryToDelete = entries.find((entry) => entry.date === `${year}-${month}-${day}`)!;
-          dispatch({type: "deleteEntry", payload: {id: entryToDelete.id}});
-        }
+      value={entryContent} onChange={(event) => { // Specifically, remove this onChange prop and move functionality to edit button
+        setEntryContent(event.target.value);
       }}></textarea>
 
       {/* Song Selection */}

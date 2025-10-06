@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 import type { ReactNode, Dispatch } from "react";
 
 // All context and reducer wiring is in here!
@@ -20,6 +20,7 @@ type Action =
 
 // Create a context to store the list of entries (to avoid prop drilling the actions and to store
 // data in a single place = single source of truth). Entries are initially empty.
+// Represents the stored version of all entries.
 const EntriesContext = createContext<EntryType[]>([]);
 
 // Create a context to store the actions (to avoid prop drilling the actions). Action is be
@@ -30,8 +31,17 @@ const EntriesDispatchContext = createContext<Dispatch<Action> | undefined>(
 
 // This is a custom wrapper component for the EntriesContext (so it's less bulky when used)
 export function EntriesProvider({ children }: { children: ReactNode }) {
-  // Initially, the list of entries is empty.
-  const [entries, dispatch] = useReducer(entriesReducer, []);
+  // Initially, the list of entries is what is in the local storage.
+  const savedEntriesJSON = localStorage.getItem("entries");
+  const savedEntries = savedEntriesJSON? JSON.parse(savedEntriesJSON) : [];
+  const [entries, dispatch] = useReducer(entriesReducer, savedEntries);
+
+  useEffect(() => {
+    // Save this updated list of entries in the local storage too only if any entry was changed.
+    // Note: in development mode, this will run twice, which is fine.
+    localStorage.setItem("entries", JSON.stringify(entries));
+    console.log("Storage updated!");
+  }, [entries])
 
   return (
     // TS requires `.Provider` appended, and b/c JSX is being returned, this should be a .tsx
@@ -58,6 +68,7 @@ function entriesReducer(entries: EntryType[], action: Action): EntryType[] {
   switch (action.type) {
     case "createEntry": {
       // Add the entry to the list.
+      console.log([...entries, action.payload])
       return [...entries, action.payload];
     }
     case "updateEntry": {

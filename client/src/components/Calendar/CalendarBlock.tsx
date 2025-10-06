@@ -1,4 +1,5 @@
 import { useParams, Link, useLocation } from 'react-router';
+import { useEntries } from '../../context/EntriesContext';
 
 function CalendarBlock({blockDate}: {blockDate: Date}) {
   // Use date prop to find proper entry's song selection to render (and figure out if it is filled 
@@ -25,6 +26,11 @@ function CalendarBlock({blockDate}: {blockDate: Date}) {
   // Info to access back to appropriate calendar after clicking on entry.
   const location = useLocation();
 
+  // Visually indicate if there is an entry for the block.
+  const entries = useEntries();
+  const blockEntry = entries.find((entry) => entry.date === `${blockYear}-${blockMonth}-${blockDay}`);
+  const hasEntry = blockEntry? true : false;
+
   return ( 
     // Clicking on it should link to the entry view of the entry associated w/ the date.
     // <Link></Link>
@@ -35,6 +41,7 @@ function CalendarBlock({blockDate}: {blockDate: Date}) {
         <div className={`inline-block`}>
           {blockDay}
         </div>
+        {hasEntry && <p>Entry exists</p>}
       </div>
     </Link>
   );
