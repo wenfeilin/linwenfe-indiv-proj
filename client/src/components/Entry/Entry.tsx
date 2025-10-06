@@ -5,6 +5,7 @@ import SaveButton from "./SaveButton";
 import { useParams } from "react-router";
 import EditButton from "./EditButton";
 import CancelButton from "./CancelButton";
+import { getMonthName } from "../../utils/calendar";
 
 // The entry content (entry and song selection)
 function Entry() {
@@ -19,38 +20,40 @@ function Entry() {
   const [entryContent, setEntryContent] = useState(entry ? entry.content : "");
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editCanceled, setEditCanceled] = useState(false);
 
   // const [songSelection, setSongSelection] = useState(); // for later
 
   return (
-    <div className="flex h-full flex-col">
-      {!isEditing ? (
-        <div className="mb-2">
-          <EditButton onEdit={() => {
-            setIsEditing(true)
-            setEditCanceled(false);
-            }}></EditButton>
-        </div>
-      ) : (
-        <div className="mb-2">
-          <CancelButton onCancel={() => {
-            setIsEditing(false);
-            setEditCanceled(true);
+    <div className="flex h-full w-3/5 flex-col">
+      <div className="mb-2 flex justify-between items-center">
+        <h1 className="text-2xl font-bold">{getMonthName(+month!)} {day}, {year} </h1>
+        {!isEditing ? (
+          <EditButton
+            onEdit={() => {
+              setIsEditing(true);
+            }}
+          ></EditButton>
+        ) : (
+          <div className="flex gap-2">
+            <CancelButton
+              onCancel={() => {
+                setIsEditing(false);
+                // Reset edits.
+                setEntryContent(entry ? entry.content : "");
+              }}
+            ></CancelButton>
 
-            // Reset edits.
-            setEntryContent(entry? entry.content : "");
-            }}></CancelButton>
-          <SaveButton
-            newEntryContent={entryContent}
-            entryBeingSaved={entry}
-            onSave={() => setIsEditing(false)}
-          ></SaveButton>
-        </div>
-      )}
+            <SaveButton
+              newEntryContent={entryContent}
+              entryBeingSaved={entry}
+              onSave={() => setIsEditing(false)}
+            ></SaveButton>
+          </div>
+        )}
+      </div>
 
       <textarea
-        className="h-2/3 w-2/3 rounded border-2 border-blue-400 focus:border-blue-500 focus:outline-none"
+        className="h-2/3 rounded border-2 border-blue-400 focus:border-blue-500 focus:outline-none resize-none overflow-y-auto p-4"
         readOnly={!isEditing}
         name="entry-content"
         id="entry-content"
@@ -58,7 +61,7 @@ function Entry() {
         onChange={(event) => {
           if (isEditing) {
             setEntryContent(event.target.value);
-            console.log("Edit made")
+            console.log("Edit made");
           }
         }}
       ></textarea>
