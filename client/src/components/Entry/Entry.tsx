@@ -6,6 +6,7 @@ import EditButton from "./EditButton";
 import CancelButton from "./CancelButton";
 import { getMonthName } from "../../utils/calendar";
 import SongSelection from "./SongSelection";
+import type { HookHandler } from "vite";
 
 // The entry content (entry and song selection)
 function Entry() {
@@ -18,14 +19,35 @@ function Entry() {
 
   // Initially render content of entry or nothing if this entry is not filled.
   const [entryContent, setEntryContent] = useState(entry ? entry.content : "");
+  const [songSelection, setSongSelection] = useState(entry ? entry.songSelection : null);
+  const [songNotes, setSongNotes] = useState(entry ? entry.songNotes : "");
 
   const [isEditing, setIsEditing] = useState(false);
 
   // const [songSelection, setSongSelection] = useState(); // for later
 
-  function onEditHandler(event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) {
+  // Updates local state of entry when typing
+  function onEditHandler(event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, updateType: "entry" | "song" | "song notes") {
     if (isEditing) {
-      setEntryContent(event.target.value);
+      switch (updateType) {
+        case "entry": {
+          setEntryContent(event.target.value);
+          break;
+        }
+        case "song": {
+          const songTitle = event.target.value;
+          if (songTitle === "") {
+            setSongSelection(null);
+          } else {
+            setSongSelection({title: songTitle})
+          }
+          break;
+        }
+        case "song notes": {
+          setSongNotes(event.target.value);
+          break;
+        }
+      }
       console.log("Edit made");
     }
   }
@@ -53,6 +75,8 @@ function Entry() {
             ></CancelButton>
             <SaveButton
               newEntryContent={entryContent}
+              newSongSelection={songSelection}
+              newSongNotes = {songNotes}
               entryBeingSaved={entry}
               onSave={() => setIsEditing(false)}
             ></SaveButton>
@@ -66,14 +90,14 @@ function Entry() {
           name="entry-content"
           id="entry-content"
           value={entryContent}
-          onChange={onEditHandler}
+          onChange={(event) => onEditHandler(event, "entry")}
         ></textarea>
       </div>
 
       {/* Song Selection */}
       <div className="col-start-5 col-end-6 w-full justify-self-end">
         <div className="m-auto flex w-2/3 flex-col gap-2">
-          <SongSelection isDisabled={!isEditing}/*onEdit={onEditHandler}*/></SongSelection>
+          <SongSelection isDisabled={!isEditing} onEdit={onEditHandler}></SongSelection>
         </div>
       </div>
     </div>
