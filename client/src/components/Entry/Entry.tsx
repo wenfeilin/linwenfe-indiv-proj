@@ -68,9 +68,18 @@ function Entry() {
           <div className="flex gap-2">
             <CancelButton
               onCancel={() => {
+                let songSelectionBeforeEdit = null
+                
+                if (entry !== undefined) {
+                  songSelectionBeforeEdit = entry.songSelection? entry.songSelection : null;
+                }
+                
                 setIsEditing(false);
+
                 // Reset edits.
                 setEntryContent(entry ? entry.content : "");
+                setSongSelection(songSelectionBeforeEdit);
+                setSongNotes(entry ? entry.songNotes : "");
               }}
             ></CancelButton>
             <SaveButton
@@ -97,7 +106,7 @@ function Entry() {
       {/* Song Selection */}
       <div className="col-start-5 col-end-6 w-full justify-self-end">
         <div className="m-auto flex w-2/3 flex-col gap-2">
-          <SongSelection isDisabled={!isEditing} onEdit={onEditHandler}></SongSelection>
+          <SongSelection isDisabled={!isEditing} songSelection={songSelection} songNotes={songNotes} onEdit={onEditHandler}></SongSelection>
         </div>
       </div>
     </div>

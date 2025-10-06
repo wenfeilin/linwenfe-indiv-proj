@@ -7,7 +7,7 @@ export type Song = {
   // albumCover: ??
 };
 
-function SongSelection({ isDisabled, onEdit }: {isDisabled: boolean, onEdit: (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, updateType: "entry" | "song" | "song notes") => void}) {
+function SongSelection({ isDisabled, songSelection, songNotes, onEdit }: {isDisabled: boolean, songSelection: Song | null, songNotes: string, onEdit: (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, updateType: "entry" | "song" | "song notes") => void}) {
   return (
     <>
       <input
@@ -15,6 +15,7 @@ function SongSelection({ isDisabled, onEdit }: {isDisabled: boolean, onEdit: (ev
         id="song"
         placeholder="Song Title - Artist"
         readOnly={isDisabled}
+        value={songSelection? songSelection.title : ""}
         className="rounded border-2 border-blue-300 focus:border-blue-400 focus:outline-none px-1.5"
         onChange={(event) => onEdit(event, "song")}
       />
@@ -25,6 +26,7 @@ function SongSelection({ isDisabled, onEdit }: {isDisabled: boolean, onEdit: (ev
         id="song-notes"
         placeholder="Song Notes"
         readOnly={isDisabled}
+        value={songNotes}
         className="resize-none overflow-y-auto rounded border-2 border-blue-300 p-1.5 focus:border-blue-400 focus:outline-none"
         onChange={(event) => onEdit(event, "song notes")}
       ></textarea>
