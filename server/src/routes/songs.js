@@ -5,8 +5,4 @@ router.get("/", (req, res) => {
   res.send("Search for a song")
 })
 
-router.put("/play", (req, res) => {
-  res.send("Play song")
-});
-
 module.exports = router;

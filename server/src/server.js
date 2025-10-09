@@ -1,3 +1,4 @@
+// To use variables from .env file
 require("dotenv").config();
 
 const app = require("./app");
