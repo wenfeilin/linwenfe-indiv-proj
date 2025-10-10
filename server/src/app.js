@@ -2,9 +2,11 @@ const express = require("express");
 const session = require("express-session");
 const songsRouter = require("./routes/songs");
 const playlistsRouter = require("./routes/playlists");
-const authRouter = require("./routes/auth-delete");
+const authRouter = require("./routes/auth");
+const cookieParser = require("cookie-parser");
 
 const app = express();
+app.use(cookieParser());
 
 // Set up session middleware. This makes `req.session` available in all routers.
 // app.use(
