@@ -24,6 +24,11 @@ This web app project incorporates a simple journal with music. By turning a jour
 - Vitest
 - Supertest
 
+**Versions**
+
+- Node.js v22.17.0
+- npm v10.9.2
+
 ## Build Instructions
 
 To build this project, make sure you have [Git](https://git-scm.com/downloads) and [Node.js](https://nodejs.org/en/download) installed. 
