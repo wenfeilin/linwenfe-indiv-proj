@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
 import type { ReactNode, Dispatch } from "react";
-// import type { Song } from "../components/Entry/SongSelection";
+import type { Song } from "../components/Entry/SongSelection";
 
 // All context and reducer wiring is in here!
 
@@ -9,14 +9,14 @@ export type EntryType = {
   id: string;
   date: string; // in the form "year-month-day"
   content: string;
-  // songSelection: Song | null
+  songSelection: Song | null
   songNotes: string;
 };
 
 // Define the structure for an Action for the reducer.
 type Action =
   | { type: "createEntry"; payload: EntryType }
-  | { type: "updateEntry"; payload: { id: string, content: string }} // entry to be added
+  | { type: "updateEntry"; payload: { id: string, content: string, songSelection: Song | null, songNotes: string }} // entry to be added
   | { type: "deleteEntry"; payload: { id: string } }; // the id of the entry being deleted
 
 // Create a context to store the list of entries (to avoid prop drilling the actions and to store
@@ -77,7 +77,7 @@ function entriesReducer(entries: EntryType[], action: Action): EntryType[] {
       const entryToUpdate = entries.find((entry) => entry.id === entryID)!;
 
       // Update the entry if it already exists in the list.
-      return entries.map((entry) => entry.id === entryID ? {...entryToUpdate, content: action.payload.content} : entry);
+      return entries.map((entry) => entry.id === entryID ? {...entryToUpdate, content: action.payload.content, songSelection: action.payload.songSelection, songNotes: action.payload.songNotes } : entry);
     }
     case "deleteEntry": {
       const entryToBeDeleted = action.payload;
