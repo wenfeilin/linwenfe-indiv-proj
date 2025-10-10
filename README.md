@@ -24,9 +24,6 @@ This web app project incorporates a simple journal with music. By turning a jour
 - Vitest
 - Supertest
 
-Plan to access the Spotify API later.
-Might deploy.
-
 ## Build Instructions
 
 To build this project, make sure you have [Git](https://git-scm.com/downloads) and [Node.js](https://nodejs.org/en/download) installed. 
