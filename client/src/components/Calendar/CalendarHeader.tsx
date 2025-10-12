@@ -1,5 +1,5 @@
 import { Link, Navigate, useParams } from "react-router";
-import { getMonthName } from "../../utils/calendar";
+import { getMonthName } from "../../utils/date";
 
 function CalendarHeader() {
   const now = new Date();
@@ -29,11 +29,15 @@ function CalendarHeader() {
 
   return (
     <div className="col-span-7 flex items-center justify-between bg-white px-4">
-      <Link className="text-2xl" to={`/my-calendar/${prevYear}/${prevMonth}`}>◄</Link>
+      <Link className="text-2xl" to={`/my-calendar/${prevYear}/${prevMonth}`}>
+        ◄
+      </Link>
       <h1 className="py-5 text-center text-2xl font-medium">
         {getMonthName(+month!)} {year}
       </h1>
-      <Link className="text-2xl" to={`/my-calendar/${nextYear}/${nextMonth}`}>►</Link>
+      <Link className="text-2xl" to={`/my-calendar/${nextYear}/${nextMonth}`}>
+        ►
+      </Link>
     </div>
   );
 }

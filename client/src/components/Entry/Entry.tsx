@@ -4,7 +4,7 @@ import SaveButton from "./SaveButton";
 import { useParams } from "react-router";
 import EditButton from "./EditButton";
 import CancelButton from "./CancelButton";
-import { getMonthName } from "../../utils/calendar";
+import { getMonthName } from "../../utils/date";
 import SongSelection from "./SongSelection";
 import type { HookHandler } from "vite";
 
@@ -19,7 +19,9 @@ function Entry() {
 
   // Initially render content of entry or nothing if this entry is not filled.
   const [entryContent, setEntryContent] = useState(entry ? entry.content : "");
-  const [songSelection, setSongSelection] = useState(entry ? entry.songSelection : null);
+  const [songSelection, setSongSelection] = useState(
+    entry ? entry.songSelection : null,
+  );
   const [songNotes, setSongNotes] = useState(entry ? entry.songNotes : "");
 
   const [isEditing, setIsEditing] = useState(false);
@@ -27,7 +29,10 @@ function Entry() {
   // const [songSelection, setSongSelection] = useState(); // for later
 
   // Updates local state of entry when typing
-  function onEditHandler(event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, updateType: "entry" | "song" | "song notes") {
+  function onEditHandler(
+    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
+    updateType: "entry" | "song" | "song notes",
+  ) {
     if (isEditing) {
       switch (updateType) {
         case "entry": {
@@ -39,7 +44,7 @@ function Entry() {
           if (songTitle === "") {
             setSongSelection(null);
           } else {
-            setSongSelection({title: songTitle})
+            setSongSelection({ title: songTitle });
           }
           break;
         }
@@ -68,12 +73,14 @@ function Entry() {
           <div className="flex gap-2">
             <CancelButton
               onCancel={() => {
-                let songSelectionBeforeEdit = null
-                
+                let songSelectionBeforeEdit = null;
+
                 if (entry !== undefined) {
-                  songSelectionBeforeEdit = entry.songSelection? entry.songSelection : null;
+                  songSelectionBeforeEdit = entry.songSelection
+                    ? entry.songSelection
+                    : null;
                 }
-                
+
                 setIsEditing(false);
 
                 // Reset edits.
@@ -85,7 +92,7 @@ function Entry() {
             <SaveButton
               newEntryContent={entryContent}
               newSongSelection={songSelection}
-              newSongNotes = {songNotes}
+              newSongNotes={songNotes}
               entryBeingSaved={entry}
               onSave={() => setIsEditing(false)}
             ></SaveButton>
@@ -106,7 +113,12 @@ function Entry() {
       {/* Song Selection */}
       <div className="col-start-5 col-end-6 w-full justify-self-end">
         <div className="m-auto flex w-2/3 flex-col gap-2">
-          <SongSelection isDisabled={!isEditing} songSelection={songSelection} songNotes={songNotes} onEdit={onEditHandler}></SongSelection>
+          <SongSelection
+            isDisabled={!isEditing}
+            songSelection={songSelection}
+            songNotes={songNotes}
+            onEdit={onEditHandler}
+          ></SongSelection>
         </div>
       </div>
     </div>

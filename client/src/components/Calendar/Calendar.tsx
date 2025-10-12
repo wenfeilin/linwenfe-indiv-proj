@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 import CalendarBlock from "./CalendarBlock";
-import { generateCalendarDates, getMonthName } from "../../utils/calendar";
+import { generateCalendarDates, getMonthName } from "../../utils/date";
 import CalendarHeader from "./CalendarHeader";
 
 function Calendar() {
@@ -29,10 +29,10 @@ function Calendar() {
       <div className="grid grid-cols-7 gap-0.5 bg-gray-300">
         <CalendarHeader></CalendarHeader>
 
-      {/* Calendar Body Section */}
+        {/* Calendar Body Section */}
         {/* Render the days of the week */}
         {days.map((day, i) => (
-          <p key={i} className={"px-5 py-1.5 text-center bg-blue-100"}>
+          <p key={i} className={"bg-blue-100 px-5 py-1.5 text-center"}>
             {day}
           </p>
         ))}

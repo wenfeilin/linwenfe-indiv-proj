@@ -46,3 +46,12 @@ export function getMonthName(month: number) {
       return "December";
   }
 }
+
+export function getDateParts(date: string) {
+  const dateParts = date.split("-");
+  const year = dateParts[0];
+  const month = dateParts[1];
+  const day = dateParts[2];
+
+  return [+year, +month, +day];
+}
