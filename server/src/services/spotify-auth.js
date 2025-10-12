@@ -1,6 +1,5 @@
 const express = require("express");
 const axios = require("axios");
-const cookieParser = require("cookie-parser");
 const crypto = require("crypto");
 
 /**
@@ -15,7 +14,6 @@ const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
 
 const auth_url = "https://accounts.spotify.com/authorize";
 const token_url = "https://accounts.spotify.com/api/token";
-const api_base_url = "https://api.spotify.com/v1/";
 
 const stateKey = "spotify_auth_state";
 
@@ -25,7 +23,7 @@ const generateRandomString = (length) => {
 
 // Prompts user to login with their Spotify credentials and to authorize access specified by the
 // scopes. Then, the user gets redirected to the specified `redirect_uri`.
-function getAuthorizationCode(req, res, next) {
+function getAuthorizationCode(req, res) {
   // Generate a random string for the state for verification later.
   const state = generateRandomString(16);
   // Set the state as a cookie to verify with when requesting an access token.
@@ -43,20 +41,16 @@ function getAuthorizationCode(req, res, next) {
     show_dialog: true, // keep for testing purposes; get rid of when deploying
   });
 
-  console.log("Generated state: " + state);
-
   // Redirect user to Spotify login (and authorization) page.
   res.redirect(`${auth_url}?${params.toString()}`);
 }
 
 async function getAccessToken(req, res) {
   // Check the code and state params from the URL returned from the authorization step.
-  const code = req.query.code || null;
+  const auth_code = req.query.code || null;
   const state = req.query.state || null;
 
   const storedState = req.cookies ? req.cookies[stateKey] : null;
-
-  console.log("Are there cookies: " + (req.cookies? "yes" : "no"));
 
   // Stop the authentication flow if there is a mismatch in the current and prev states for
   // security reasons.
@@ -64,22 +58,18 @@ async function getAccessToken(req, res) {
     const params = new URLSearchParams({
       error: "state_mismatch",
     });
-  
-    console.log("Stored state: " + storedState);
-
-
-    res.redirect(`/#${params.toString()}`);
+    
   } else {
     // The request for an access token was valid.
 
     // Access was denied by user.
-    if (!code) {
+    if (!auth_code) {
       return res.status(400).json({ error: req.query.error });
     } else {
       // Access was granted by user.
       const req_body = new URLSearchParams({
         grant_type: "authorization_code",
-        code: code,
+        code: auth_code,
         redirect_uri: redirect_uri,
       }).toString();
 
@@ -98,10 +88,11 @@ async function getAccessToken(req, res) {
         const ms_in_one_sec = 1000;
 
         // Sets cookies.
-        res.cookie("access_token", token_info.access_token);
+        res.cookie("access_token", token_info.access_token); // is in seconds
+
         res.cookie(
           "expires_at",
-          Math.floor(Date.now() / ms_in_one_sec) + token_info.expires_in
+          Math.floor(Date.now() / ms_in_one_sec) + 30/*token_info.expires_in*/
         );
         res.cookie("refresh_token", token_info.refresh_token);
 
@@ -155,6 +146,9 @@ async function getRefreshToken(req, res) {
   
       // Redirect to home page for now. (Ideally, want to redirect to the page that began the
       // login/authorization flow!)
+
+      console.log("Retrieved new access token");
+
       res.redirect("/");
     } catch {
       res.status(500).json({ error: "Failed to get access token" });

@@ -1,12 +1,20 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
+const cors = require('cors');
 const session = require("express-session");
 const songsRouter = require("./routes/songs");
 const playlistsRouter = require("./routes/playlists");
 const authRouter = require("./routes/auth");
-const cookieParser = require("cookie-parser");
+
 
 const app = express();
 app.use(cookieParser());
+
+// Allow requests from frontend dev server
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true, // to let cookies be sent w/ cross-origin requests
+}))
 
 // Set up session middleware. This makes `req.session` available in all routers.
 // app.use(

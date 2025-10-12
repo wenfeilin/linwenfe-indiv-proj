@@ -1,10 +1,41 @@
+import { useState } from "react";
+import SongSearchForm from "../components/Entry/SongSearchForm";
 import LoginButton from "../components/LoginButton";
 
 function SettingsPage() {
-  return(
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  async function clickHandler() {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/auth/status`,
+        { credentials: "include" },
+      ); // to send cookies w/ the request
+      const body = await response.json();
+
+      {
+        // console.log("Fetch was called.");
+      }
+
+      setIsLoggedIn(body.loggedIn);
+      {
+        // console.log("Login status was set as: ", body.loggedIn);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  return (
     <>
       <h1>Settings</h1>
-      <LoginButton></LoginButton>
+      <LoginButton
+        isLoggedIn={isLoggedIn}
+        setLogInStatus={clickHandler}
+      ></LoginButton>
+      {console.log("Login status: ", isLoggedIn)}
+      {isLoggedIn && <p>You are already logged in!</p>}
+      <SongSearchForm></SongSearchForm>
     </>
   );
 }
