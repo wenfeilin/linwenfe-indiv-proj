@@ -26,7 +26,7 @@ function CalendarBlock({ blockDate }: { blockDate: Date }) {
     blockMonth == currMonth &&
     currYear === blockYear;
 
-  // Info to access back to appropriate calendar after clicking on entry.
+  // Info to go back to appropriate calendar after clicking on entry.
   const location = useLocation();
 
   // Visually indicate if there is an entry for the block.

@@ -17,11 +17,6 @@ export function generateCalendarDates(year: number, month: number): Date[] {
   return calendarDates;
 }
 
-// function daysInMonth(month: number, year: number) {
-//     // Getting the 0th day of the next month gets the last day of the current month.
-//     return new Date(year, month, 0).getDate();
-// }
-
 // month should not be 0-indexed
 export function getMonthName(month: number) {
   switch (month) {

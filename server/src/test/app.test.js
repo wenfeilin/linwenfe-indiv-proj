@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 const request = require("supertest");
-const app = require("./app");
+const app = require("../app");
 
 describe("GET /api/messages", () => {
   it("returns Hello, World!", async () => {
