@@ -33,7 +33,7 @@ This web app project incorporates a simple journal with music. By turning a jour
 
 To build this project, make sure you have [Git](https://git-scm.com/downloads) and [Node.js](https://nodejs.org/en/download) installed. 
 
-Create a `.env` file at the root of the `server` directory and fill in the environment variables as seen in `server/.env.example`.
+Create a `.env` file at the root of the `client` directory and one at the `server` directory. Fill in the environment variables as seen in `client/.env.example` and `server/.env.example` respectively for each.
 
 Then, do the following in the command line:
 
