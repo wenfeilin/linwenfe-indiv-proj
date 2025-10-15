@@ -15,22 +15,18 @@ const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
 const auth_url = "https://accounts.spotify.com/authorize";
 const token_url = "https://accounts.spotify.com/api/token";
 
-const stateKey = "spotify_auth_state";
-
 const generateRandomString = (length) => {
   return crypto.randomBytes(60).toString("hex").slice(0, length);
 };
 
 // Prompts user to login with their Spotify credentials and to authorize access specified by the
 // scopes. Then, the user gets redirected to the specified `redirect_uri`.
-function getAuthorizationCode(req, res) {
+function getAuthorizationUrl(req, res) {
   // Generate a random string for the state for verification later.
   const state = generateRandomString(16);
-  // Set the state as a cookie to verify with when requesting an access token.
-  res.cookie(stateKey, state);
 
-  // Scopes for searching for songs, creating public playlists, and controlling playback of song.
-  const scope = "user-read-private playlist-modify-public streaming";
+  // Scopes for searching for songs, creating public playlists, and controlling playback of song; the last four scopes are for the Spotify Web Playback SDK.
+  const scope = "user-read-private playlist-modify-public streaming user-read-email user-modify-playback-state user-read-playback-state user-read-currently-playing";
 
   const params = new URLSearchParams({
     client_id: client_id,
@@ -38,19 +34,20 @@ function getAuthorizationCode(req, res) {
     scope: scope,
     redirect_uri: redirect_uri,
     state: state,
-    show_dialog: true, // keep for testing purposes; get rid of when deploying
+    show_dialog: true, // keep for testing purposes; get rid of when deploying; this forces the Spotify login/authorization dialog to appear even if the user is already logged in and has authorized the app
   });
 
-  // Redirect user to Spotify login (and authorization) page.
-  res.redirect(`${auth_url}?${params.toString()}`);
+  // Build the authorization URl to redirect to to get an authorization code from.
+  const authorizationUrl = `${auth_url}?${params.toString()}`;
+  return {authorizationUrl, state};
 }
 
-async function getAccessToken(req, res) {
+async function getAccessTokenInfo(req, res) {
   // Check the code and state params from the URL returned from the authorization step.
   const auth_code = req.query.code || null;
   const state = req.query.state || null;
 
-  const storedState = req.cookies ? req.cookies[stateKey] : null;
+  const storedState = req.cookies ? req.cookies["spotify_auth_state"] : null;
 
   // Stop the authentication flow if there is a mismatch in the current and prev states for
   // security reasons.
@@ -85,29 +82,16 @@ async function getAccessToken(req, res) {
         const response = await axios.post(token_url, req_body, { headers: req_headers });
         const token_info = response.data; // axios returns obj w/ data property, not .json method.
 
-        const ms_in_one_sec = 1000;
-
-        // Sets cookies.
-        res.cookie("access_token", token_info.access_token); // is in seconds
-
-        res.cookie(
-          "expires_at",
-          Math.floor(Date.now() / ms_in_one_sec) + 30/*token_info.expires_in*/
-        );
-        res.cookie("refresh_token", token_info.refresh_token);
-
-        // Redirect to home page for now. (Ideally, want to redirect to the page that began the
-        // login/authorization flow!)
-        const homepage_URL = process.env.FRONTEND_URL;
-        res.redirect(homepage_URL);
-      } catch {
-        res.status(500).json({ error: "Failed to get access token" });
+        return token_info;
+      } catch (err) {
+        console.log("Failed to get access token: ", err.message);
+        return null;
       }
     }
   }
 }
 
-async function getRefreshToken(req, res) {
+async function refreshToken(req, res) {
   const refresh_token = req.cookies["refresh_token"] || null;
   const expires_at = req.cookies["expires_at"] || null;
   const ms_in_one_sec = 1000;
@@ -139,23 +123,14 @@ async function getRefreshToken(req, res) {
       const response = await axios.post(token_url, req_body, { headers: req_headers});
       const new_token_info = response.data;
   
-      // Sets new values of existing cookies.
-      res.cookie("access_token", new_token_info.access_token);
-      res.cookie("expires_at", Math.floor(Date.now() / ms_in_one_sec) + new_token_info.expires_in);
-      res.cookie("refresh_token", new_token_info.refresh_token);
-  
-      // Redirect to home page for now. (Ideally, want to redirect to the page that began the
-      // login/authorization flow!)
-
-      console.log("Retrieved new access token");
-
-      res.redirect("/");
-    } catch {
-      res.status(500).json({ error: "Failed to get access token" });
+      return new_token_info;
+    } catch (err) {
+      console.log("Failed to get new access token: ", err.message);
+      return null;
     }
   } else {
-    res.status(200).json({ message: "Access token is still valid" })
+    return { message: "Access token is still valid" };
   }
 }
 
-module.exports = { getAuthorizationCode, getAccessToken, getRefreshToken }
+module.exports = { getAuthorizationUrl, getAccessTokenInfo, refreshToken }

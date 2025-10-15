@@ -1,11 +1,12 @@
 import { useState } from "react";
 import SongSearchForm from "../components/Entry/SongSearchForm";
 import LoginButton from "../components/LoginButton";
+import SpotifyPlayer from "../components/Entry/SpotifyPlayer";
 
 function SettingsPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  async function clickHandler() {
+  async function checkLoginStatus() {
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/auth/status`,
@@ -13,14 +14,12 @@ function SettingsPage() {
       ); // to send cookies w/ the request
       const body = await response.json();
 
-      {
-        // console.log("Fetch was called.");
-      }
+      // console.log("Fetch was called.");
 
       setIsLoggedIn(body.loggedIn);
-      {
-        // console.log("Login status was set as: ", body.loggedIn);
-      }
+      
+      // console.log("Login status was set as: ", body.loggedIn);
+
     } catch (err) {
       console.log(err);
     }
@@ -31,11 +30,12 @@ function SettingsPage() {
       <h1>Settings</h1>
       <LoginButton
         isLoggedIn={isLoggedIn}
-        setLogInStatus={clickHandler}
+        checkLoginStatus={checkLoginStatus}
       ></LoginButton>
       {console.log("Login status: ", isLoggedIn)}
       {isLoggedIn && <p>You are already logged in!</p>}
-      <SongSearchForm></SongSearchForm>
+      {/* <SongSearchForm></SongSearchForm>
+      <SpotifyPlayer></SpotifyPlayer> */}
     </>
   );
 }

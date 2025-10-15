@@ -1,3 +1,4 @@
+// Checks if access token is valid (exists and hasn't expired)
 function isAccessTokenValid(req) {
   const accessToken = req.cookies ? req.cookies["access_token"] : null;
   const expiresAt = req.cookies ? req.cookies["expires_at"] : null;
@@ -7,17 +8,40 @@ function isAccessTokenValid(req) {
   return accessToken && nowInSeconds < expiresAt;
 }
 
+// Refreshes access token if necessary
 function checkAccessToken(req, res, next) {
   // Only refresh the access token if it is expired or doesn't exist
   console.log("Is access token still valid? ", isAccessTokenValid(req))
   if (isAccessTokenValid(req)) {
+    console.log("Token is valid.")
     next();
   } else {
-    res.redirect("/auth/refresh");
     console.log("Going to retrieve new access token");
+
+
+
+
+
+    // USING REDIRECT HERE DOES NOT CHANGE THE REQUEST TO GET; THAT'S WHY THERE'S AN ERROR IN THE TERMINAL
+
+
+
+    res.redirect("/auth/refresh");
+    // try {
+    //   // Call your refreshToken service directly
+    //   const newTokenInfo = await refreshToken(req, res);
+    //   // Set new cookies if needed
+    //   res.cookie("access_token", newTokenInfo.access_token);
+    //   res.cookie("expires_at", newTokenInfo.expires_at);
+    //   next();
+    // } catch (err) {
+    //   console.log(err);
+    //   res.status(401).json({ error: "Unable to refresh token" });
+    // }
   }
 }
 
+// Checks if user has logged in and authorized access or not 
 function checkLoginStatus(req, res, next) {
   // If the user has already logged in, has authorized access, and doesn't have an expired access 
   // token, prevent them from logging in again.

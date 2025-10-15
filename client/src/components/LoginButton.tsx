@@ -1,9 +1,12 @@
-function LoginButton({isLoggedIn, setLogInStatus}: {isLoggedIn: boolean, setLogInStatus: () => void}) {
+function LoginButton({isLoggedIn, checkLoginStatus}: {isLoggedIn: boolean, checkLoginStatus: () => void}) {
   return(
-    <button className="bg-amber-300" disabled={isLoggedIn} onClick={() => {
-      setLogInStatus();
+    <button className="bg-amber-300 cursor-pointer" disabled={isLoggedIn} onClick={() => {
+      checkLoginStatus();
 
       if (!isLoggedIn) {
+
+        // You can just do this??: href="/auth/login"
+
         // window.location.href for redirecting
         window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/login`;
       }

@@ -5,10 +5,11 @@ const session = require("express-session");
 const songsRouter = require("./routes/songs");
 const playlistsRouter = require("./routes/playlists");
 const authRouter = require("./routes/auth");
-
+const playerRouter = require("./routes/player")
 
 const app = express();
 app.use(cookieParser());
+app.use(express.json()); // to parse JSON from request bodies
 
 // Allow requests from frontend dev server
 app.use(cors({
@@ -31,5 +32,6 @@ app.use(cors({
 app.use("/auth", authRouter);
 app.use("/api/songs", songsRouter);
 app.use("/api/playlists", playlistsRouter);
+app.use("/api/player", playerRouter);
 
 module.exports = app;
