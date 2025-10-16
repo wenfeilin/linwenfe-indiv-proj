@@ -11,6 +11,7 @@ async function searchSong(req, res) {
     return {
       album: {
         name: track.album.name,
+        largeCoverImgURL: track.album.images[0].url,
         mediumCoverImgURL: track.album.images[1].url,
         smallCoverImgURL: track.album.images[2].url,
       },

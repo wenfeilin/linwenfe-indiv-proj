@@ -4,7 +4,7 @@ import {
   type EntryType,
 } from "../../context/EntriesContext";
 import type { MouseEventHandler } from "react";
-import type { Song } from "./SongSelection";
+import type { Song } from "../Music/SongSelection";
 
 // Determines if changes were made and if so saves, updating the entries list context and updates
 // local storage too. Otherwise, doesn't update the entries list context.
@@ -13,15 +13,17 @@ function SaveButton({
   newSongSelection,
   newSongNotes,
   entryBeingSaved,
-  setAddingSong,
+  setIsAddSongBtnActive,
   onSave,
+  setIsSearching,
 }: {
   newEntryContent: string;
   entryBeingSaved: EntryType | undefined;
   newSongSelection: Song | null;
   newSongNotes: string;
-  setAddingSong: any,
+  setIsAddSongBtnActive: any,
   onSave: MouseEventHandler<HTMLButtonElement>;
+  setIsSearching: (arg0: boolean) => void;
 }) {
   const dispatch = useEntriesDispatch()!;
 
@@ -90,7 +92,8 @@ function SaveButton({
           onSave(event);
 
           // Hides the add song search form / makes the player uneditable upon save.
-          setAddingSong(false);
+          setIsAddSongBtnActive(false);
+          setIsSearching(false);
         }}
       >
         Save

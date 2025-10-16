@@ -4,6 +4,7 @@ import { Search, Check, Play } from "lucide-react";
 type Track = {
   album: {
     name: string;
+    largeCoverImgURL: string;
     mediumCoverImgURL: string;
     smallCoverImgURL: string;
   };
@@ -17,9 +18,11 @@ type Track = {
 function SongSearchForm({
   setSongSelection,
   setSongToPlay,
+  setIsSearching,
 }: {
   setSongSelection: any;
   setSongToPlay: any;
+  setIsSearching: (isSearching: boolean) => void;
 }) {
   const [searchContent, setSearchContent] = useState("");
   const [searchResults, setSearchResults] = useState<any[] | null>(null);
@@ -51,8 +54,8 @@ function SongSearchForm({
 
   return (
     // Song Search container
-    <div className="h-full rounded-lg border-2 px-4 py-5">
-      <div className="flex h-full flex-col gap-5">
+    <div className="mb-3 rounded-lg border-2 px-4 py-5">
+      <div className="flex h-73 flex-col gap-5">
         {/* The search bar and button */}
         <form onSubmit={handleFormSubmit} className="relative flex gap-4">
           {/* Search Bar */}
@@ -94,7 +97,8 @@ function SongSearchForm({
               songArtists = songArtists.slice(0, songArtists.length - 2);
               const album = trackObj.album;
               const albumTitle = album.name;
-              // const medAlbumCoverUrl = album.mediumCoverImgURL;
+              const largeAlbumCoverUrl = album.largeCoverImgURL;
+              const medAlbumCoverUrl = album.mediumCoverImgURL;
               const smallAlbumCoverUrl = album.smallCoverImgURL;
               return (
                 <div key={i} className="flex gap-x-2">
@@ -107,7 +111,11 @@ function SongSearchForm({
                           id: songID, // technically dont need
                           uri: songURI,
                           album: albumTitle, // technically dont need
-                          albumCoverUrl: smallAlbumCoverUrl,
+                          albumCoverUrls: [
+                            smallAlbumCoverUrl,
+                            medAlbumCoverUrl,
+                            largeAlbumCoverUrl,
+                          ],
                           title: songTitle,
                           artists: songArtists,
                           durationMS: durationMS,
@@ -117,7 +125,7 @@ function SongSearchForm({
                       <Play fill="white" />
                     </button>
                     <img
-                      src={smallAlbumCoverUrl}
+                      src={largeAlbumCoverUrl}
                       alt={`Cover of the album ${albumTitle}`}
                       className="block h-16 w-16 rounded-lg"
                     ></img>
@@ -141,12 +149,31 @@ function SongSearchForm({
                             id: songID,
                             uri: songURI,
                             album: albumTitle,
-                            albumCoverUrl: smallAlbumCoverUrl,
+                            albumCoverUrls: [
+                              smallAlbumCoverUrl,
+                              medAlbumCoverUrl,
+                              largeAlbumCoverUrl,
+                            ],
+                            title: songTitle,
+                            artists: songArtists,
+                            durationMS: durationMS,
+                          });
+
+                          setSongToPlay({
+                            id: songID, // technically dont need
+                            uri: songURI,
+                            album: albumTitle, // technically dont need
+                            albumCoverUrls: [
+                              smallAlbumCoverUrl,
+                              medAlbumCoverUrl,
+                              largeAlbumCoverUrl,
+                            ],
                             title: songTitle,
                             artists: songArtists,
                             durationMS: durationMS,
                           });
                           console.log(songTitle);
+                          setIsSearching(false);
                         }}
                       >
                         <Check color="white" />

@@ -1,21 +1,17 @@
-// So Spotify is recognized as a type
-///  <reference types="@types/spotify-web-playback-sdk"/>
-import { useState, useEffect, useRef } from "react";
-import type { Song } from "./SongSelection";
-import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import type { Song } from "../components/Music/SongSelection";
+import useInterval from "./useInterval";
 
-function SpotifyPlayer({
-  currentTrackToPlay,
-  addingSong,
-}: {
-  currentTrackToPlay: Song | null;
-  addingSong: boolean;
-}) {
+function useSpotifyPlayer(
+  currentTrackToPlay: Song | null,
+  addingSong: boolean,
+) {
   const playerRef = useRef<Spotify.Player | null>(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [deviceId, setDeviceId] = useState<string | null>(null);
-  // const [isActive, setIsActive] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -64,7 +60,7 @@ function SpotifyPlayer({
       player.addListener(
         "ready",
         async ({ device_id }: { device_id: string }) => {
-          console.log("Ready with Device ID ", device_id);
+          // console.log("Ready with Device ID ", device_id);
           setDeviceId(device_id);
 
           // Transfer playback to this player so it's ready to play music.
@@ -82,7 +78,10 @@ function SpotifyPlayer({
               credentials: "include", // so access token can be retrieved from cookies
             });
 
-            console.log("Playback has been transferred!");
+            // The Spotify player is ready to play some music!
+            setIsReady(true)
+
+            // console.log("Playback has been transferred!");
           } catch (err) {
             console.log(err);
           }
@@ -92,17 +91,31 @@ function SpotifyPlayer({
       player.addListener(
         "not_ready",
         ({ device_id }: { device_id: string }) => {
-          console.log("Device ID has gone offline ", device_id);
+          // console.log("Device ID has gone offline ", device_id);
         },
       );
 
       player.addListener("player_state_changed", async (state) => {
         if (!state) {
-          console.log("Player is not active");
+          // console.log("Player is not active");
 
           // return;
         } else {
-          console.log("Player is active", state);
+          // console.log("Player is active", state);
+          const songDuration = state.duration;
+
+
+
+
+
+
+// Not working -- fix later
+
+
+          // The track has finished playing a song.
+          if (state.position >= songDuration) {
+            setIsPlaying(false);
+          }
         }
       });
 
@@ -172,83 +185,48 @@ function SpotifyPlayer({
 
   // When current track changes, make API call to start playback with this new song.
   useEffect(() => {
-    if (playerRef.current) {
+    // Only start playing music when the player exists and is ready
+    if (playerRef.current && isReady) {
       playSelectedSong();
       setIsPlaying(true);
       playerRef.current.pause();
     }
   }, [currentTrackToPlay]);
 
+  // Try to disconnect.
   useEffect(() => {
-    if (!addingSong) {
-      playerRef.current!.disconnect();
-      console.log("Player disconnected");
+    if (playerRef.current && isReady) {
+      if (!addingSong) {
+        playerRef.current!.disconnect();
+        console.log("Player disconnected");
+      }
     }
-  }, [addingSong])
+  }, [addingSong]);
   
+  // Update the progress of the song being played every second.
+  useInterval(() => {
+    playerRef.current?.getCurrentState().then((state) => {
+      setProgress(state!.position);
+      // if (currentTrackToPlay) {
+      //   console.log(state!.position / 1000 > currentTrackToPlay?.durationMS, state!.position / 1000, currentTrackToPlay?.durationMS)
+      //   if (state!.position / 1000 > currentTrackToPlay?.durationMS) {
+      //     console.log("is playing?", isPlaying)
+      //     setIsPlaying(false);
+      //   }
+      // }
+    })
+  }, isPlaying && playerRef.current && isReady && currentTrackToPlay ? 500 : null);
 
-  return (
-    // MAKE SURE NOTHING IS PRESSABLE UNTIL THE PLAYER IS LOADED!!
 
-    <>
-      <div>
-        <div>
-          <h1>Player</h1>
 
-          <div className="flex gap-2">
-            {/* Album Cover */}
-            <img
-              src={currentTrackToPlay?.albumCoverUrl}
-              alt={`Cover of the album ${currentTrackToPlay?.album}`}
-              className="h-12"
-            ></img>{" "}
-            <div className="flex w-full justify-between">
-              {/* Song Info */}
-              <div className="flex flex-col text-sm">
-                <p>{currentTrackToPlay?.title}</p>
-                <p className="text-gray-500">{currentTrackToPlay?.artists}</p>
-              </div>
-
-              {/* Play/Pause Button */}
-              <button
-                onClick={async () => {
-                  if (playerRef.current) {
-                    playerRef.current.togglePlay();
-                    setIsPlaying(!isPlaying);
-                  }
-                }}
-              >
-                {isPlaying ? <Pause fill="black" /> : <Play fill="black" />}
-              </button>
-            </div>
-          </div>
-
-          <div>Progress Bar</div>
-          <div>
-            {/* Get rid of the bangs later! */}
-
-            {/* Previous Song Button
-            <button
-              onClick={() => {
-                playerRef.current!.previousTrack();
-              }}
-            >
-              <SkipBack fill="black" />
-            </button> */}
-
-            {/* Next Song Button
-            <button
-              onClick={() => {
-                playerRef.current!.nextTrack();
-              }}
-            >
-              <SkipForward fill="black" />
-            </button> */}
-          </div>
-        </div>
-      </div>
-    </>
-  );
+  return {
+    playerRef,
+    isPlaying, 
+    setIsPlaying,
+    deviceId, 
+    isReady,
+    progress
+  };
 }
 
-export default SpotifyPlayer;
+export default useSpotifyPlayer;

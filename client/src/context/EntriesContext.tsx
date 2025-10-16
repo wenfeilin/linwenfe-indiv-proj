@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
 import type { ReactNode, Dispatch } from "react";
-import type { Song } from "../components/Entry/SongSelection";
+import type { Song } from "../components/Music/SongSelection";
 
 // All context and reducer wiring is in here!
 

@@ -5,7 +5,7 @@ async function searchSpotifySong(searchedSong, accessToken) {
   const params = new URLSearchParams({
     q: searchedSong,
     type: "track",
-    limit: 10, // for now
+    limit: 15, // for now
     include_external: "audio",
   });
 

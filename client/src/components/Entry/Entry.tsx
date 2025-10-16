@@ -5,7 +5,7 @@ import { useParams } from "react-router";
 import EditButton from "./EditButton";
 import CancelButton from "./CancelButton";
 import { getMonthName } from "../../utils/date";
-import SongSelection from "./SongSelection";
+import SongSelection from "../Music/SongSelection";
 import AddSongButton from "./AddSongButton";
 
 // The entry content (entry and song selection)
@@ -24,7 +24,8 @@ function Entry() {
   );
   const [songNotes, setSongNotes] = useState(entry ? (entry.songNotes ?? "") : "");
   const [isEditing, setIsEditing] = useState(false);
-  const [addingSong, setAddingSong] = useState(false);
+  const [isAddSongBtnActive, setIsAddSongBtnActive] = useState(entry?.songSelection ? true : false);
+  const [isSearching, setIsSearching] = useState(songSelection ? false : true);
 
   console.log(songSelection);
 
@@ -37,24 +38,28 @@ function Entry() {
         onEdit={() => {
           setIsEditing(true);
         }}
+        setIsAddSongBtnActive={setIsAddSongBtnActive}
+        songSelection={songSelection}
       ></EditButton>
     );
   } else {
     buttonsRow = (
       <div className="flex gap-2">
         {/* Add Song Button */}
-        <AddSongButton addingSong={addingSong} setAddingSong={setAddingSong}></AddSongButton>
+        <AddSongButton isAddSongBtnActive={isAddSongBtnActive || (songSelection ? true : false)} setIsAddSongBtnActive={setIsAddSongBtnActive}></AddSongButton>
 
         {/* Cancel Edits Button */}
         <CancelButton
           onCancel={() => {
-            // let songSelectionBeforeEdit = null;
+            let songSelectionBeforeEdit;
 
-            // if (entry !== undefined) {
-            //   songSelectionBeforeEdit = entry.songSelection
-            //     ? entry.songSelection
-            //     : null;
-            // }
+            if (entry !== undefined) {
+              songSelectionBeforeEdit = entry.songSelection
+                ? entry.songSelection
+                : null;
+            } else {
+              songSelectionBeforeEdit = null;
+            }
 
             // If this entry had something in it prior to editing, check what it's song selection
             // and song notes were.
@@ -63,10 +68,11 @@ function Entry() {
             // }
 
             setIsEditing(false);
+            setIsSearching(false);
 
             // Reset edits.
             setEntryContent(entry ? entry.content : "");
-            // setSongSelection(songSelectionBeforeEdit);
+            setSongSelection(songSelectionBeforeEdit);
             setSongNotes(entry ? entry.songNotes : "");
           }}
         ></CancelButton>
@@ -77,8 +83,9 @@ function Entry() {
           newSongSelection={songSelection}
           newSongNotes={songNotes}
           entryBeingSaved={entry}
-          setAddingSong={setAddingSong}
+          setIsAddSongBtnActive={setIsAddSongBtnActive}
           onSave={() => setIsEditing(false)}
+          setIsSearching={setIsSearching}
         ></SaveButton>
       </div>
     );
@@ -139,22 +146,25 @@ function Entry() {
 
 
       {/* When in edit mode, if the Add Song button is pressed, render the song selection component.  */}
-      {addingSong && (
-        // Song Selection
+      {/* {isAddSongBtnActive && ( */}
+        {/* Song Selection */}
         <div className="col-start-5 col-end-6 row-start-2 row-end-3 w-full">
           <div className="m-auto flex w-4/5 flex-col gap-2">
             <SongSelection
               isEditing={isEditing}
-              addingSong={addingSong}
-              setAddingSong={setAddingSong}
+              isAddSongBtnActive={isAddSongBtnActive}
+              setIsAddSongBtnActive={setIsAddSongBtnActive}
               songSelection={songSelection}
               setSongSelection={setSongSelection}
               songNotes={songNotes}
               onEdit={onEditHandler}
+              setSongNotes={setSongNotes}
+              isSearching={isSearching}
+              setIsSearching={setIsSearching}
             ></SongSelection>
           </div>
         </div>
-      )}
+      {/* )} */}
     </div>
   );
 }
