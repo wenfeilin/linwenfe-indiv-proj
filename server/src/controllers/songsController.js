@@ -1,6 +1,7 @@
 const {searchSpotifySong} = require("../services/spotify-api");
 
 async function searchSong(req, res) {
+  console.log("Searched")
   // Retrieves song being searched for from the query parameter (?search=...)
   const searchedSong = req.query.search;
   const accessToken = req.cookies["access_token"];

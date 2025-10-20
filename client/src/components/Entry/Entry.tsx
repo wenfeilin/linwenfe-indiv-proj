@@ -133,7 +133,8 @@ function Entry() {
       </div>
 
       {/* Entry Text Box */}
-      <div className="col-start-2 col-end-5 row-start-2 row-end-4 flex h-full flex-col">
+      {/* Change col-end back to 5 */}
+      <div className="col-start-2 col-end-4 row-start-2 row-end-4 flex h-full flex-col">
         <textarea
           className="h-2/3 resize-none overflow-y-auto rounded border-2 border-blue-400 p-4 focus:border-blue-500 focus:outline-none"
           readOnly={!isEditing}
@@ -148,7 +149,8 @@ function Entry() {
       {/* When in edit mode, if the Add Song button is pressed, render the song selection component.  */}
       {/* {isAddSongBtnActive && ( */}
         {/* Song Selection */}
-        <div className="col-start-5 col-end-6 row-start-2 row-end-3 w-full">
+        {/* Change col-start back to 5 */}
+        <div className="col-start-4 col-end-6 row-start-2 row-end-3 w-full">
           <div className="m-auto flex w-4/5 flex-col gap-2">
             <SongSelection
               isEditing={isEditing}

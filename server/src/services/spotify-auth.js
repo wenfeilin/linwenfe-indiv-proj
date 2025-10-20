@@ -91,22 +91,24 @@ async function getAccessTokenInfo(req, res) {
   }
 }
 
+// Use the one (usually unchanging) refresh token to request new access token(s).
 async function refreshToken(req, res) {
   const refresh_token = req.cookies["refresh_token"] || null;
   const expires_at = req.cookies["expires_at"] || null;
   const ms_in_one_sec = 1000;
 
-  // Missing refresh token
+  // Missing refresh token; login/authorize to get one
   if (!refresh_token) {
     return res.redirect("/login"); // ?
   }
 
-  // Invalid expiration time
+  // Invalid expiration time; login/authorize to set one
   if (!expires_at || isNaN(expires_at)) {
     return res.redirect("/login");
   }
 
-  if (Math.floor(Date.now() / ms_in_one_sec) > req.cookies["expires_at"]) {
+  // Only refresh the token if it has expired
+  if (Math.floor(Date.now() / ms_in_one_sec) > expires_at) {
     const req_body = new URLSearchParams({
       grant_type: "refresh_token",
       refresh_token: refresh_token,

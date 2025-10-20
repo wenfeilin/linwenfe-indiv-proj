@@ -38,7 +38,7 @@ async function callbackHandler(req, res) {
   const ms_in_one_sec = 1000;
   res.cookie(
     "expires_at",
-    Math.floor(Date.now() / ms_in_one_sec) + token_info.expires_in // change to 5 for testing
+    Math.floor(Date.now() / ms_in_one_sec) + 10/*token_info.expires_in*/ // change to 5 for testing
   );
   res.cookie("refresh_token", token_info.refresh_token);
 
@@ -64,16 +64,17 @@ async function refreshTokenHandler(req, res) {
   // Sets new values of existing cookies.
   const ms_in_one_sec = 1000;
 
+  // Note: This only sets cookies in responses. Have to forward these from the responses to have them appear on the client-side.
   res.cookie("access_token", new_token_info.access_token);
   res.cookie("expires_at", Math.floor(Date.now() / ms_in_one_sec) + new_token_info.expires_in);
-  res.cookie("refresh_token", new_token_info.refresh_token);
 
-  // Redirect to home page for now. (Ideally, want to redirect to the page that began the
-  // login/authorization flow!)
+
+
+  console.log("new expiration", Math.floor(Date.now() / ms_in_one_sec) + new_token_info.expires_in);
+
 
   console.log("Retrieved new access token");
-
-  res.redirect("/");
+  res.status(200).json({ message: "Token has been successfully refreshed."});
 }
 
 module.exports = {getValidAccessToken, login, callbackHandler, refreshTokenHandler}

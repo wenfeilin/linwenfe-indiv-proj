@@ -1,7 +1,9 @@
+const axios = require("axios");
+
 // Checks if access token is valid (exists and hasn't expired)
 function isAccessTokenValid(req) {
   const accessToken = req.cookies ? req.cookies["access_token"] : null;
-  const expiresAt = req.cookies ? req.cookies["expires_at"] : null;
+  const expiresAt = req.cookies ? +req.cookies["expires_at"] : null;
   const msInOneSecond = 1000;
   const nowInSeconds = Math.floor(Date.now() / msInOneSecond);
 
@@ -9,35 +11,33 @@ function isAccessTokenValid(req) {
 }
 
 // Refreshes access token if necessary
-function checkAccessToken(req, res, next) {
+async function checkAccessToken(req, res, next) {
   // Only refresh the access token if it is expired or doesn't exist
   console.log("Is access token still valid? ", isAccessTokenValid(req))
   if (isAccessTokenValid(req)) {
-    console.log("Token is valid.")
+    console.log("Token is valid.");
     next();
   } else {
     console.log("Going to retrieve new access token");
 
+    const backendUrl = process.env.BACKEND_URL;
 
+    try {
+      const response = await axios.get(`${backendUrl}/auth/refresh`, {
+        headers: {
+          Cookie: req.headers.cookie, // Forwards cookies since making a req from the BE to a route
+      }});
 
+      // Forwards cookies from response to client. The server sends a Set-Cookie header in its response to the client. The client stores this cookie to the Cookie header?
+      const setCookieHeader = response.headers["set-cookie"];
+      res.setHeader("Set-Cookie", setCookieHeader);
 
-
-    // USING REDIRECT HERE DOES NOT CHANGE THE REQUEST TO GET; THAT'S WHY THERE'S AN ERROR IN THE TERMINAL
-
-
-
-    res.redirect("/auth/refresh");
-    // try {
-    //   // Call your refreshToken service directly
-    //   const newTokenInfo = await refreshToken(req, res);
-    //   // Set new cookies if needed
-    //   res.cookie("access_token", newTokenInfo.access_token);
-    //   res.cookie("expires_at", newTokenInfo.expires_at);
-    //   next();
-    // } catch (err) {
-    //   console.log(err);
-    //   res.status(401).json({ error: "Unable to refresh token" });
-    // }
+      // Proceed to next route handler
+      next();
+    } catch (err) {
+      console.log(err);
+      res.status(401).json({ message: "Failed to refresh token"});
+    }
   }
 }
 
