@@ -2,7 +2,7 @@ import { useParams } from "react-router";
 import {
   useEntriesDispatch,
   type EntryType,
-} from "../../context/EntriesContext";
+} from "../../contexts/EntriesContext";
 import type { MouseEventHandler } from "react";
 import type { Song } from "../Music/SongSelection";
 

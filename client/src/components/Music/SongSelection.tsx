@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type ChangeEventHandler } from "react";
+import { useEffect, useState, type ChangeEvent, type ChangeEventHandler } from "react";
 import SongSearchForm from "./SongSearchForm";
 import RegularSpotifyPlayer from "./RegularSpotifyPlayer";
 import MiniSpotifyPlayer from "./MiniSpotifyPlayer";
@@ -42,41 +42,54 @@ function SongSelection({
   isSearching: boolean;
   setIsSearching: (arg0: boolean) => void;
 }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    const isLoggedInVal = localStorage.getItem("isSpotifyLoggedIn");
+    return isLoggedInVal? JSON.parse(isLoggedInVal) : false;
+  });
   const [songToPlay, setSongToPlay] = useState(songSelection);
-  // const [isSearching, setIsSearching] = useState(songSelection ? false : true);
-
+  
   async function checkLoginStatus() {
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/auth/status`,
         { credentials: "include" },
       ); // to send cookies w/ the request
-      const body = await response.json();
-
+      const authStatus = await response.json();
+      
       // console.log("Fetch was called.");
-
-      setIsLoggedIn(body.loggedIn);
-
-      // console.log("Login status was set as: ", body.loggedIn);
+      
+      setIsLoggedIn(authStatus.isLoggedIn);
+      console.log(authStatus.isLoggedIn);
     } catch (err) {
       console.log(err);
     }
   }
 
+  checkLoginStatus();
+
+  useEffect(() => {
+    localStorage.setItem("isSpotifyLoggedIn", JSON.stringify(isLoggedIn));
+  }, [isLoggedIn]);
+
   let playerComponent;
   let searchFormComponent;
   let songNotesComponent;
+  let loginBtnComponent;
 
   // If this entry doesn't have an associated song, don't display anything for the song component.
   if (!songSelection || (!songSelection && !isAddSongBtnActive)) {
     playerComponent = null;
     searchFormComponent = null;
     songNotesComponent = null;
+    loginBtnComponent = null;
   }
 
   // Display song with regular music player if there is a song selection for this entry.
   if (songSelection) {
+    loginBtnComponent = (
+      <LoginButton isLoggedIn={isLoggedIn} checkLoginStatus={checkLoginStatus} />
+    );
+
     playerComponent = (
       <RegularSpotifyPlayer
         songSelection={songSelection}
@@ -102,8 +115,13 @@ function SongSelection({
     }
   }
 
+  
   if (isAddSongBtnActive && isEditing && !songSelection) {
     // Render the song search form and notes section when the user is trying to add a song to the entry.
+    loginBtnComponent = (
+      <LoginButton isLoggedIn={isLoggedIn} checkLoginStatus={checkLoginStatus} />
+    );
+
     searchFormComponent = (
       <SongSearchForm
         setSongSelection={setSongSelection}
@@ -151,20 +169,20 @@ function SongSelection({
       ></MiniSpotifyPlayer>)
   }
 
-  // Only render the song notes in non-edit view if there is a song selected as well.
-  if (songNotes && songSelection) {
-    songNotesComponent = (
-      <textarea
-        name="song-notes"
-        id="song-notes"
-        placeholder="Song Notes"
-        readOnly={!isEditing}
-        value={songNotes}
-        className="w-full resize-none overflow-y-auto rounded border-2 border-blue-300 p-1.5 focus:border-blue-400 focus:outline-none"
-        onChange={(event) => onEdit(event, "song notes")}
-      ></textarea>
-    );
-  }
+  // // Only render the song notes in non-edit view if there is a song selected as well.
+  // if (songNotes && songSelection) {
+  //   songNotesComponent = (
+  //     <textarea
+  //       name="song-notes"
+  //       id="song-notes"
+  //       placeholder="Song Notes"
+  //       readOnly={!isEditing}
+  //       value={songNotes}
+  //       className="w-full resize-none overflow-y-auto rounded border-2 border-blue-300 p-1.5 focus:border-blue-400 focus:outline-none"
+  //       onChange={(event) => onEdit(event, "song notes")}
+  //     ></textarea>
+  //   );
+  // }
 
   return (
     <div className="relative h-108">
@@ -191,20 +209,14 @@ function SongSelection({
         </button>
       )}
 
-      {searchFormComponent}
-      {playerComponent}
-      {songNotesComponent}
-
-      {/* Song Notes
-      { (songNotes || (isEditing && addingSong)) && <textarea
-        name="song-notes"
-        id="song-notes"
-        placeholder="Song Notes"
-        readOnly={!isEditing}
-        value={songNotes}
-        className="w-full resize-none overflow-y-auto rounded border-2 border-blue-300 p-1.5 focus:border-blue-400 focus:outline-none"
-        onChange={(event) => onEdit(event, "song notes")}
-      ></textarea>} */}
+      {isLoggedIn? 
+        <div>
+          {searchFormComponent}
+          {playerComponent}
+          {songNotesComponent}
+        </div> :
+        loginBtnComponent
+      }
     </div>
   );
 }

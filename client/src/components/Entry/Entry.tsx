@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent } from "react";
-import { useEntries } from "../../context/EntriesContext";
+import { useEntries } from "../../contexts/EntriesContext";
 import SaveButton from "./SaveButton";
 import { useParams } from "react-router";
 import EditButton from "./EditButton";

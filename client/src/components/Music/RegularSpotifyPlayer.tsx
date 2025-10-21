@@ -1,10 +1,8 @@
-// So Spotify is recognized as a type
-///  <reference types="@types/spotify-web-playback-sdk"/>
-import { useState, useEffect, useRef } from "react";
 import type { Song } from "./SongSelection";
-import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
-import useSpotifyPlayer from "../../hooks/useSpotifyPlayer";
+import { Pause, Play } from "lucide-react";
 import ProgressBar from "./ProgressBar";
+import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
+import { ColorRing } from "react-loader-spinner";
 
 function RegularSpotifyPlayer({
   songSelection,
@@ -17,12 +15,12 @@ function RegularSpotifyPlayer({
   isAddSongBtnActive: boolean;
   setIsSearching: (isSearching: boolean) => void;
 }) {
-  console.log("Currently going to play", songSelection);
+  const musicPlayer = useMusicPlayer();
+  musicPlayer?.setCurrentTrack(songSelection);
 
-  const { playerRef, isPlaying, setIsPlaying, deviceId, isReady, progress } =
-    useSpotifyPlayer(songSelection, isAddSongBtnActive);
+  // console.log("Currently going to play", musicPlayer?.currentTrack?.title, "by", musicPlayer?.currentTrack?.artists);
 
-  // console.log("is playing?", isPlaying)
+  // console.log("is playing?", musicPlayer?.isPlaying)
 
   return (
     // MAKE SURE NOTHING IS PRESSABLE UNTIL THE PLAYER IS LOADED!! -- this behavior isn't determinate rn
@@ -54,26 +52,32 @@ function RegularSpotifyPlayer({
       </div>
 
       <div className="flex justify-center">
-        {/* Play/Pause Button */}
-        <button
-          className="p-1 hover:cursor-pointer hover:opacity-80"
-          onClick={async () => {
-            if (playerRef.current) {
-              playerRef.current.togglePlay();
-              setIsPlaying(!isPlaying);
-            }
-          }}
-        >
-          {isPlaying ? <Pause fill="black" /> : <Play fill="black" />}
-        </button>
+        {musicPlayer?.isReady? 
+          // Play/Pause Button
+          (<button
+            className="p-1 hover:cursor-pointer hover:opacity-80"
+            disabled={!(musicPlayer?.isReady)}
+            onClick={async () => {
+              if (musicPlayer) {
+                console.log("Currently playing", songSelection);
+
+                musicPlayer.togglePlay();
+                musicPlayer.setIsPlaying(!musicPlayer.isPlaying);
+              }
+            }}
+          >
+            {musicPlayer!.isPlaying ? <Pause fill="black" /> : <Play fill="black" />}
+          </button>) :
+          (<ColorRing colors={["#25c21d", "#25c21d", "#25c21d", "#25c21d", "#25c21d"]} height={42} />)
+        }
       </div>
 
       <ProgressBar
-        progress={progress}
+        progress={musicPlayer!.progress}
         songDuration={songSelection ? songSelection.durationMS : 1}
       ></ProgressBar>
 
-      { (isAddSongBtnActive && isEditing) && <div className="flex justify-center">
+      {(isAddSongBtnActive && isEditing) && <div className="flex justify-center">
         <button
           className="rounded-lg bg-yellow-400 px-3 py-2 text-sm hover:cursor-pointer hover:bg-yellow-500"
           onClick={() => {

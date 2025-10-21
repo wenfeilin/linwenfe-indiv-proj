@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router";
-import { useEntries } from "../context/EntriesContext";
+import { useEntries } from "../contexts/EntriesContext";
 import { useState } from "react";
 import { getDateParts } from "../utils/date";
 

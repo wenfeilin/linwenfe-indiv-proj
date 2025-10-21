@@ -7,7 +7,7 @@ const { checkAccessToken } = require("../middleware/spotifyAuthMiddleware");
 router.put("/play", checkAccessToken, playSong);
 
 // Transfers playback to the player so music can be played in the browser
-router.put("/device", checkAccessToken, transferPlayback)
+router.put("/device", checkAccessToken, transferPlayback);
 
 // Loops song(s)
 // router.put("/loop", checkAccessToken, loop)

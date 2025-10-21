@@ -25,7 +25,6 @@ const api_base_player_url = "https://api.spotify.com/v1/" + "me/player/";
 async function startPlayback(device_id, songUris, accessToken) {
   // PUT /me/player/play
   const req_body = {
-    // device_id: device_id,
     uris: songUris,
     position_ms: 0, // start playing from beginning of song for now
   };

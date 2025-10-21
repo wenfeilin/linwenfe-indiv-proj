@@ -1,5 +1,6 @@
 function ProgressBar({progress, songDuration}:{progress: number, songDuration: number}) {
   const progressPercentage = (progress / songDuration) * 100;
+  
   const progressDurationInSeconds = progress / 1000;
   const songDurationInSeconds = songDuration / 1000;
 

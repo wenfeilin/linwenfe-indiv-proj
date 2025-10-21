@@ -12,7 +12,6 @@ async function playSong(req, res) {
     // console.log("Play song response", response);
 
     if (response.status === 204) {
-      console.log("Night before the end should be playing.")
       res.sendStatus(204); // Playback started.
     } else {
       console.log("Status 400")

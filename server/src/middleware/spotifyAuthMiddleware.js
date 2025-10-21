@@ -51,7 +51,7 @@ function checkLoginStatus(req, res, next) {
     res.status(200).json({ isLoggedIn: true });
   } else {
     // Not logged in, denied access, or has expired access token.
-    res.status(401).json({ isLoggedIn: false });
+    res.status(200).json({ isLoggedIn: false });
   }
 }
 

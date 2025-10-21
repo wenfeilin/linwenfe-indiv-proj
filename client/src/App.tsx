@@ -1,4 +1,3 @@
-import React, { useEffect, useContext } from "react";
 import { BrowserRouter, Routes, Route } from "react-router";
 import PageLayout from "./pages/PageLayout";
 import CalendarPage from "./pages/CalendarPage";
@@ -7,7 +6,8 @@ import MyJournalPage from "./pages/MyJournalPage";
 import EntriesPage from "./pages/EntriesPage";
 import DecorationsPage from "./pages/DecorationsPage";
 import SettingsPage from "./pages/SettingsPage";
-import { EntriesProvider } from "./context/EntriesContext";
+import { EntriesProvider } from "./contexts/EntriesContext";
+import { MusicPlayerProvider } from "./contexts/MusicPlayerContext";
 
 /* For API part:
 import Message from "./Message";
@@ -17,25 +17,28 @@ import Message from "./Message";
 function App() {
 
   return (
-    <EntriesProvider>
-      {/* Set up routes for pages. */}
-      <BrowserRouter>
-        <Routes>
-          {/* All pages will be wrapped by PageLayout so they will have a page header. */}
-          <Route path="/" element={<PageLayout />}>
-            {/* I'm making the root (the home page) point to the calendar page for now. */}
-            <Route index element={<CalendarPage />} />
-            <Route path="my-calendar" element={<CalendarPage />} />
-            <Route path="my-calendar/:year/:month" element={<CalendarPage />} />
-            <Route path="entry/:year/:month/:day" element={<EntryPage />} />
-            <Route path="my-journal" element={<MyJournalPage />} />
-            <Route path="my-entries" element={<EntriesPage />} />
-            <Route path="decorations" element={<DecorationsPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </EntriesProvider>
+    // Set up single global music player.
+    <MusicPlayerProvider>
+      <EntriesProvider>
+        {/* Set up routes for pages. */}
+        <BrowserRouter>
+          <Routes>
+            {/* All pages will be wrapped by PageLayout so they will have a page header. */}
+            <Route path="/" element={<PageLayout />}>
+              {/* I'm making the root (the home page) point to the calendar page for now. */}
+              <Route index element={<CalendarPage />} />
+              <Route path="my-calendar" element={<CalendarPage />} />
+              <Route path="my-calendar/:year/:month" element={<CalendarPage />} />
+              <Route path="entry/:year/:month/:day" element={<EntryPage />} />
+              <Route path="my-journal" element={<MyJournalPage />} />
+              <Route path="my-entries" element={<EntriesPage />} />
+              <Route path="decorations" element={<DecorationsPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </EntriesProvider>
+    </MusicPlayerProvider>
   );
 
   /*

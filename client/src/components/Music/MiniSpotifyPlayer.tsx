@@ -1,22 +1,21 @@
-// So Spotify is recognized as a type
-///  <reference types="@types/spotify-web-playback-sdk"/>
-import { useState, useEffect, useRef } from "react";
 import type { Song } from "./SongSelection";
-import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
-import useSpotifyPlayer from "../../hooks/useSpotifyPlayer";
+import { Pause, Play } from "lucide-react";
 import ProgressBar from "./ProgressBar";
+import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
+import { ColorRing } from "react-loader-spinner";
 
-function SpotifyPlayer({
+// Handles UI rendering and UI-related functionality for music player in entry view
+function MiniSpotifyPlayer({
   currentTrackToPlay,
   isAddSongBtnActive,
 }: {
   currentTrackToPlay: Song | null;
   isAddSongBtnActive: boolean;
 }) {
-  console.log("Currently going to play", currentTrackToPlay);
+  const musicPlayer = useMusicPlayer();
+  musicPlayer?.setCurrentTrack(currentTrackToPlay);
 
-  const { playerRef, isPlaying, setIsPlaying, deviceId, isReady, progress } =
-    useSpotifyPlayer(currentTrackToPlay, isAddSongBtnActive);
+  console.log("Currently going to play", musicPlayer?.currentTrack?.title, "by", musicPlayer?.currentTrack?.artists);
 
   return (
     // MAKE SURE NOTHING IS PRESSABLE UNTIL THE PLAYER IS LOADED!! -- this behavior isn't determinate rn
@@ -43,24 +42,28 @@ function SpotifyPlayer({
           </div>
 
           <div className="flex items-center">
-            {/* Play/Pause Button */}
-            <button className="hover:cursor-pointer hover:opacity-80"
-              onClick={async () => {
-                if (playerRef.current) {
-                  playerRef.current.togglePlay();
-                  setIsPlaying(!isPlaying);
-                }
-              }}
-            >
-              {isPlaying ? <Pause fill="black" /> : <Play fill="black" />}
-            </button>
+            {musicPlayer?.isReady? 
+              // Play/Pause Button 
+              (<button className="hover:cursor-pointer hover:opacity-80"
+                disabled={currentTrackToPlay? false : true}
+                onClick={async () => {
+                  if (musicPlayer) {
+                    musicPlayer.togglePlay();
+                    musicPlayer.setIsPlaying(!musicPlayer.isPlaying);
+                  }
+                }}
+              >
+                {musicPlayer!.isPlaying? <Pause fill="black" /> : <Play fill="black" />}
+              </button>) : 
+              (<ColorRing colors={["#25c21d", "#25c21d", "#25c21d", "#25c21d", "#25c21d"]} height={42} />)
+            }
           </div>
         </div>
       </div>
 
       {/* Progress Bar */}
       <ProgressBar
-        progress={progress}
+        progress={musicPlayer!.progress}
         songDuration={currentTrackToPlay ? currentTrackToPlay.durationMS : 1}
       ></ProgressBar>
       <div>{/* Get rid of the bangs later! */}</div>
@@ -68,4 +71,4 @@ function SpotifyPlayer({
   );
 }
 
-export default SpotifyPlayer;
+export default MiniSpotifyPlayer;

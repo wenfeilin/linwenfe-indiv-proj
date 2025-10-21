@@ -47,6 +47,7 @@ export function EntriesProvider({ children }: { children: ReactNode }) {
   return (
     // TS requires `.Provider` appended, and b/c JSX is being returned, this should be a .tsx
     // file.
+    // Pass `entries` so it can be accessed when using the context.
     <EntriesContext.Provider value={entries}>
       <EntriesDispatchContext.Provider value={dispatch}>
         {children}
@@ -55,10 +56,12 @@ export function EntriesProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// Custom hook to use entries context.
 export function useEntries() {
   return useContext(EntriesContext);
 }
 
+// Custom hook to use entries dispatch.
 export function useEntriesDispatch() {
   return useContext(EntriesDispatchContext);
 }

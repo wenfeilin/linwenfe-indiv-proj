@@ -13,6 +13,12 @@ function getValidAccessToken(req, res) {
 
 // Redirects user to Spotify's login/authorization page.
 function login(req, res) { 
+  // Save and the URL of the page that login was initiated from to redirect to after login.
+  const redirectUrl = process.env.FRONTEND_URL + req.query.prevPage;
+  res.cookie("redirect_url", redirectUrl);
+
+  console.log(redirectUrl);
+
   // Get the URL for user authorization.
   const {authorizationUrl, state} = getAuthorizationUrl(req, res);
 
@@ -38,14 +44,12 @@ async function callbackHandler(req, res) {
   const ms_in_one_sec = 1000;
   res.cookie(
     "expires_at",
-    Math.floor(Date.now() / ms_in_one_sec) + 10/*token_info.expires_in*/ // change to 5 for testing
+    Math.floor(Date.now() / ms_in_one_sec) + token_info.expires_in // change to 5 for testing
   );
   res.cookie("refresh_token", token_info.refresh_token);
 
-  // Redirect to home page for now. (Ideally, want to redirect to the page that began the
-  // login/authorization flow!)
-  const homepage_URL = process.env.FRONTEND_URL;
-  res.redirect(homepage_URL);
+  // Redirect to the page that began the login/authorization flow.
+  res.redirect(req.cookies["redirect_url"]);
 }
 
 async function refreshTokenHandler(req, res) {

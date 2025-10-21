@@ -1,17 +1,13 @@
+// So Spotify is recognized as a type
+///  <reference types="@types/spotify-web-playback-sdk"/>
 import { useEffect, useRef, useState } from "react";
-import type { Song } from "../components/Music/SongSelection";
-import useInterval from "./useInterval";
 
-function useSpotifyPlayer(
-  currentTrackToPlay: Song | null,
-  addingSong: boolean,
-) {
+// Handles music player setup (connecting, disconnecting, listening to basic events)
+function useSpotifyPlayer() {
   const playerRef = useRef<Spotify.Player | null>(null);
 
-  const [isPlaying, setIsPlaying] = useState(false);
   const [deviceId, setDeviceId] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
-  const [progress, setProgress] = useState(0);
 
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -95,30 +91,11 @@ function useSpotifyPlayer(
         },
       );
 
-      player.addListener("player_state_changed", async (state) => {
-        if (!state) {
-          // console.log("Player is not active");
+      // player.addListener("player_state_changed", (state) => {
+        
+      // });
 
-          // return;
-        } else {
-          // console.log("Player is active", state);
-          const songDuration = state.duration;
-
-
-
-
-
-
-// Not working -- fix later
-
-
-          // The track has finished playing a song.
-          if (state.position >= songDuration) {
-            setIsPlaying(false);
-          }
-        }
-      });
-
+      // Error event listeners
       player.addListener(
         "initialization_error",
         ({ message }: { message: string }) => {
@@ -158,74 +135,10 @@ function useSpotifyPlayer(
     };
   }, []);
 
-  async function playSelectedSong() {
-    try {
-      // Play the song specified by the URI when play is pressed.
-      console.log("device id", deviceId);
-
-      const play_song_req_body = {
-        device_id: deviceId,
-        uris: [currentTrackToPlay?.uri],
-      };
-
-      await fetch(`${apiUrl}/player/play`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(play_song_req_body),
-        credentials: "include",
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  // should also load song when play is pressed if there is already a song selection for the entry.
-
-  // When current track changes, make API call to start playback with this new song.
-  useEffect(() => {
-    // Only start playing music when the player exists and is ready
-    if (playerRef.current && isReady) {
-      playSelectedSong();
-      setIsPlaying(true);
-      playerRef.current.pause();
-    }
-  }, [currentTrackToPlay]);
-
-  // Try to disconnect.
-  useEffect(() => {
-    if (playerRef.current && isReady) {
-      if (!addingSong) {
-        playerRef.current!.disconnect();
-        console.log("Player disconnected");
-      }
-    }
-  }, [addingSong]);
-  
-  // Update the progress of the song being played every second.
-  useInterval(() => {
-    playerRef.current?.getCurrentState().then((state) => {
-      setProgress(state!.position);
-      // if (currentTrackToPlay) {
-      //   console.log(state!.position / 1000 > currentTrackToPlay?.durationMS, state!.position / 1000, currentTrackToPlay?.durationMS)
-      //   if (state!.position / 1000 > currentTrackToPlay?.durationMS) {
-      //     console.log("is playing?", isPlaying)
-      //     setIsPlaying(false);
-      //   }
-      // }
-    })
-  }, isPlaying && playerRef.current && isReady && currentTrackToPlay ? 500 : null);
-
-
-
   return {
     playerRef,
-    isPlaying, 
-    setIsPlaying,
     deviceId, 
     isReady,
-    progress
   };
 }
 

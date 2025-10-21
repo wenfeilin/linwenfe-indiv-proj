@@ -1,5 +1,5 @@
 import { useParams, Link, useLocation } from "react-router";
-import { useEntries } from "../../context/EntriesContext";
+import { useEntries } from "../../contexts/EntriesContext";
 
 function CalendarBlock({ blockDate }: { blockDate: Date }) {
   // Use date prop to find proper entry's song selection to render (and figure out if it is filled
