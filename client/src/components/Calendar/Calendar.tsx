@@ -1,16 +1,25 @@
 import { useParams } from "react-router";
 import CalendarBlock from "./CalendarBlock";
-import { generateCalendarDates, getMonthName } from "../../utils/date";
+import { generateCalendarDates } from "../../utils/date";
 import CalendarHeader from "./CalendarHeader";
+import { useState } from "react";
+import { RotatingLines } from "react-loader-spinner";
 
 function Calendar() {
   // Retrieve the year and month of the calendar (from the URL) the user navigated to.
   // The month here is not 0-indexed.
   let { year, month } = useParams();
-
+  
   // Convert the URL parameters to numbers.
   const selectedYr = Number(year);
   const selectedMonth = Number(month);
+  
+  // Since the year and month (the URL params) are undefined until after the first render.
+  if (!selectedYr || !selectedMonth) {
+    return(
+      <RotatingLines />
+    )
+  }
 
   const calendarDates = generateCalendarDates(selectedYr, selectedMonth);
 
