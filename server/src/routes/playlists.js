@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const {makePlaylist} = require("../controllers/playlistsController")
+const {checkAccessToken} = require("../middleware/spotifyAuthMiddleware")
 
-router.post("/", (req, res) => {
-  res.send("Make playlist");
-});
+router.post("/", checkAccessToken, makePlaylist);
 
 module.exports = router;

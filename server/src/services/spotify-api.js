@@ -1,7 +1,10 @@
 const axios = require("axios");
 
+// Songs
+
+const api_base_url = "https://api.spotify.com/v1/";
+
 async function searchSpotifySong(searchedSong, accessToken) {
-  const api_base_url = "https://api.spotify.com/v1/";
   const params = new URLSearchParams({
     q: searchedSong,
     type: "track",
@@ -9,16 +12,23 @@ async function searchSpotifySong(searchedSong, accessToken) {
     include_external: "audio",
   });
 
-  const response = await axios.get(
-    `${api_base_url}search?${params.toString()}`,
-    {
-      headers: {
-        Authorization: "Bearer " + accessToken,
-      },
-    }
-  ); // already parsed as JS object from JSON by axios
-  return response.data;
+  try {
+    const response = await axios.get(
+      `${api_base_url}search?${params.toString()}`,
+      {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
+      }
+    ); // already parsed as JS object from JSON by axios
+    return response.data;
+  } catch (err) {
+    console.log(err);
+  }
 }
+
+
+// Player
 
 const api_base_player_url = "https://api.spotify.com/v1/" + "me/player/";
 
@@ -68,35 +78,87 @@ async function transferPlaybackHelper(device_ids, accessToken) {
   }
 }
 
-// state = "track", "context", "off"
-async function toggleLoop(state, device_id, accessToken) {
-  // PUT /me/player/repeat
+// // state = "track", "context", "off"
+// async function toggleLoop(state, device_id, accessToken) {
+//   // PUT /me/player/repeat
+//   try {
+//     const response = await axios.put(`${api_base_player_url}repeat?state=${state}&device_id=${device_id}`, {
+//       headers: {
+//         Authorization: "Bearer " + accessToken,
+//       },
+//     });
+
+//     return response;
+//   } catch (err) {
+//     console.log(err);
+//   }
+// }
+
+// async function toggleShuffle(state, device_id, accessToken) {
+//   // PUT /me/player/shuffle
+//   try {
+//     const response = await axios.put(`${api_base_player_url}shuffle?state=${state}&device_id=${device_id}`, {
+//       headers: {
+//         Authorization: "Bearer " + accessToken,
+//       },
+//     });
+    
+//     return response;
+//   } catch (err) {
+//     console.log(err)
+//   }
+// }
+
+
+// Playlist
+
+async function getNewPlaylistId(month, year, accessToken) {
   try {
-    const response = await axios.put(`${api_base_player_url}repeat?state=${state}&device_id=${device_id}`, {
+    // Get user's Spotify ID.
+    const profileResponse = await axios.get(`${api_base_url}me`, {
       headers: {
         Authorization: "Bearer " + accessToken,
-      },
+      }
     });
-
-    return response;
+    const userId = profileResponse.data.id;
+  
+    const req_body = {
+      "name": `${month} ${year} Songs`,
+      "public": true,
+      "description": "",
+    }
+    
+    // Create a public, non-collaborative playlist on the user's profile.
+    const playlistResponse = await axios.post(`${api_base_url}users/${userId}/playlists`, req_body, {
+      headers: {
+        Authorization: "Bearer " + accessToken,
+        "Content-Type": "application/json",
+      }
+    });
+  
+    // Return playlist's Spotify ID.
+    return playlistResponse.data.id;
   } catch (err) {
     console.log(err);
   }
 }
 
-async function toggleShuffle(state, device_id, accessToken) {
-  // PUT /me/player/shuffle
+async function addSongsToPlaylist(playlistId, songUris, accessToken) {
+  const req_body = {
+    uris: songUris,
+  }
+
   try {
-    const response = await axios.put(`${api_base_player_url}shuffle?state=${state}&device_id=${device_id}`, {
+    // Add songs to playlist.
+    await axios.post(`${api_base_url}playlists/${playlistId}/tracks`, req_body, {
       headers: {
         Authorization: "Bearer " + accessToken,
-      },
+        "Content-Type": "application/json",
+      }
     });
-    
-    return response;
   } catch (err) {
-    console.log(err)
+    console.log(err);
   }
 }
 
-module.exports = { searchSpotifySong, startPlayback, transferPlaybackHelper, toggleLoop, toggleShuffle};
+module.exports = { searchSpotifySong, startPlayback, transferPlaybackHelper, /*toggleLoop, toggleShuffle*/ getNewPlaylistId, addSongsToPlaylist};

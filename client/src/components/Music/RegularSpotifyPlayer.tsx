@@ -3,6 +3,7 @@ import { Pause, Play } from "lucide-react";
 import ProgressBar from "./ProgressBar";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 import { ColorRing } from "react-loader-spinner";
+import { useEffect } from "react";
 
 function RegularSpotifyPlayer({
   songSelection,
