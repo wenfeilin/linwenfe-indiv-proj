@@ -1,6 +1,6 @@
 import { useState } from "react";
 import SongSearchForm from "../components/Music/SongSearchForm";
-import LoginButton from "../components/LoginButton";
+import LoginButton from "../components/Music/LoginButton";
 import SpotifyPlayer from "../components/Music/RegularSpotifyPlayer";
 
 function SettingsPage() {

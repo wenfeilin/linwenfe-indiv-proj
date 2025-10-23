@@ -2,7 +2,6 @@ import { useParams } from "react-router";
 import CalendarBlock from "./CalendarBlock";
 import { generateCalendarDates } from "../../utils/date";
 import CalendarHeader from "./CalendarHeader";
-import { useState } from "react";
 import { RotatingLines } from "react-loader-spinner";
 
 function Calendar() {
@@ -17,7 +16,7 @@ function Calendar() {
   // Since the year and month (the URL params) are undefined until after the first render.
   if (!selectedYr || !selectedMonth) {
     return(
-      <RotatingLines />
+      <RotatingLines height={50} />
     )
   }
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import ExportPlaylistButton from "./ExportPlaylistButton";
 import DatePicker from "react-datepicker";
 import { getMonthName } from "../../utils/date";
-import LoginButton from "../LoginButton";
+import LoginButton from "./LoginButton";
 
 // Import datepicker CSS from package
 import "react-datepicker/dist/react-datepicker.css";

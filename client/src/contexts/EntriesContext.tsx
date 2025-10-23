@@ -31,11 +31,11 @@ const EntriesDispatchContext = createContext<Dispatch<Action> | undefined>(
 );
 
 // This is a custom wrapper component for the EntriesContext (so it's less bulky when used)
-export function EntriesProvider({ children }: { children: ReactNode }) {
-  // Initially, the list of entries is what is in the local storage.
+export function EntriesProvider({ children, initialEntries }: { children: ReactNode, initialEntries?: EntryType[] }) {
+  // Initially, use initialEntries if provided. Otheriwse, use the list of entries that's already in the local storage, if any.
   const savedEntriesJSON = localStorage.getItem("entries");
   const savedEntries = savedEntriesJSON? JSON.parse(savedEntriesJSON) : [];
-  const [entries, dispatch] = useReducer(entriesReducer, savedEntries);
+  const [entries, dispatch] = useReducer(entriesReducer, initialEntries ?? savedEntries); // initialEntries is for testing purposes mainly
 
   useEffect(() => {
     // Save this updated list of entries in the local storage too only if any entry was changed.

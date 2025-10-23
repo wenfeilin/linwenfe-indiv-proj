@@ -2,7 +2,7 @@ import { useEffect, useState, type ChangeEvent, type ChangeEventHandler } from "
 import SongSearchForm from "./SongSearchForm";
 import RegularSpotifyPlayer from "./RegularSpotifyPlayer";
 import MiniSpotifyPlayer from "./MiniSpotifyPlayer";
-import LoginButton from "../LoginButton";
+import LoginButton from "./LoginButton";
 import { X } from "lucide-react";
 
 export type Song = {

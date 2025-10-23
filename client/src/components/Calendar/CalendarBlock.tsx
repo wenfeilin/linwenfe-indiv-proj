@@ -38,7 +38,6 @@ function CalendarBlock({ blockDate }: { blockDate: Date }) {
 
   return (
     // Clicking on it should link to the entry view of the entry associated w/ the date.
-    // <Link></Link>
     <Link
       to={`/entry/${blockYear}/${blockMonth}/${blockDay}`}
       state={{ prevPage: location.pathname }}
@@ -49,9 +48,10 @@ function CalendarBlock({ blockDate }: { blockDate: Date }) {
       }}
     >
       <div
+        data-testid="calendar-block"
         className={`h-21 pt-0.5 pl-1.5 ${isInCurrMonth ? "bg-white text-gray-900 hover:bg-amber-200" : "bg-gray-500 text-gray-300 cursor-default"} ${isToday && "bg-yellow-300 hover:bg-yellow-400"}`}
       >
-        <div className={`inline-block`}>{blockDay}</div>
+        <div data-testid="day-number" className={`inline-block`}>{blockDay}</div>
         {hasEntry && isInCurrMonth && <p>Entry exists</p>}
       </div>
     </Link>

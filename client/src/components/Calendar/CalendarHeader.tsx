@@ -1,19 +1,8 @@
-import { Link, Navigate, useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import { getMonthName } from "../../utils/date";
 
 function CalendarHeader() {
-  const now = new Date();
-  let { year, month } = useParams(); // The month here is not 0-indexed.
-
-  // .getMonth() returned 0-based months.
-  const currMonth = now.getMonth() + 1;
-  const currYear = now.getFullYear();
-
-  // By default, redirect user to calendar for current month and year.
-  if (month === undefined || year === undefined) {
-    return <Navigate to={`/my-calendar/${currYear}/${currMonth}`}></Navigate>;
-  }
-
+  const { year, month } = useParams(); // The month here is not 0-indexed.
   const displayedMonth = Number(month);
   const displayedYear = Number(year);
 
