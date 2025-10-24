@@ -61,12 +61,6 @@ function Entry() {
               songSelectionBeforeEdit = null;
             }
 
-            // If this entry had something in it prior to editing, check what it's song selection
-            // and song notes were.
-            // if (entry) {
-            //   songSelectionBeforeEdit = entry.songSelection ?? null;
-            // }
-
             setIsEditing(false);
             setIsSearching(false);
 
@@ -94,7 +88,7 @@ function Entry() {
   // Updates local state of entry when typing
   function onEditHandler(
     event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-    updateType: "entry" | /*"song" |*/ "song notes",
+    updateType: "entry" | "song notes",
   ) {
     if (isEditing) {
       switch (updateType) {
@@ -102,15 +96,6 @@ function Entry() {
           setEntryContent(event.target.value);
           break;
         }
-        /*case "song": {
-          const songTitle = event.target.value;
-          if (songTitle === "") {
-            setSongSelection(null);
-          } else {
-            setSongSelection({ title: songTitle });
-          }
-          break;
-        }*/
         case "song notes": {
           setSongNotes(event.target.value);
           break;

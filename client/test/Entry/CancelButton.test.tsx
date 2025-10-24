@@ -6,7 +6,7 @@ import CancelButton from "../../src/components/Entry/CancelButton";
 import "@testing-library/jest-dom/vitest";
 
 describe("CancelButton", () => {
-  // Mock the onCancel function so it's callable in AddSgonButton component.
+  // Mock the onCancel function so it's callable in CancelButton component.
   const mockOnCancel = vi.fn();
 
   beforeEach(() => {
