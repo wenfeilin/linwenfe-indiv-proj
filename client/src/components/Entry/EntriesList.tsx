@@ -5,13 +5,13 @@ import { getDateParts } from "../../utils/date";
 function EntriesList({ entriesToRender, location }: { entriesToRender: { entryNum: number; entry: EntryType }[], location: Location}) {
   return (
     <>
-    {/* Make each entry show its date, entry number, and link to it*/}
+      {/* Make each entry show its date, entry number, and link to it*/}
       {entriesToRender.map((entryObj) => {
         const [year, month, day] = getDateParts(entryObj.entry.date);
 
         const entryNumber = entryObj.entryNum;
         return (
-          <div key={entryNumber} className="flex w-full gap-x-14 text-lg">
+          <div data-testid="listed-entry" key={entryNumber} className="flex w-full gap-x-14 text-lg">
             <div className="flex w-1/2 justify-end">
               {/* Date of entry */}
               <p>
