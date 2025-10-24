@@ -1,7 +1,7 @@
 import React from "react";
 import { renderWithRouterAndEntries } from "../test-utils"
 import { screen } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import Calendar from "../../src/components/Calendar/Calendar";
 import { useParams } from "react-router";
 import "@testing-library/jest-dom/vitest";
@@ -43,6 +43,11 @@ describe("Calendar", () => {
 
   // Mock the setIsCalendarLoading function so it's callable in Calendar component.
   const mockSetIsCalendarLoading = vi.fn();
+
+  beforeEach(() => {
+    // Clear information about mock function.
+    mockSetIsCalendarLoading.mockClear();
+  })
 
   it("renders all child components", () => {
     renderWithRouterAndEntries(<Calendar setIsCalendarLoading={mockSetIsCalendarLoading}/>, renderOptions);
