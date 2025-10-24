@@ -1,10 +1,4 @@
-import type { MouseEventHandler } from "react";
-
-function CancelButton({
-  onCancel,
-}: {
-  onCancel: MouseEventHandler<HTMLButtonElement>;
-}) {
+function CancelButton({ onCancel }: { onCancel: () => void }) {
   return (
     <>
       <button
