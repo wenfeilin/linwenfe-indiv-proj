@@ -84,12 +84,16 @@ describe("EntriesList", () => {
       const renderedEntry = listedEntries[index];
       const entryDate = mockEntry.entry.date;
       const entryNum = mockEntry.entryNum;
-      const link = within(renderedEntry).getByRole("link");
       const [ year, month, day ] = getDateParts(entryDate);
+      
+      // Get the date, entry number, and link.
+      const entryDateText = screen.getByText(`${month}-${day}-${year}`);
+      const entryNumText = screen.getByText(`Entry #${entryNum}`);
+      const link = within(renderedEntry).getByRole("link");
 
       // Assert that the date, entry number, and link to entry are rendered.
-      expect(entryDate).toBeInTheDocument();
-      expect(`Entry #${entryNum}`).toBeInTheDocument();
+      expect(entryDateText).toBeInTheDocument();
+      expect(entryNumText).toBeInTheDocument();
       expect(link).toHaveAttribute("href", `/entry/${year}/${month}/${day}`);
     })
   });
