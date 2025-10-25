@@ -4,6 +4,7 @@ import RegularSpotifyPlayer from "./RegularSpotifyPlayer";
 import MiniSpotifyPlayer from "./MiniSpotifyPlayer";
 import LoginButton from "./LoginButton";
 import { X } from "lucide-react";
+import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 
 export type Song = {
   id: string;
@@ -59,7 +60,7 @@ function SongSelection({
       // console.log("Fetch was called.");
       
       setIsLoggedIn(authStatus.isLoggedIn);
-      console.log(authStatus.isLoggedIn);
+      console.log("is logged in?", authStatus.isLoggedIn);
     } catch (err) {
       console.log(err);
     }
@@ -70,6 +71,19 @@ function SongSelection({
   useEffect(() => {
     localStorage.setItem("isSpotifyLoggedIn", JSON.stringify(isLoggedIn));
   }, [isLoggedIn]);
+
+  const musicPlayer = useMusicPlayer();
+
+  // On mount, ensure no music plays. -- DOESN'T WORK
+  useEffect(() => {
+    const onMount = async () => {
+      if (musicPlayer) {
+        await musicPlayer.pause();
+      }
+    }
+
+    onMount();
+  }, [])
 
   let playerComponent;
   let searchFormComponent;

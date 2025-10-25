@@ -5,6 +5,7 @@ import {
 } from "../../contexts/EntriesContext";
 import type { MouseEventHandler } from "react";
 import type { Song } from "../Music/SongSelection";
+import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 
 // Determines if changes were made and if so saves, updating the entries list context and updates
 // local storage too. Otherwise, doesn't update the entries list context.
@@ -29,6 +30,8 @@ function SaveButton({
 
   const { year, month, day } = useParams();
   const entryDate = `${year}-${month}-${day}`;
+
+  const musicPlayer = useMusicPlayer();
 
   return (
     <>
@@ -90,6 +93,11 @@ function SaveButton({
             console.log("Updated permanently!");
           }
           onSave(event);
+
+          // Stop music from playing if any.
+          if (musicPlayer && musicPlayer.isPlaying) {
+            musicPlayer.togglePlay();
+          }
 
           // Hides the add song search form / makes the player uneditable upon save.
           setIsAddSongBtnActive(false);

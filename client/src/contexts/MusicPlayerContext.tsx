@@ -11,9 +11,11 @@ type MusicPlayerContextType = {
   setCurrentTrack: (song: Song | null) => void;
   isPlaying: boolean;
   setIsPlaying:(playing: boolean) => void;
-  togglePlay: () => void;
+  togglePlay: () => Promise<void>;
   progress: number;
   setProgress: (progress: number) => void;
+  resetProgress: () => void;
+  pause: () => Promise<void>;
 }
 
 // One single global music player to be used to play a single song and a playlist of songs
@@ -23,6 +25,8 @@ const MusicPlayerContext = createContext<MusicPlayerContextType | null>(null);
 export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   // On page load, there is no song to play yet.
   const [currentTrack, setCurrentTrack] = useState<Song | null>(null);
+  const [searchedTrackToPlay, setSearchedTrackToPlay] = useState<Song | null>(null);
+  // console.log("Context's current song is", currentTrack?.title);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -39,15 +43,23 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Toggles music playing.
-  const togglePlay = () => {
+  const togglePlay = async () => {
     if (playerRef.current) {
-      playerRef.current.togglePlay();
+      await playerRef.current.togglePlay();
       setIsPlaying(!isPlaying);
     }
   };
 
+  // Pause music.
+  const pause = async () => {
+    if (playerRef.current) {
+      await playerRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
   // Queues the current song to play.
-  async function playSelectedSong() {
+  async function playSelectedSong(songToPlay: Song | null) {
     const apiUrl = import.meta.env.VITE_API_URL;
 
     try {
@@ -56,7 +68,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
 
       const play_song_req_body = {
         device_id: deviceId,
-        uris: [currentTrack?.uri],
+        uris: [songToPlay?.uri],
       };
 
       await fetch(`${apiUrl}/player/play`, {
@@ -74,20 +86,43 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
 
   // should also load song when play is pressed if there is already a song selection for the entry.
 
-  // When current track changes, make API call to start playback with this new song.
+  // When current track changes, make API call to start playback with this new song (queue it up immediately).
   useEffect(() => {
     // Only start playing music when the player exists and is ready
     if (playerRef.current && isReady) {
-      playSelectedSong();
+      playSelectedSong(currentTrack);
       setIsPlaying(true);
+      // pause();
+      // togglePlay();
       // playerRef.current.pause();
       // console.log("Paused!")
     }
   }, [currentTrack]);
 
+  // When a searched track being queued to play changes, make API call to start playback with this new song (queue it up immediately).
+  useEffect(() => {
+    // Only start playing music when the player exists and is ready
+    if (playerRef.current && isReady && searchedTrackToPlay) {
+      console.log("searched track", searchedTrackToPlay)
+      
+      playSelectedSong(searchedTrackToPlay);
+      setIsPlaying(true);
+      // togglePlay();
+      // playerRef.current.pause();
+      // console.log("Paused!")
+    }
+  }, [searchedTrackToPlay]);
 
+  // Resets progress of music playing.
+  const resetProgress = () => {
+    // Reset visual progress.
+    setProgress(0);
 
-
+    // Reset the actual progress of the song.
+    if (playerRef.current) {
+      playerRef.current.seek(0);
+    }
+  };
 
 
   
@@ -104,7 +139,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   }, isPlaying && playerRef.current && isReady && currentTrack ? 1000 : null);
 
   return (
-    <MusicPlayerContext.Provider value={{playerRef, deviceId, isReady, currentTrack, setCurrentTrack, isPlaying, setIsPlaying, togglePlay, progress, setProgress}}>
+    <MusicPlayerContext.Provider value={{playerRef, deviceId, isReady, currentTrack, setCurrentTrack, isPlaying, setIsPlaying, togglePlay, progress, setProgress, resetProgress, pause}}>
       { children }
     </MusicPlayerContext.Provider>
   )

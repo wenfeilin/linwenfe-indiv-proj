@@ -1,9 +1,6 @@
 import { useLocation } from "react-router";
 
 function LoginButton({isLoggedIn, checkLoginStatus}: {isLoggedIn: boolean, checkLoginStatus: () => void}) {
-  
-  
-  
   const location = useLocation();
 
   return(
@@ -17,7 +14,7 @@ function LoginButton({isLoggedIn, checkLoginStatus}: {isLoggedIn: boolean, check
         // window.location.href for redirecting
         window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/login?prevPage=${prevPageUrl}`;
       }
-    }}>Login!</button>
+    }}>Log in to Spotify!</button>
   )
 }
 

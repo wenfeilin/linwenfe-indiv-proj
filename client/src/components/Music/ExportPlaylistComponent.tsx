@@ -3,11 +3,12 @@ import ExportPlaylistButton from "./ExportPlaylistButton";
 import DatePicker from "react-datepicker";
 import { getMonthName } from "../../utils/date";
 import LoginButton from "./LoginButton";
+import { type StyleProps } from "../../utils/types";
 
 // Import datepicker CSS from package
 import "react-datepicker/dist/react-datepicker.css";
 
-function ExportPlaylistComponent() {
+function ExportPlaylistComponent({ containerStyles = ""}: StyleProps) {
   const [playlistUrl, setPlaylistUrl] = useState("");
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(new Date());
   const [showExportPlaylistMsg, setShowExportPlaylistMsg] = useState(false);
@@ -82,7 +83,7 @@ function ExportPlaylistComponent() {
   }
 
   return (
-    <div className="my-2">
+    <div className={containerStyles}>
       {!isExportPlaylistBtnActive && (
         <button
           className="rounded-lg bg-blue-400 px-4 py-1 text-gray-100 hover:cursor-pointer hover:bg-blue-500"
@@ -96,18 +97,17 @@ function ExportPlaylistComponent() {
 
       {isLoggedIn ? (
         isExportPlaylistBtnActive && (
-          <div className="">
-            <div className="w-auto flex flex-col items-center gap-1 mt-3 mb-1">
+          <div className="w-auto flex flex-col items-end gap-2">
+            <div className="flex flex-col gap-1">
               {/* Date Picker */}
-              <div className="">
-                <DatePicker
-                  className="rounded border-2 text-center inline-block"
-                  selected={selectedMonth}
-                  dateFormat="MMMM yyyy"
-                  showMonthYearPicker
-                  onChange={(date) => setSelectedMonth(date)}
-                ></DatePicker>
-              </div>
+              <DatePicker
+                className="rounded border-2 text-center inline-block mt-2"
+                selected={selectedMonth}
+                dateFormat="MMMM yyyy"
+                showMonthYearPicker
+                onChange={(date) => setSelectedMonth(date)}
+              ></DatePicker>
+              
               <div className="flex justify-center">
                 {/* Export Button */}
                 <ExportPlaylistButton

@@ -3,6 +3,7 @@ import { Pause, Play } from "lucide-react";
 import ProgressBar from "./ProgressBar";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 import { ColorRing } from "react-loader-spinner";
+import { useEffect } from "react";
 
 // Handles UI rendering and UI-related functionality for music player in entry view
 function MiniSpotifyPlayer({
@@ -17,6 +18,16 @@ function MiniSpotifyPlayer({
 
   console.log("Currently going to play", musicPlayer?.currentTrack?.title, "by", musicPlayer?.currentTrack?.artists);
 
+  const albumImageSrc = currentTrackToPlay?.albumCoverUrls[2];
+
+  // When the song being played is changed, reset the visual and actual progress of the music if there is any.
+  useEffect(() => {
+    return () => {
+      // This makes the progress bar reset instantly with no animation.
+      musicPlayer?.resetProgress();
+    }
+  }, [albumImageSrc])
+
   return (
     // MAKE SURE NOTHING IS PRESSABLE UNTIL THE PLAYER IS LOADED!! -- this behavior isn't determinate rn
 
@@ -28,7 +39,7 @@ function MiniSpotifyPlayer({
         >
           {currentTrackToPlay && (
             <img
-              src={currentTrackToPlay?.albumCoverUrls[2]}
+              src={albumImageSrc}
               alt={`Cover of the album ${currentTrackToPlay?.album}`}
               className="h-14 rounded border-2 border-transparent"
             ></img>
@@ -48,7 +59,8 @@ function MiniSpotifyPlayer({
                 disabled={currentTrackToPlay? false : true}
                 onClick={async () => {
                   if (musicPlayer) {
-                    musicPlayer.togglePlay();
+                    await musicPlayer.togglePlay();
+                    // Need this for the player to look visually paused immediately.
                     musicPlayer.setIsPlaying(!musicPlayer.isPlaying);
                   }
                 }}

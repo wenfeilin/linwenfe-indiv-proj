@@ -1,5 +1,7 @@
 import Entry from "../components/Entry/Entry";
 import { Link, useLocation, useParams } from "react-router-dom";
+import { useMusicPlayer } from "../contexts/MusicPlayerContext";
+import { useEffect } from "react";
 
 function EntryPage() {
   // Get the path the user came from.
@@ -14,6 +16,8 @@ function EntryPage() {
       prevPageLocation = "My Entries";
     }
   }
+  
+  const musicPlayer = useMusicPlayer();
 
   return (
     <div className="flex h-full flex-col pt-3">
@@ -23,6 +27,12 @@ function EntryPage() {
         <Link
           to={prevPagePath}
           className={`ml-7 inline-block hover:text-[#E36414] ${!prevPagePath && "invisible"}`}
+          onClick={() => {
+            // When navigating away from the entry page, pause any music that may be playing.
+            if (musicPlayer?.isPlaying) {
+              musicPlayer?.togglePlay();
+            }
+          }}
         >
           <span className="text-3xl">&larr;</span>Back to {prevPageLocation}
         </Link>

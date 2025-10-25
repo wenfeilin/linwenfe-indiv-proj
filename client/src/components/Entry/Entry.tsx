@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { useEntries } from "../../contexts/EntriesContext";
 import SaveButton from "./SaveButton";
 import { useParams } from "react-router";
@@ -7,6 +7,7 @@ import CancelButton from "./CancelButton";
 import { getMonthName } from "../../utils/date";
 import SongSelection from "../Music/SongSelection";
 import AddSongButton from "./AddSongButton";
+import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 
 // The entry content (entry and song selection)
 function Entry() {
@@ -27,7 +28,7 @@ function Entry() {
   const [isAddSongBtnActive, setIsAddSongBtnActive] = useState(entry?.songSelection ? true : false);
   const [isSearching, setIsSearching] = useState(songSelection ? false : true);
 
-  console.log(songSelection);
+  console.log("This entry's song selection is", songSelection?.title);
 
   // Determine what buttons will be rendered for the entry based on if it's in Edit mode or not.
   let buttonsRow;
@@ -104,6 +105,20 @@ function Entry() {
       console.log("Edit made");
     }
   }
+
+  const musicPlayer = useMusicPlayer();
+  
+  useEffect(() => {
+    // When the entry is unmounted, reset the visual and actual progress of music if there is any.
+    return () => {
+      const cleanup = async () => {
+        // Reset on unmount so the reset of the progress bar is not seen by the user while leaving the page.
+        musicPlayer?.resetProgress();
+      }
+
+      cleanup();
+    }
+  }, [])
 
   return (
     <div className="grid h-full w-full grid-cols-5 grid-rows-[auto_auto_1fr]">

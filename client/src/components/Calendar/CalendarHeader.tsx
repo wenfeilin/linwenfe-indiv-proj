@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router";
 import { getMonthName } from "../../utils/date";
+import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
 
 function CalendarHeader() {
   const { year, month } = useParams(); // The month here is not 0-indexed.
@@ -18,14 +19,14 @@ function CalendarHeader() {
 
   return (
     <div className="col-span-7 flex items-center justify-between bg-white px-4">
-      <Link className="text-2xl" to={`/my-calendar/${prevYear}/${prevMonth}`}>
-        ◄
+      <Link className="" to={`/my-calendar/${prevYear}/${prevMonth}`}>
+        <ArrowBigLeft className="fill-rose-200 stroke-yellow-900 w-6 md:w-8 h-auto" />
       </Link>
-      <h1 className="py-5 text-center text-2xl font-medium">
+      <h1 className="py-5 text-center text-xl md:text-2xl font-medium">
         {getMonthName(+month!)} {year}
       </h1>
-      <Link className="text-2xl" to={`/my-calendar/${nextYear}/${nextMonth}`}>
-        ►
+      <Link className="" to={`/my-calendar/${nextYear}/${nextMonth}`}>
+        <ArrowBigRight className="fill-rose-200 stroke-yellow-900 w-6 md:w-8 h-auto" />
       </Link>
     </div>
   );

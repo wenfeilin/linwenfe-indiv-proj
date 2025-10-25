@@ -3,8 +3,10 @@ import CalendarBlock from "./CalendarBlock";
 import { generateCalendarDates } from "../../utils/date";
 import CalendarHeader from "./CalendarHeader";
 import { RotatingLines } from "react-loader-spinner";
+import { type StyleProps } from "../../utils/types";
 
-function Calendar({setIsCalendarLoading}: {setIsCalendarLoading: (isCalendarLoading: boolean) => void }) {
+// & to union types
+function Calendar({ setIsCalendarLoading, containerStyles }: { setIsCalendarLoading: (isCalendarLoading: boolean) => void } & StyleProps) {
   // Retrieve the year and month of the calendar (from the URL) the user navigated to.
   // The month here is not 0-indexed.
   let { year, month } = useParams();
@@ -23,7 +25,7 @@ function Calendar({setIsCalendarLoading}: {setIsCalendarLoading: (isCalendarLoad
 
   const calendarDates = generateCalendarDates(selectedYr, selectedMonth);
 
-  const days = [
+  const daysFullNames = [
     "Sunday",
     "Monday",
     "Tuesday",
@@ -33,14 +35,33 @@ function Calendar({setIsCalendarLoading}: {setIsCalendarLoading: (isCalendarLoad
     "Saturday",
   ];
 
+  const daysShortNames = [
+    "Sun",
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+  ];
+
   return (
-    <div data-testid="calendar" className="grid grid-cols-7 gap-0.5 bg-gray-300 border-2 border-gray-300">
+    <div data-testid="calendar" className={`grid grid-cols-7 gap-0.5 bg-gray-300 border-2 border-gray-300 w-full ${containerStyles}`}>
       <CalendarHeader></CalendarHeader>
 
       {/* Calendar Body Section */}
       {/* Render the days of the week */}
-      {days.map((day, i) => (
-        <p key={i} className={"bg-blue-100 px-5 py-1.5 text-center"}>
+
+      {/* Use short names for smaller screens */}
+      {daysShortNames.map((day, i) => (
+        <p key={i} className={"bg-blue-100 py-1.5 text-center text-sm md:hidden"}>
+          {day}
+        </p>
+      ))}
+
+      {/* Use full names for medium to larger screens */}
+      {daysFullNames.map((day, i) => (
+        <p key={i} className={"bg-blue-100 py-1.5 text-center hidden md:block"}>
           {day}
         </p>
       ))}

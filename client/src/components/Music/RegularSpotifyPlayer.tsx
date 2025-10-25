@@ -24,8 +24,6 @@ function RegularSpotifyPlayer({
   // console.log("is playing?", musicPlayer?.isPlaying)
 
   return (
-    // MAKE SURE NOTHING IS PRESSABLE UNTIL THE PLAYER IS LOADED!! -- this behavior isn't determinate rn
-
     <div className="mb-1 flex flex-col gap-6 rounded-lg border-2 p-2 pb-4">
       <div className="flex gap-2">
         {/* Album Cover */}
@@ -62,7 +60,8 @@ function RegularSpotifyPlayer({
               if (musicPlayer) {
                 console.log("Currently playing", songSelection);
 
-                musicPlayer.togglePlay();
+                await musicPlayer.togglePlay();
+                // Need this for the player to look visually paused immediately.
                 musicPlayer.setIsPlaying(!musicPlayer.isPlaying);
               }
             }}

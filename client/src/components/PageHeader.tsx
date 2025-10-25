@@ -2,35 +2,34 @@ import { NavLink } from "react-router";
 
 function PageHeader() {
   return (
-    <header className="flex items-center justify-between shadow pl-8 pr-4"> 
+    <header className="flex items-center justify-between shadow px-4 md:px-6 lg:px-10"> 
       {/* Logo */}
       {/* NavLinks can be styled based on if they're active or not */}
       <NavLink className="" to={`/my-calendar/`}>
         {/* Credit for temporary icon: "https://www.flaticon.com/free-icons/smile" created by 
         Illosalz */}
-        <img className="w-14" src="/happy.png" alt="https://www.flaticon.com/free-icons/smile created by 
+        <img className="w-9 md:w-11 lg:w-13" src="/happy.png" alt="https://www.flaticon.com/free-icons/smile created by 
         Illosalz"></img>
       </NavLink>
 
       {/* Nav bar */}
       <nav>
-        <ul className="flex text-lg">
-          {/* Should def create these w/ map later. */}
+        <ul className="flex text-base text-center md:text-base lg:text-lg">
           <li>
-            <NavLink className={({ isActive }) => `inline-block px-4 py-8 hover:text-[#E36414] active:text-[#CC5803] ${isActive ? "text-[#4895EF]" : ""}`} to={`/my-calendar/`}>My Calendar</NavLink>
+            <NavLink className={({ isActive }) => `inline-block px-4 py-6 lg:py-7 hover:text-[#E36414] active:text-[#CC5803] ${isActive ? "text-[#4895EF]" : ""}`} to={`/my-calendar/`}>My Calendar</NavLink>
           </li>
-          <li>
+          {/* <li>
             <NavLink className={({ isActive }) => `inline-block px-4 py-8 hover:text-[#E36414] active:text-[#CC5803] ${isActive ? "text-[#4895EF]" : ""}`} to="/my-journal">My Journal</NavLink>
-          </li>
+          </li> */}
           <li>
-            <NavLink className={({ isActive }) => `inline-block px-4 py-8 hover:text-[#E36414] active:text-[#CC5803] ${isActive ? "text-[#4895EF]" : ""}`} to="/my-entries">My Entries</NavLink>
+            <NavLink className={({ isActive }) => `inline-block px-4 py-6 lg:py-7 hover:text-[#E36414] active:text-[#CC5803] ${isActive ? "text-[#4895EF]" : ""}`} to="/my-entries">My Entries</NavLink>
           </li>
-          <li>
+          {/* <li>
             <NavLink className={({ isActive }) => `inline-block px-4 py-8 hover:text-[#E36414] active:text-[#CC5803] ${isActive ? "text-[#4895EF]" : ""}`} to="/decorations">Decorations</NavLink>
-          </li>
-          <li>
+          </li> */}
+          {/* <li>
             <NavLink className={({ isActive }) => `inline-block px-4 py-8 hover:text-[#E36414] active:text-[#CC5803] ${isActive ? "text-[#4895EF]" : ""}`} to="/settings">Settings</NavLink>
-          </li>
+          </li> */}
         </ul>
       </nav>
     </header>

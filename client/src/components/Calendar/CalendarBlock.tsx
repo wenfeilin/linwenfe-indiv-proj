@@ -1,5 +1,6 @@
 import { useParams, Link, useLocation } from "react-router";
 import { useEntries } from "../../contexts/EntriesContext";
+import { Flower2 } from "lucide-react";
 
 function CalendarBlock({ blockDate }: { blockDate: Date }) {
   // Use date prop to find proper entry's song selection to render (and figure out if it is filled
@@ -49,10 +50,18 @@ function CalendarBlock({ blockDate }: { blockDate: Date }) {
     >
       <div
         data-testid="calendar-block"
-        className={`h-21 pt-0.5 pl-1.5 ${isInCurrMonth ? "bg-white text-gray-900 hover:bg-amber-200" : "bg-gray-500 text-gray-300 cursor-default"} ${isToday && "bg-yellow-300 hover:bg-yellow-400"}`}
+        className={`h-16 md:h-full md:aspect-square text-sm md:text-base grid grid-rows-3 py-1 px-1.5 md:py-0.5 md:pb-1 ${isInCurrMonth ? "bg-white text-gray-900 hover:bg-amber-200" : "bg-gray-500 text-gray-300 cursor-default"} ${isToday && "bg-yellow-300 hover:bg-yellow-400"}`}
       >
-        <div data-testid="day-number" className={`inline-block`}>{blockDay}</div>
-        {hasEntry && isInCurrMonth && <p>Entry exists</p>}
+        <div data-testid="day-number" className={`inline-block row-start-1 text-center md:text-left`}>
+          {blockDay}
+        </div>
+
+        {hasEntry && isInCurrMonth && (
+          <div className="row-start-2 row-end-4 flex justify-center md:justify-start items-center md:flex-col">
+            <Flower2 className="w-4.5 h-auto md:w-6 lg:w-1/5 fill-rose-200 stroke-pink-600" strokeWidth={1.75} />
+            <p className="hidden text-center md:block">An entry!</p>
+          </div>
+        )}
       </div>
     </Link>
   );
