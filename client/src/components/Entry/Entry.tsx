@@ -109,11 +109,14 @@ function Entry() {
   const musicPlayer = useMusicPlayer();
   
   useEffect(() => {
-    // When the entry is unmounted, reset the visual and actual progress of music if there is any.
+    // When the entry is unmounted, reset the visual and actual progress of music and pause music.
     return () => {
       const cleanup = async () => {
-        // Reset on unmount so the reset of the progress bar is not seen by the user while leaving the page.
-        await musicPlayer?.resetProgress();
+        if(musicPlayer) {
+          // Reset on unmount so the reset of the progress bar is not seen by the user while leaving the page.
+          await musicPlayer?.resetProgress();
+          await musicPlayer.pause();
+        }
       }
 
       cleanup();
