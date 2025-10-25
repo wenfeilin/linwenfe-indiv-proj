@@ -14,9 +14,7 @@ function MiniSpotifyPlayer({
   isAddSongBtnActive: boolean;
 }) {
   const musicPlayer = useMusicPlayer();
-  musicPlayer?.setCurrentTrack(currentTrackToPlay);
-
-  console.log("Currently going to play", musicPlayer?.currentTrack?.title, "by", musicPlayer?.currentTrack?.artists);
+  // musicPlayer?.setCurrentTrack(currentTrackToPlay);
 
   const albumImageSrc = currentTrackToPlay?.albumCoverUrls[2];
 
@@ -53,13 +51,14 @@ function MiniSpotifyPlayer({
           </div>
 
           <div className="flex items-center">
-            {musicPlayer?.isReady? 
+            {(musicPlayer?.isReady && !(musicPlayer?.isLoadingSong))? 
               // Play/Pause Button 
               (<button className="hover:cursor-pointer hover:opacity-80"
                 disabled={currentTrackToPlay? false : true}
                 onClick={async () => {
+                  // Resume/pause song.
                   if (musicPlayer) {
-                    await musicPlayer.togglePlay();
+                    await musicPlayer.togglePlay(musicPlayer.trackToPlay);
                     // Need this for the player to look visually paused immediately.
                     musicPlayer.setIsPlaying(!musicPlayer.isPlaying);
                   }

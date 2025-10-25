@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Search, Check, Play } from "lucide-react";
+import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 
 type Track = {
   album: {
@@ -52,6 +53,8 @@ function SongSearchForm({
     }
   }
 
+  const musicPlayer = useMusicPlayer();
+
   return (
     // Song Search container
     <div className="mb-3 rounded-lg border-2 px-4 py-5">
@@ -88,7 +91,7 @@ function SongSearchForm({
               const songTitle = trackObj.name;
               const songID = trackObj.id;
               const songURI = trackObj.uri;
-              const durationMS = trackObj.durationMS;
+              const durationMS = +trackObj.durationMS;
               const songArtistsList = trackObj.artists;
               let songArtists = songArtistsList.reduce(
                 (names, artistName) => (names += `${artistName}, `),
@@ -104,10 +107,12 @@ function SongSearchForm({
                 <div key={i} className="flex gap-x-2">
                   {/* Album Cover */}
                   <div className="relative">
+                    {/* Play button on album cover */}
                     <button
                       className="absolute inset-0 flex items-center justify-center rounded-lg opacity-0 hover:opacity-100 not-even:hover:bg-gray-200/20"
-                      onClick={() =>
-                        setSongToPlay({
+                      onClick={async () => {
+                        const clickedSong = (
+                          {
                           id: songID, // technically dont need
                           uri: songURI,
                           album: albumTitle, // technically dont need
@@ -119,8 +124,21 @@ function SongSearchForm({
                           title: songTitle,
                           artists: songArtists,
                           durationMS: durationMS,
-                        })
-                      }
+                        }
+                        );
+
+                        setSongToPlay(clickedSong)
+
+                        // Immediately queue up and play the song clicked on.
+                        if (musicPlayer) {
+                          // Pass the track in b/c state doesn't update immediately but still need to update state for later references to it in togglePlay.
+                          musicPlayer.resetProgress(); // Always reset the progress when a song is clicked on.
+                          await musicPlayer.togglePlay(clickedSong, null);
+                          musicPlayer?.setTrackToPlay(clickedSong);
+                          // Need this for the player to look visually paused immediately.
+                          musicPlayer.setIsPlaying(true);
+                        }
+                      }}
                     >
                       <Play fill="white" />
                     </button>
@@ -140,26 +158,13 @@ function SongSearchForm({
                     </div>
 
                     {/* BUT I ONLY WANT THE CHECK TO APPEAR WHEN HOVERING OVER A SONG */}
+
                     {/* Button for selecting a song for the entry */}
                     <div className="flex items-center">
                       <button
                         className="rounded bg-green-400 p-1 hover:cursor-pointer hover:bg-green-500"
                         onClick={() => {
-                          setSongSelection({
-                            id: songID,
-                            uri: songURI,
-                            album: albumTitle,
-                            albumCoverUrls: [
-                              smallAlbumCoverUrl,
-                              medAlbumCoverUrl,
-                              largeAlbumCoverUrl,
-                            ],
-                            title: songTitle,
-                            artists: songArtists,
-                            durationMS: durationMS,
-                          });
-
-                          setSongToPlay({
+                          const selectedSong = {
                             id: songID, // technically dont need
                             uri: songURI,
                             album: albumTitle, // technically dont need
@@ -171,7 +176,15 @@ function SongSearchForm({
                             title: songTitle,
                             artists: songArtists,
                             durationMS: durationMS,
-                          });
+                          }
+
+                          // Pause the music player.
+                          if (musicPlayer && musicPlayer.isPlaying) {
+                            musicPlayer.togglePlay();
+                          }
+                          setSongSelection(selectedSong);
+                          setSongToPlay(selectedSong);
+
                           console.log(songTitle);
                           setIsSearching(false);
                         }}

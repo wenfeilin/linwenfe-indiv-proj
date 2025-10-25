@@ -113,7 +113,7 @@ function Entry() {
     return () => {
       const cleanup = async () => {
         // Reset on unmount so the reset of the progress bar is not seen by the user while leaving the page.
-        musicPlayer?.resetProgress();
+        await musicPlayer?.resetProgress();
       }
 
       cleanup();
