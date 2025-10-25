@@ -163,7 +163,7 @@ function SongSearchForm({
                     <div className="flex items-center">
                       <button
                         className="rounded bg-green-400 p-1 hover:cursor-pointer hover:bg-green-500"
-                        onClick={() => {
+                        onClick={async () => {
                           const selectedSong = {
                             id: songID, // technically dont need
                             uri: songURI,
@@ -179,8 +179,8 @@ function SongSearchForm({
                           }
 
                           // Pause the music player.
-                          if (musicPlayer && musicPlayer.isPlaying) {
-                            musicPlayer.togglePlay();
+                          if (musicPlayer) {
+                            await musicPlayer.pause();
                           }
                           setSongSelection(selectedSong);
                           setSongToPlay(selectedSong);

@@ -58,9 +58,7 @@ function MiniSpotifyPlayer({
                 onClick={async () => {
                   // Resume/pause song.
                   if (musicPlayer) {
-                    await musicPlayer.togglePlay(musicPlayer.trackToPlay);
-                    // Need this for the player to look visually paused immediately.
-                    musicPlayer.setIsPlaying(!musicPlayer.isPlaying);
+                    await musicPlayer.togglePlay();
                   }
                 }}
               >

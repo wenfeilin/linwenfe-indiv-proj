@@ -1,7 +1,5 @@
 import Entry from "../components/Entry/Entry";
-import { Link, useLocation, useParams } from "react-router-dom";
-import { useMusicPlayer } from "../contexts/MusicPlayerContext";
-import { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 function EntryPage() {
   // Get the path the user came from.

@@ -37,7 +37,7 @@ function SaveButton({
     <>
       <button
         className="rounded-md bg-green-500 px-6 py-2 font-bold text-white hover:cursor-pointer hover:bg-green-600"
-        onClick={(event) => {
+        onClick={async (event) => {
           // If changes are being saved, update the entry in the entries list.
           if (
             entryBeingSaved === undefined &&
@@ -95,8 +95,8 @@ function SaveButton({
           onSave(event);
 
           // Stop music from playing if any.
-          if (musicPlayer && musicPlayer.isPlaying) {
-            musicPlayer.togglePlay();
+          if (musicPlayer) {
+            await musicPlayer.pause();
           }
 
           // Hides the add song search form / makes the player uneditable upon save.

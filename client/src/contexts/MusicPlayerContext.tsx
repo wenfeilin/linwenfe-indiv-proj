@@ -60,6 +60,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   // Toggles music playing (but more...).
   // Note: only pass in song for queuedSong to queue up song; otherwise, default to passing in nothing (pausing/resuming)
   // Note: only pass in null for playerContext to queue up song; otherwise, default to passing in nothing
+  // Note: passing in nothing for both params = pausing/resuming song playing
   const togglePlay = async (queuedSong? : Song | null, playerContext? : null) => {
     console.log("track to play:", trackToPlay?.title);
     console.log("current context:", currentContext?.title);

@@ -77,8 +77,8 @@ function SongSelection({
   // On mount, ensure no music plays.
   useEffect(() => {
     const onMount = async () => {
-      if (musicPlayer && musicPlayer.isPlaying) {
-        await musicPlayer.togglePlay();
+      if (musicPlayer) {
+        await musicPlayer.pause();
       }
     }
 
@@ -210,7 +210,7 @@ function SongSelection({
       {isEditing && (songSelection || isAddSongBtnActive) && (
         <button
           className="absolute -top-3 -right-2 rounded-xl bg-red-400 p-0.5 hover:cursor-pointer"
-          onClick={() => {
+          onClick={async () => {
             setIsAddSongBtnActive(false);
 
             // Wipe the song selection and its notes.
@@ -218,6 +218,14 @@ function SongSelection({
             setSongNotes("");
 
             setIsSearching(false);
+
+            // Reset the song that shows up in the mini player.
+            setSongToPlay(null);
+
+            // Pause song playing.
+            if (musicPlayer) {
+              await musicPlayer.pause();
+            }
           }}
         >
           <X size={20} color="white" />

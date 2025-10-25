@@ -69,8 +69,6 @@ function RegularSpotifyPlayer({
                 console.log("Currently playing", songSelection);
 
                 await musicPlayer.togglePlay();
-                // Need this for the player to look visually paused immediately.
-                // musicPlayer.setIsPlaying(!musicPlayer.isPlaying);
               }
             }}
           >
