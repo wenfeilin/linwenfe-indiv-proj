@@ -17,7 +17,13 @@ function RegularSpotifyPlayer({
   setIsSearching: (isSearching: boolean) => void;
 }) {
   const musicPlayer = useMusicPlayer();
-  musicPlayer?.setCurrentTrack(songSelection);
+  // musicPlayer?.setCurrentTrack(songSelection);
+
+  // Set track to play to queue it up when play is pressed
+  if (musicPlayer) {
+    musicPlayer?.setTrackToPlay(songSelection);
+  }
+
 
   // console.log("Currently going to play", musicPlayer?.currentTrack?.title, "by", musicPlayer?.currentTrack?.artists);
 
@@ -51,7 +57,7 @@ function RegularSpotifyPlayer({
       </div>
 
       <div className="flex justify-center">
-        {musicPlayer?.isReady? 
+        {(musicPlayer?.isReady && !(musicPlayer?.isLoadingSong)) ?
           // Play/Pause Button
           (<button
             className="p-1 hover:cursor-pointer hover:opacity-80"
@@ -62,7 +68,7 @@ function RegularSpotifyPlayer({
 
                 await musicPlayer.togglePlay();
                 // Need this for the player to look visually paused immediately.
-                musicPlayer.setIsPlaying(!musicPlayer.isPlaying);
+                // musicPlayer.setIsPlaying(!musicPlayer.isPlaying);
               }
             }}
           >

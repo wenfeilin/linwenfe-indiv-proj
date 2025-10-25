@@ -77,8 +77,8 @@ function SongSelection({
   // On mount, ensure no music plays. -- DOESN'T WORK
   useEffect(() => {
     const onMount = async () => {
-      if (musicPlayer) {
-        await musicPlayer.pause();
+      if (musicPlayer && musicPlayer.isPlaying) {
+        await musicPlayer.togglePlay();
       }
     }
 
