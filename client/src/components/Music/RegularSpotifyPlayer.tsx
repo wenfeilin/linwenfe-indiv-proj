@@ -10,11 +10,13 @@ function RegularSpotifyPlayer({
   isEditing,
   isAddSongBtnActive,
   setIsSearching,
+  setSongToPlay,
 }: {
   songSelection: Song | null;
   isEditing: boolean;
   isAddSongBtnActive: boolean;
   setIsSearching: (isSearching: boolean) => void;
+  setSongToPlay: (song: Song | null) => void;
 }) {
   const musicPlayer = useMusicPlayer();
   // musicPlayer?.setCurrentTrack(songSelection);
@@ -88,6 +90,7 @@ function RegularSpotifyPlayer({
           className="rounded-lg bg-yellow-400 px-3 py-2 text-sm hover:cursor-pointer hover:bg-yellow-500"
           onClick={() => {
             setIsSearching(true);
+            setSongToPlay(songSelection);
           }}
         >
           Change Song

@@ -74,7 +74,7 @@ function SongSelection({
 
   const musicPlayer = useMusicPlayer();
 
-  // On mount, ensure no music plays. -- DOESN'T WORK
+  // On mount, ensure no music plays.
   useEffect(() => {
     const onMount = async () => {
       if (musicPlayer && musicPlayer.isPlaying) {
@@ -110,6 +110,7 @@ function SongSelection({
         isEditing={isEditing}
         isAddSongBtnActive={isAddSongBtnActive}
         setIsSearching={setIsSearching}
+        setSongToPlay={setSongToPlay}
       ></RegularSpotifyPlayer>
     );
 

@@ -15,11 +15,8 @@ type MusicPlayerContextType = {
   progress: number;
   setProgress: (progress: number) => void;
   resetProgress: () => Promise<void>;
-  pause: () => Promise<void>;
   trackToPlay: Song | null;
   setTrackToPlay: (song: Song | null) => void;
-  /*currentContext: Song | null;
-  setCurrentContext: (song: Song | null) => void;*/
   isLoadingSong: boolean;
 }
 
@@ -111,14 +108,6 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Pause music. NOT SURE IF THIS WORKS -- WONT NEED IT ANYWAY B/C CAN JUST USE TOGGLEPLAY.
-  const pause = async () => {
-    if (playerRef.current) {
-      await playerRef.current.pause();
-      setIsPlaying(false);
-    }
-  };
-
   // Queues the current song to play.
   async function playSong(songToPlay: Song) {
     console.log("song being queued", songToPlay.title);
@@ -146,35 +135,6 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // should also load song when play is pressed if there is already a song selection for the entry.
-
-  // When current track changes, make API call to start playback with this new song (queue it up immediately).
-  // useEffect(() => {
-  //   // Only start playing music when the player exists and is ready
-  //   if (playerRef.current && isReady) {
-  //     playSong(currentTrack);
-  //     setIsPlaying(true);
-  //     // pause();
-  //     // togglePlay();
-  //     // playerRef.current.pause();
-  //     // console.log("Paused!")
-  //   }
-  // }, [currentTrack]);
-
-  // When a searched track being queued to play changes, make API call to start playback with this new song (queue it up immediately).
-  // useEffect(() => {
-  //   // Only start playing music when the player exists and is ready
-  //   if (playerRef.current && isReady && searchedTrackToPlay) {
-  //     console.log("searched track", searchedTrackToPlay)
-
-  //     playSong(searchedTrackToPlay);
-  //     setIsPlaying(true);
-  //     // togglePlay();
-  //     // playerRef.current.pause();
-  //     // console.log("Paused!")
-  //   }
-  // }, [searchedTrackToPlay]);
-
   // Resets progress of music playing.
   const resetProgress = async () => {
     // Reset visual progress.
@@ -185,8 +145,6 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
       await playerRef.current.seek(0);
     }
   };
-
-
   
   // Update the progress of the song being played every second.
   useInterval(() => {
@@ -201,7 +159,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   }, isPlaying && playerRef.current && isReady && !isLoadingSong && currentContext ? 1000 : null);
 
   return (
-    <MusicPlayerContext.Provider value={{playerRef, deviceId, isReady, currentTrack, setCurrentTrack, isPlaying, setIsPlaying, togglePlay, progress, setProgress, resetProgress, pause, trackToPlay, setTrackToPlay/*, currentContext, setCurrentContext*/, isLoadingSong}}>
+    <MusicPlayerContext.Provider value={{playerRef, deviceId, isReady, currentTrack, setCurrentTrack, isPlaying, setIsPlaying, togglePlay, progress, setProgress, resetProgress, trackToPlay, setTrackToPlay, isLoadingSong}}>
       { children }
     </MusicPlayerContext.Provider>
   )
