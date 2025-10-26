@@ -5,6 +5,8 @@ import MiniSpotifyPlayer from "./MiniSpotifyPlayer";
 import LoginButton from "./LoginButton";
 import { X } from "lucide-react";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
+import SavedSongIndicator from "./SavedSongIndicator";
+import SelectedSongIndicator from "./SelectedSongIndicator";
 
 export type Song = {
   id: string;
@@ -100,12 +102,19 @@ function SongSelection({
   let songNotesComponent;
   let loginBtnComponent;
 
+  // Indicators of what song is saved and what is selected.
+  let savedSongComponent;
+  let selectedSongComponent;
+
   // If this entry doesn't have an associated song or isn't trying to add a song selection, don't display anything for the song component.
-  if (!songSelection || !isAddSongBtnActive) {
+  if (!songSelection || !isAddSongBtnActive) { // I FEEL LIKE I DON'T NEED "!songSelection"; GET RID OF LATER.
     playerComponent = null;
     searchFormComponent = null;
     songNotesComponent = null;
     loginBtnComponent = null;
+
+    savedSongComponent = null;
+    selectedSongComponent = null;
   }
 
   // If there are song notes for this entry or when editing with the add song component active (a song is being added to the entry or a song selection is being edited), display the song notes component.
@@ -121,6 +130,12 @@ function SongSelection({
         onChange={(event) => onEdit(event, "song notes")}
       ></textarea>
     );
+  }
+
+  // Render indicators of saved and selected songs (only when adding/editing a song selection).
+  if (isEditing && isAddSongBtnActive) {
+    savedSongComponent = <SavedSongIndicator savedSongSelection={savedSongSelection}/>;
+    selectedSongComponent = <SelectedSongIndicator songSelection={songSelection}/>;
   }
 
   // If the entry has a song selection or a song is being added to the entry, display the login button (when necessary) -- since song-related elements require Spotify access.
@@ -223,6 +238,10 @@ function SongSelection({
         <div>
           {searchFormComponent}
           {playerComponent}
+          <div className="border-2 rounded-lg p-2 flex flex-col gap-2 mb-2">
+            {savedSongComponent}
+            {selectedSongComponent}
+          </div>
           {songNotesComponent}
         </div> :
         loginBtnComponent

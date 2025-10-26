@@ -106,16 +106,16 @@ function SaveButton({
             const newSongSelectionUri = newSongSelection?.uri;
             const currentlyPlayingSongUri = musicPlayer.currentContext?.uri;
 
-                // If what is playing right now is not what was previously selected OR a song that was selected (but not saved yet) is not the same as the one being played right now, pause the music. (In all other cases, let the song play because it should be the same song being played before and after save, so no need to pause it. I am assuming this is a preference users would have.) <-- THIS IS AN OLD COMMENT (I'M TOO LAZY TO UPDATE IT TO MATCH THE NEW IF STATEMENT CONDITION -- DO LATER)
+            // If what is playing right now is not what was previously selected OR a song that was selected (but not saved yet) is not the same as the one being played right now, pause the music. (In all other cases, let the song play because it should be the same song being played before and after save, so no need to pause it. I am assuming this is a preference users would have.) <-- THIS IS AN OLD COMMENT (I'M TOO LAZY TO UPDATE IT TO MATCH THE NEW IF STATEMENT CONDITION -- DO LATER)
 
-                console.log("prev song", prevSavedSongSelectionUri)
-                console.log("new song", newSongSelectionUri)
+            console.log("prev song", prevSavedSongSelectionUri)
+            console.log("new song", newSongSelectionUri)
 
-                if ((newSongSelectionUri === prevSavedSongSelectionUri && prevSavedSongSelectionUri !== currentlyPlayingSongUri) || newSongSelectionUri !== currentlyPlayingSongUri) {
-                  await musicPlayer.pause();
-                  await musicPlayer.resetProgress();
-                }
+            if ((newSongSelectionUri === prevSavedSongSelectionUri && prevSavedSongSelectionUri !== currentlyPlayingSongUri) || newSongSelectionUri !== currentlyPlayingSongUri) {
+              await musicPlayer.pause();
+              await musicPlayer.resetProgress();
             }
+          }
 
           // Assuming there's no song selection for the entry, reset the song the mini player shows.
           if ((entryBeingSaved !== undefined && !entryBeingSaved.songSelection) || newSongSelection === null) {

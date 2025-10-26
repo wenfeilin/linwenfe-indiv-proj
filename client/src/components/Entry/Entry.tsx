@@ -173,7 +173,7 @@ function Entry() {
       {/* {isAddSongBtnActive && ( */}
         {/* Song Selection */}
         {/* Change col-start back to 5 */}
-        <div className="col-start-4 col-end-6 row-start-2 row-end-3 w-full">
+        <div className="col-start-4 col-end-6 row-start-2 row-end-4 w-full">
           <div className="m-auto flex w-4/5 flex-col gap-2">
             <SongSelection
               isEditing={isEditing}

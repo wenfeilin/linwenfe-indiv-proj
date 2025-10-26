@@ -34,9 +34,6 @@ function EntryPage() {
       <div className="flex flex-1 flex-col items-center">
         <Entry></Entry>
       </div>
-
-      {/* Spotify Player */}
-      {/* Song Notes */}
     </div>
   );
 }
