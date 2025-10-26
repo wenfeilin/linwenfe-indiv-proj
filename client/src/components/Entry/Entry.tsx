@@ -8,6 +8,7 @@ import { getMonthName } from "../../utils/date";
 import SongSelection from "../Music/SongSelection";
 import AddSongButton from "./AddSongButton";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
+import { useBlocker } from "../../hooks/useBlocker";
 
 // The entry content (entry and song selection)
 function Entry() {
@@ -127,6 +128,8 @@ function Entry() {
   }
 
   const musicPlayer = useMusicPlayer();
+
+  useBlocker(isEditing);
   
   useEffect(() => {
     // When the entry is unmounted, reset the visual and actual progress of music and pause music.

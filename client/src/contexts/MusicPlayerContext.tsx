@@ -44,11 +44,13 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  // Creates and connects a music player.
+  // Creates and connects a single global music player once when loading the Provider.
   const { playerRef, deviceId, isReady } = useSpotifyPlayer();
 
   useEffect(() => {
-    // Disconnects the music player on unmount. (cleanup function that runs on unmount)
+    // Disconnects the music player on unmount. (cleanup function that runs on app unmount since the Provider is the first direct child of the App component -- that means when the app gets reloaded or the tab/window is closed. 
+
+    // Note: if the app is navigated away from (navigate to another tab/window), the App is not unmounted, so the player is still connected. This may or may not be undesirable. If you want to change it, use a visibility change event listener that can determine if the website loses focus.
     return () => {
       if (playerRef.current) {
         playerRef.current.disconnect();
