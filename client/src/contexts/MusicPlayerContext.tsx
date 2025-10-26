@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import useSpotifyPlayer from "../hooks/useSpotifyPlayer";
 import type { Song } from "../components/Music/SongSelection";
 import useInterval from "../hooks/useInterval";
@@ -18,6 +18,8 @@ type MusicPlayerContextType = {
   isLoadingSong: boolean;
   pause: () => Promise<void>;
   currentContext: Song | null;
+  seek: (timeToSeekTo: number) => Promise<void>; 
+  isScrubbing: RefObject<boolean>;
 }
 
 // One single global music player to be used to play a single song and a playlist of songs
@@ -145,6 +147,13 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  // time (in ms)
+  async function seek(timeToSeekTo: number) {
+    if (playerRef.current) {
+      await playerRef.current.seek(timeToSeekTo);
+    }
+  }
+
   // Resets progress of music playing.
   const resetProgress = async () => {
     // Reset visual progress.
@@ -156,9 +165,17 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     }
     console.log("is playing", isPlaying)
   };
-  
+
+  const isScrubbing = useRef(false); // useRef so it doesn't trigger rerender; a flag to indicate if user is scrubbing so the progress can stop being updated while scrubbing is happening 
+
   // Update the progress of the song being played every second.
   useInterval(() => {
+    // Don't update the progress state while scrubbing is happening. (Otherwise, it'll be jumpy)
+    if (isScrubbing.current) {
+      return;
+    }
+
+    // Otherwise, update the progress.
     playerRef.current?.getCurrentState().then((state) => {
       setProgress(state!.position);
 
@@ -170,7 +187,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   }, isPlaying && playerRef.current && isReady && !isLoadingSong && currentContext ? 1000 : null);
 
   return (
-    <MusicPlayerContext.Provider value={{playerRef, deviceId, isReady, /*currentTrack, setCurrentTrack,*/ isPlaying, setIsPlaying, togglePlay, progress, setProgress, resetProgress, trackToPlay, setTrackToPlay, isLoadingSong, pause, currentContext}}>
+    <MusicPlayerContext.Provider value={{playerRef, deviceId, isReady, /*currentTrack, setCurrentTrack,*/ isPlaying, setIsPlaying, togglePlay, progress, setProgress, resetProgress, trackToPlay, setTrackToPlay, isLoadingSong, pause, currentContext, seek, isScrubbing}}>
       { children }
     </MusicPlayerContext.Provider>
   )
