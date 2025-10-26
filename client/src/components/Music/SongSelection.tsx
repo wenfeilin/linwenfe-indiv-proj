@@ -105,6 +105,7 @@ function SongSelection({
   // Indicators of what song is saved and what is selected.
   let savedSongComponent;
   let selectedSongComponent;
+  let songIndicatorsComponent; // grouped saved and selected song components
 
   // If this entry doesn't have an associated song or isn't trying to add a song selection, don't display anything for the song component.
   if (!songSelection || !isAddSongBtnActive) { // I FEEL LIKE I DON'T NEED "!songSelection"; GET RID OF LATER.
@@ -113,6 +114,7 @@ function SongSelection({
     songNotesComponent = null;
     loginBtnComponent = null;
 
+    songIndicatorsComponent = null;
     savedSongComponent = null;
     selectedSongComponent = null;
   }
@@ -136,6 +138,13 @@ function SongSelection({
   if (isEditing && isAddSongBtnActive) {
     savedSongComponent = <SavedSongIndicator savedSongSelection={savedSongSelection}/>;
     selectedSongComponent = <SelectedSongIndicator songSelection={songSelection}/>;
+
+    songIndicatorsComponent = (
+      <div className="border-2 rounded-lg p-2 flex flex-col gap-2 mb-2">
+        {savedSongComponent}
+        {selectedSongComponent}
+      </div>
+    )
   }
 
   // If the entry has a song selection or a song is being added to the entry, display the login button (when necessary) -- since song-related elements require Spotify access.
@@ -238,10 +247,7 @@ function SongSelection({
         <div>
           {searchFormComponent}
           {playerComponent}
-          <div className="border-2 rounded-lg p-2 flex flex-col gap-2 mb-2">
-            {savedSongComponent}
-            {selectedSongComponent}
-          </div>
+          {songIndicatorsComponent}
           {songNotesComponent}
         </div> :
         loginBtnComponent
