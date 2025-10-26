@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 
 function ProgressBar({progress, songDuration}:{progress: number, songDuration: number}) {
@@ -14,10 +13,10 @@ function ProgressBar({progress, songDuration}:{progress: number, songDuration: n
   const songDurSecondsTimestamp = String(Math.floor(songDurationInSeconds % 60)).padStart(2, "0");
 
   // Only apply the smooth transition of the progress bar when not resetting it.
-  const applyTransition = progress? progress >= 0: false;
+  // const applyTransition = progress? progress >= 0: false;
 
   const musicPlayer = useMusicPlayer();
-  
+
   // Run when progress and songDuration get updated.
   // useEffect(() => {
   //   if (musicPlayer) {
@@ -33,7 +32,7 @@ function ProgressBar({progress, songDuration}:{progress: number, songDuration: n
   // Mouse down on the range input = started scrubbing.
   function handleMouseDown() {
     if (musicPlayer) {
-      musicPlayer.isScrubbing.current = true;
+      musicPlayer.isScrubbingProgress.current = true;
     }
   }
 
@@ -50,7 +49,7 @@ function ProgressBar({progress, songDuration}:{progress: number, songDuration: n
   // Mouse up = stopped scrubbing.
   function handleMouseUp () {
     if (musicPlayer) {
-      musicPlayer.isScrubbing.current = false;
+      musicPlayer.isScrubbingProgress.current = false;
       // Seek to this new position after scrubbing.
       const timeToSeekTo = progress;
       musicPlayer.seek(timeToSeekTo);

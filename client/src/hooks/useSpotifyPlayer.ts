@@ -45,7 +45,7 @@ function useSpotifyPlayer() {
 
           cb(token);
         },
-        volume: 0.5,
+        volume: 1,
       });
 
       // Save the player.

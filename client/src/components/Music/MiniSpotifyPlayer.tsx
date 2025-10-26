@@ -4,6 +4,7 @@ import ProgressBar from "./ProgressBar";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 import { ColorRing } from "react-loader-spinner";
 import { useEffect } from "react";
+import VolumeBar from "./VolumeBar";
 
 // Handles UI rendering and UI-related functionality for music player in entry view
 function MiniSpotifyPlayer({
@@ -45,6 +46,10 @@ function MiniSpotifyPlayer({
   //     }
   //   }
   // }, [currentTrackToPlay])
+
+  // IDK if this is the best place to check this; maybe it should be higher up  (in the component tree, like when the musicPlayer is loaded) idk
+  // Check the pointer type (coarse = touch input)
+  const onMobileDevice = window.matchMedia("(pointer: coarse").matches;
 
   return (
     // MAKE SURE NOTHING IS PRESSABLE UNTIL THE PLAYER IS LOADED!! -- this behavior isn't determinate rn
@@ -95,6 +100,13 @@ function MiniSpotifyPlayer({
         progress={musicPlayer!.progress}
         songDuration={currentTrackToPlay ? currentTrackToPlay.durationMS : 1}
       ></ProgressBar>
+
+      {/* Volume Bar */}
+      {/* According to Spotify Web Playback SDK, mobile devices must control the volume through hardware, so don't render the volume bar! */}
+      {!onMobileDevice && 
+      <VolumeBar
+        volume={musicPlayer!.volume}
+      ></VolumeBar>}
       <div>{/* Get rid of the bangs later! */}</div>
     </div>
   );

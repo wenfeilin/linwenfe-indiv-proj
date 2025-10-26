@@ -19,7 +19,9 @@ type MusicPlayerContextType = {
   pause: () => Promise<void>;
   currentContext: Song | null;
   seek: (timeToSeekTo: number) => Promise<void>; 
-  isScrubbing: RefObject<boolean>;
+  isScrubbingProgress: RefObject<boolean>;
+  setPlayerVolume: (newVolume: number) => Promise<void>;
+  volume: number,
 }
 
 // One single global music player to be used to play a single song and a playlist of songs
@@ -49,7 +51,17 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   // Creates and connects a single global music player once when loading the Provider.
   const { playerRef, deviceId, isReady } = useSpotifyPlayer();
 
+  // Run once (on mount).
   useEffect(() => {
+    // const getPlayerVolume = async () => {
+    //   if (playerRef.current) {
+    //     const currVolume = await playerRef.current.getVolume();
+    //     setVolume(currVolume);
+    //   }
+    // }
+    
+    // getPlayerVolume();
+
     // Disconnects the music player on unmount. (cleanup function that runs on app unmount since the Provider is the first direct child of the App component -- that means when the app gets reloaded or the tab/window is closed. 
 
     // Note: if the app is navigated away from (navigate to another tab/window), the App is not unmounted, so the player is still connected. This may or may not be undesirable. If you want to change it, use a visibility change event listener that can determine if the website loses focus.
@@ -166,12 +178,12 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     console.log("is playing", isPlaying)
   };
 
-  const isScrubbing = useRef(false); // useRef so it doesn't trigger rerender; a flag to indicate if user is scrubbing so the progress can stop being updated while scrubbing is happening 
+  const isScrubbingProgress = useRef(false); // useRef so it doesn't trigger rerender; a flag to indicate if user is scrubbing so the progress can stop being updated while scrubbing is happening 
 
   // Update the progress of the song being played every second.
   useInterval(() => {
     // Don't update the progress state while scrubbing is happening. (Otherwise, it'll be jumpy)
-    if (isScrubbing.current) {
+    if (isScrubbingProgress.current) {
       return;
     }
 
@@ -186,8 +198,17 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     })
   }, isPlaying && playerRef.current && isReady && !isLoadingSong && currentContext ? 1000 : null);
 
+  const [volume, setVolume] = useState(1);
+
+  async function setPlayerVolume(newVolume: number) {
+    if (playerRef.current) {
+      await playerRef.current.setVolume(newVolume);
+      setVolume(newVolume);
+    }
+  }
+
   return (
-    <MusicPlayerContext.Provider value={{playerRef, deviceId, isReady, /*currentTrack, setCurrentTrack,*/ isPlaying, setIsPlaying, togglePlay, progress, setProgress, resetProgress, trackToPlay, setTrackToPlay, isLoadingSong, pause, currentContext, seek, isScrubbing}}>
+    <MusicPlayerContext.Provider value={{playerRef, deviceId, isReady, /*currentTrack, setCurrentTrack,*/ isPlaying, setIsPlaying, togglePlay, progress, setProgress, resetProgress, trackToPlay, setTrackToPlay, isLoadingSong, pause, currentContext, seek, isScrubbingProgress, setPlayerVolume, volume}}>
       { children }
     </MusicPlayerContext.Provider>
   )

@@ -3,6 +3,7 @@ import { Pause, Play } from "lucide-react";
 import ProgressBar from "./ProgressBar";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 import { ColorRing } from "react-loader-spinner";
+import VolumeBar from "./VolumeBar";
 
 function RegularSpotifyPlayer({
   songSelection,
@@ -27,6 +28,10 @@ function RegularSpotifyPlayer({
   // console.log("Currently going to play", musicPlayer?.currentTrack?.title, "by", musicPlayer?.currentTrack?.artists);
 
   // console.log("is playing?", musicPlayer?.isPlaying)
+
+  // IDK if this is the best place to check this; maybe it should be higher up  (in the component tree, like when the musicPlayer is loaded) idk
+  // Check the pointer type (coarse = touch input)
+  const onMobileDevice = window.matchMedia("(pointer: coarse").matches;
 
   return (
     <div className="mb-1 flex flex-col gap-6 rounded-lg border-2 p-2 pb-4">
@@ -79,6 +84,13 @@ function RegularSpotifyPlayer({
         progress={musicPlayer!.progress}
         songDuration={songSelection ? songSelection.durationMS : 1}
       ></ProgressBar>
+      
+      {/* Volume Bar */}
+      {/* According to Spotify Web Playback SDK, mobile devices must control the volume through hardware, so don't render the volume bar! */}
+      {!onMobileDevice && 
+      <VolumeBar
+        volume={musicPlayer!.volume}
+      ></VolumeBar>}
 
       {(isAddSongBtnActive && isEditing) && <div className="flex justify-center">
         <button
