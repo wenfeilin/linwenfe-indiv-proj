@@ -3,7 +3,6 @@ import { Pause, Play } from "lucide-react";
 import ProgressBar from "./ProgressBar";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 import { ColorRing } from "react-loader-spinner";
-import { useEffect } from "react";
 
 function RegularSpotifyPlayer({
   songSelection,
@@ -19,13 +18,11 @@ function RegularSpotifyPlayer({
   setSongToPlay: (song: Song | null) => void;
 }) {
   const musicPlayer = useMusicPlayer();
-  // musicPlayer?.setCurrentTrack(songSelection);
 
   // Set track to play to queue it up when play is pressed
   if (musicPlayer) {
     musicPlayer?.setTrackToPlay(songSelection);
   }
-
 
   // console.log("Currently going to play", musicPlayer?.currentTrack?.title, "by", musicPlayer?.currentTrack?.artists);
 

@@ -97,13 +97,27 @@ function SaveButton({
           }
           onSave(event);
 
-          // Stop music from playing if any.
+          // Determine whether song being played should be paused or not after saving.
+          // Only stop playing music if the song being played is not the song selection before edit.
           if (musicPlayer) {
-            await musicPlayer.pause();
+            const prevSavedSongSelectionUri = entryBeingSaved?.songSelection?.uri;
+            const newSongSelectionUri = newSongSelection?.uri;
+            const currentlyPlayingSongUri = musicPlayer.currentContext?.uri;
+
+            // Entry already exists.
+            if (entryBeingSaved !== undefined) {
+              // There previously was a song selection.
+              if (prevSavedSongSelectionUri) {
+                // If what is playing right now is not what was previously selected OR a song that was selected (but not saved yet) is not the same as the one being played right now, pause the music. (In all other cases, let the song play because it should be the same song being played before and after save, so no need to pause it. I am assuming this is a preference users would have.)
+                if (prevSavedSongSelectionUri !== currentlyPlayingSongUri || newSongSelectionUri !== currentlyPlayingSongUri) {
+                  await musicPlayer.pause();
+                  await musicPlayer.resetProgress();
+                }
+              }
+            }
           }
 
-          // Assuming there's no song selection for the entry, reset the song the mini player
-          // shows.
+          // Assuming there's no song selection for the entry, reset the song the mini player shows.
           if (entryBeingSaved !== undefined && !entryBeingSaved.songSelection) {
             setSearchedSongToPlay(null);
           }
@@ -111,6 +125,7 @@ function SaveButton({
           // Hides the add song search form / makes the player uneditable upon save.
           setIsAddSongBtnActive(false);
           setIsSearching(false);
+          
         }}
       >
         Save

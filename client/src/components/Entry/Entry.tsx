@@ -28,15 +28,6 @@ function Entry() {
   const [isAddSongBtnActive, setIsAddSongBtnActive] = useState(entry?.songSelection ? true : false);
   const [isSearching, setIsSearching] = useState(false);
 
-
-
-
-
-
-
-
-
-
   const [searchedSongToPlay, setSearchedSongToPlay] = useState(songSelection);
 
   console.log("This entry's song selection is", songSelection?.title);
@@ -62,7 +53,7 @@ function Entry() {
 
         {/* Cancel Edits Button */}
         <CancelButton
-          onCancel={() => {
+          onCancel={async () => {
             let songSelectionBeforeEdit;
 
             if (entry !== undefined) {
@@ -82,10 +73,17 @@ function Entry() {
             setSongNotes(entry ? entry.songNotes : "");
 
             // Reset song for mini player.
-            console.log("check this", songSelection);
             if (!songSelectionBeforeEdit) {
               setSearchedSongToPlay(null);
               setIsAddSongBtnActive(false);
+            }
+
+            // Only stop playing music if the song being played is not the song selection before edit.
+            if (musicPlayer) {
+              if (songSelectionBeforeEdit?.uri !== musicPlayer.currentContext?.uri) {
+                await musicPlayer.pause();
+                await musicPlayer.resetProgress();
+              }
             }
           }}>
         </CancelButton>
@@ -95,7 +93,7 @@ function Entry() {
           newEntryContent={entryContent}
           newSongSelection={songSelection}
           newSongNotes={songNotes}
-          entryBeingSaved={entry}
+          entryBeingSaved={entry} // The entry before being saved
           setIsAddSongBtnActive={setIsAddSongBtnActive}
           onSave={() => setIsEditing(false)}
           setIsSearching={setIsSearching}

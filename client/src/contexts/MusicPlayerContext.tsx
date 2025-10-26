@@ -7,8 +7,8 @@ type MusicPlayerContextType = {
   playerRef: React.RefObject<Spotify.Player | null>,
   deviceId: string | null;
   isReady: boolean;
-  currentTrack: Song | null;
-  setCurrentTrack: (song: Song | null) => void;
+  // currentTrack: Song | null;
+  // setCurrentTrack: (song: Song | null) => void;
   isPlaying: boolean;
   setIsPlaying:(playing: boolean) => void;
   togglePlay: (song?: Song | null, context?: null) => Promise<void>;
@@ -19,6 +19,7 @@ type MusicPlayerContextType = {
   setTrackToPlay: (song: Song | null) => void;
   isLoadingSong: boolean;
   pause: () => Promise<void>;
+  currentContext: Song | null;
 }
 
 // One single global music player to be used to play a single song and a playlist of songs
@@ -28,8 +29,8 @@ const MusicPlayerContext = createContext<MusicPlayerContextType | null>(null);
 export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   // On page load, there is no song to play yet.
   // GET RID OF THESE LATER -- BEING REPLACED BY trackToPlay and currentContext prob.
-  const [currentTrack, setCurrentTrack] = useState<Song | null>(null);
-  const [searchedTrackToPlay, setSearchedTrackToPlay] = useState<Song | null>(null);
+  // const [currentTrack, setCurrentTrack] = useState<Song | null>(null);
+  // const [searchedTrackToPlay, setSearchedTrackToPlay] = useState<Song | null>(null);
 
   // The song user wants to play
   const [trackToPlay, setTrackToPlay] = useState<Song | null>(null);
@@ -169,7 +170,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   }, isPlaying && playerRef.current && isReady && !isLoadingSong && currentContext ? 1000 : null);
 
   return (
-    <MusicPlayerContext.Provider value={{playerRef, deviceId, isReady, currentTrack, setCurrentTrack, isPlaying, setIsPlaying, togglePlay, progress, setProgress, resetProgress, trackToPlay, setTrackToPlay, isLoadingSong, pause}}>
+    <MusicPlayerContext.Provider value={{playerRef, deviceId, isReady, /*currentTrack, setCurrentTrack,*/ isPlaying, setIsPlaying, togglePlay, progress, setProgress, resetProgress, trackToPlay, setTrackToPlay, isLoadingSong, pause, currentContext}}>
       { children }
     </MusicPlayerContext.Provider>
   )
