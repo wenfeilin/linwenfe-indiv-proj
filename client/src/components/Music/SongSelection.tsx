@@ -28,6 +28,8 @@ function SongSelection({
   onEdit,
   isSearching,
   setIsSearching,
+  searchedSongToPlay,
+  setSearchedSongToPlay,
 }: {
   isEditing: boolean;
   isAddSongBtnActive: boolean;
@@ -42,12 +44,14 @@ function SongSelection({
   ) => void;
   isSearching: boolean;
   setIsSearching: (arg0: boolean) => void;
+  searchedSongToPlay: Song | null;
+  setSearchedSongToPlay: (searchedSongToPlay: Song | null) => void;
 }) {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     const isLoggedInVal = localStorage.getItem("isSpotifyLoggedIn");
     return isLoggedInVal? JSON.parse(isLoggedInVal) : false;
   });
-  const [songToPlay, setSongToPlay] = useState(songSelection);
+  // const [songToPlay, setSongToPlay] = useState(songSelection);
   
   async function checkLoginStatus() {
     try {
@@ -90,61 +94,16 @@ function SongSelection({
   let songNotesComponent;
   let loginBtnComponent;
 
-  // If this entry doesn't have an associated song, don't display anything for the song component.
-  if (!songSelection || (!songSelection && !isAddSongBtnActive)) {
+  // If this entry doesn't have an associated song or isn't trying to add a song selection, don't display anything for the song component.
+  if (!songSelection || !isAddSongBtnActive) {
     playerComponent = null;
     searchFormComponent = null;
     songNotesComponent = null;
     loginBtnComponent = null;
   }
 
-  // Display song with regular music player if there is a song selection for this entry.
-  if (songSelection) {
-    loginBtnComponent = (
-      <LoginButton isLoggedIn={isLoggedIn} checkLoginStatus={checkLoginStatus} />
-    );
-
-    playerComponent = (
-      <RegularSpotifyPlayer
-        songSelection={songSelection}
-        isEditing={isEditing}
-        isAddSongBtnActive={isAddSongBtnActive}
-        setIsSearching={setIsSearching}
-        setSongToPlay={setSongToPlay}
-      ></RegularSpotifyPlayer>
-    );
-
-    if (songNotes || isEditing) {
-      songNotesComponent = (
-        <textarea
-          name="song-notes"
-          id="song-notes"
-          placeholder="Song Notes"
-          readOnly={!isEditing}
-          value={songNotes}
-          className="w-full resize-none overflow-y-auto rounded border-2 border-blue-300 p-1.5 focus:border-blue-400 focus:outline-none"
-          onChange={(event) => onEdit(event, "song notes")}
-        ></textarea>
-      );
-
-    }
-  }
-
-  
-  if (isAddSongBtnActive && isEditing && !songSelection) {
-    // Render the song search form and notes section when the user is trying to add a song to the entry.
-    loginBtnComponent = (
-      <LoginButton isLoggedIn={isLoggedIn} checkLoginStatus={checkLoginStatus} />
-    );
-
-    searchFormComponent = (
-      <SongSearchForm
-        setSongSelection={setSongSelection}
-        setSongToPlay={setSongToPlay}
-        setIsSearching={setIsSearching}
-      ></SongSearchForm>
-    );
-
+  // If there are song notes for this entry or when editing with the add song component active (a song is being added to the entry or a song selection is being edited), display the song notes component.
+  if (isEditing && isAddSongBtnActive || songNotes) {
     songNotesComponent = (
       <textarea
         name="song-notes"
@@ -158,13 +117,34 @@ function SongSelection({
     );
   }
 
-  // Render a mini song player when the user is searching for songs for this entry and is trying to play one.
-  if (isAddSongBtnActive && isEditing && !songSelection && songToPlay) {
+  // If the entry has a song selection or a song is being added to the entry, display the login button (when necessary) -- since song-related elements require Spotify access.
+  if (isAddSongBtnActive) {
+    loginBtnComponent = (
+      <LoginButton isLoggedIn={isLoggedIn} checkLoginStatus={checkLoginStatus} />
+    );
+  }
+
+  // Display song with regular music player if there is a song selection for this entry.
+  if (songSelection) {
     playerComponent = (
-      <MiniSpotifyPlayer
-        currentTrackToPlay={songToPlay}
+      <RegularSpotifyPlayer
+        songSelection={songSelection}
+        isEditing={isEditing}
         isAddSongBtnActive={isAddSongBtnActive}
-      ></MiniSpotifyPlayer>
+        setIsSearching={setIsSearching}
+        setSongToPlay={setSearchedSongToPlay}
+      ></RegularSpotifyPlayer>
+    );
+  }
+
+  // Render the song search form when the user is trying to add a song to the entry.
+  if (isSearching && !songSelection) {
+    searchFormComponent = (
+      <SongSearchForm
+        setSongSelection={setSongSelection}
+        setSongToPlay={setSearchedSongToPlay}
+        setIsSearching={setIsSearching}
+      ></SongSearchForm>
     );
   }
 
@@ -173,31 +153,20 @@ function SongSelection({
     searchFormComponent = (
       <SongSearchForm
         setSongSelection={setSongSelection}
-        setSongToPlay={setSongToPlay}
+        setSongToPlay={setSearchedSongToPlay}
         setIsSearching={setIsSearching}
       ></SongSearchForm>
     );
 
-    playerComponent = (<MiniSpotifyPlayer
-        currentTrackToPlay={songToPlay}
-        isAddSongBtnActive={isAddSongBtnActive}
-      ></MiniSpotifyPlayer>)
-  }
+    console.log("searchedSongToPlay", searchedSongToPlay)
 
-  // // Only render the song notes in non-edit view if there is a song selected as well.
-  // if (songNotes && songSelection) {
-  //   songNotesComponent = (
-  //     <textarea
-  //       name="song-notes"
-  //       id="song-notes"
-  //       placeholder="Song Notes"
-  //       readOnly={!isEditing}
-  //       value={songNotes}
-  //       className="w-full resize-none overflow-y-auto rounded border-2 border-blue-300 p-1.5 focus:border-blue-400 focus:outline-none"
-  //       onChange={(event) => onEdit(event, "song notes")}
-  //     ></textarea>
-  //   );
-  // }
+    if (searchedSongToPlay) {
+      playerComponent = (<MiniSpotifyPlayer
+          currentTrackToPlay={searchedSongToPlay}
+          isAddSongBtnActive={isAddSongBtnActive}
+        ></MiniSpotifyPlayer>)
+    }
+  }
 
   return (
     <div className="relative h-108">
@@ -220,7 +189,7 @@ function SongSelection({
             setIsSearching(false);
 
             // Reset the song that shows up in the mini player.
-            setSongToPlay(null);
+            setSearchedSongToPlay(null);
 
             // Pause song playing.
             if (musicPlayer) {

@@ -26,7 +26,18 @@ function Entry() {
   const [songNotes, setSongNotes] = useState(entry ? (entry.songNotes ?? "") : "");
   const [isEditing, setIsEditing] = useState(false);
   const [isAddSongBtnActive, setIsAddSongBtnActive] = useState(entry?.songSelection ? true : false);
-  const [isSearching, setIsSearching] = useState(songSelection ? false : true);
+  const [isSearching, setIsSearching] = useState(false);
+
+
+
+
+
+
+
+
+
+
+  const [searchedSongToPlay, setSearchedSongToPlay] = useState(songSelection);
 
   console.log("This entry's song selection is", songSelection?.title);
 
@@ -47,7 +58,7 @@ function Entry() {
     buttonsRow = (
       <div className="flex gap-2">
         {/* Add Song Button */}
-        <AddSongButton isAddSongBtnActive={isAddSongBtnActive || (songSelection ? true : false)} setIsAddSongBtnActive={setIsAddSongBtnActive}></AddSongButton>
+        <AddSongButton isAddSongBtnActive={isAddSongBtnActive || (songSelection ? true : false)} setIsAddSongBtnActive={setIsAddSongBtnActive} setIsSearching={setIsSearching}></AddSongButton>
 
         {/* Cancel Edits Button */}
         <CancelButton
@@ -69,8 +80,15 @@ function Entry() {
             setEntryContent(entry ? entry.content : "");
             setSongSelection(songSelectionBeforeEdit);
             setSongNotes(entry ? entry.songNotes : "");
-          }}
-        ></CancelButton>
+
+            // Reset song for mini player.
+            console.log("check this", songSelection);
+            if (!songSelectionBeforeEdit) {
+              setSearchedSongToPlay(null);
+              setIsAddSongBtnActive(false);
+            }
+          }}>
+        </CancelButton>
 
         {/* Save Edits Button */}
         <SaveButton
@@ -81,6 +99,7 @@ function Entry() {
           setIsAddSongBtnActive={setIsAddSongBtnActive}
           onSave={() => setIsEditing(false)}
           setIsSearching={setIsSearching}
+          setSearchedSongToPlay={setSearchedSongToPlay}
         ></SaveButton>
       </div>
     );
@@ -166,6 +185,8 @@ function Entry() {
               setSongNotes={setSongNotes}
               isSearching={isSearching}
               setIsSearching={setIsSearching}
+              searchedSongToPlay={searchedSongToPlay}
+              setSearchedSongToPlay={setSearchedSongToPlay}
             ></SongSelection>
           </div>
         </div>

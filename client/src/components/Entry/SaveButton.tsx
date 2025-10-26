@@ -6,6 +6,7 @@ import {
 import type { MouseEventHandler } from "react";
 import type { Song } from "../Music/SongSelection";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
+import SongSelection from "../Music/SongSelection";
 
 // Determines if changes were made and if so saves, updating the entries list context and updates
 // local storage too. Otherwise, doesn't update the entries list context.
@@ -17,6 +18,7 @@ function SaveButton({
   setIsAddSongBtnActive,
   onSave,
   setIsSearching,
+  setSearchedSongToPlay,
 }: {
   newEntryContent: string;
   entryBeingSaved: EntryType | undefined;
@@ -25,6 +27,7 @@ function SaveButton({
   setIsAddSongBtnActive: any,
   onSave: MouseEventHandler<HTMLButtonElement>;
   setIsSearching: (arg0: boolean) => void;
+  setSearchedSongToPlay: (searchedSongToPlay: Song | null) => void;
 }) {
   const dispatch = useEntriesDispatch()!;
 
@@ -42,8 +45,8 @@ function SaveButton({
           if (
             entryBeingSaved === undefined &&
             (newEntryContent !== "" ||
-              newSongSelection !== null ||
-              newSongNotes !== "")
+             newSongSelection !== null ||
+             newSongNotes !== "")
           ) {
             // Create new entry since content has been added to it.
             dispatch({
@@ -76,8 +79,8 @@ function SaveButton({
           } else if (
             entryBeingSaved !== undefined &&
             (newEntryContent !== entryBeingSaved.content ||
-              newSongSelection !== entryBeingSaved.songSelection ||
-              newSongNotes !== entryBeingSaved.songNotes)
+             newSongSelection !== entryBeingSaved.songSelection ||
+             newSongNotes !== entryBeingSaved.songNotes)
           ) {
             // Update entry since its content has been changed.
             dispatch({
@@ -97,6 +100,12 @@ function SaveButton({
           // Stop music from playing if any.
           if (musicPlayer) {
             await musicPlayer.pause();
+          }
+
+          // Assuming there's no song selection for the entry, reset the song the mini player
+          // shows.
+          if (entryBeingSaved !== undefined && !entryBeingSaved.songSelection) {
+            setSearchedSongToPlay(null);
           }
 
           // Hides the add song search form / makes the player uneditable upon save.
