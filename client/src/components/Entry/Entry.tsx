@@ -30,6 +30,8 @@ function Entry() {
 
   const [searchedSongToPlay, setSearchedSongToPlay] = useState(songSelection);
 
+  const [unsavedSongSelectionWasChanged, setUnsavedSongSelectionWasChanged] = useState(false);
+
   console.log("This entry's song selection is", songSelection?.title);
 
   // Determine what buttons will be rendered for the entry based on if it's in Edit mode or not.
@@ -98,6 +100,7 @@ function Entry() {
           onSave={() => setIsEditing(false)}
           setIsSearching={setIsSearching}
           setSearchedSongToPlay={setSearchedSongToPlay}
+          unsavedSongSelectionWasChanged={unsavedSongSelectionWasChanged}
         ></SaveButton>
       </div>
     );
@@ -185,6 +188,9 @@ function Entry() {
               setIsSearching={setIsSearching}
               searchedSongToPlay={searchedSongToPlay}
               setSearchedSongToPlay={setSearchedSongToPlay}
+              savedSongSelection={entry ? (entry.songSelection ?? null) : null} // the one in local storage
+              unsavedSongSelectionWasChanged={unsavedSongSelectionWasChanged}
+              setUnsavedSongSelectionWasChanged={setUnsavedSongSelectionWasChanged}
             ></SongSelection>
           </div>
         </div>

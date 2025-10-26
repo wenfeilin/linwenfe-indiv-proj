@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Search, Check, Play } from "lucide-react";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
+import type { Song } from "./SongSelection";
 
 type Track = {
   album: {
@@ -20,13 +21,24 @@ function SongSearchForm({
   setSongSelection,
   setSongToPlay,
   setIsSearching,
+  savedSongSelection,
+  songToPlay,
+  songSelection, // unsaved
+  unsavedSongSelectionWasChanged,
+  setUnsavedSongSelectionWasChanged,
 }: {
   setSongSelection: any;
   setSongToPlay: any;
   setIsSearching: (isSearching: boolean) => void;
+  savedSongSelection: Song | null;
+  songToPlay: Song | null;
+  songSelection: Song | null;
+  unsavedSongSelectionWasChanged: boolean;
+  setUnsavedSongSelectionWasChanged: (wasUnsavedSongSelectionChanged: boolean) => void;
 }) {
   const [searchContent, setSearchContent] = useState("");
   const [searchResults, setSearchResults] = useState<any[] | null>(null);
+  // const [unsavedSongSelectionWasChanged, setUnsavedSongSelectionWasChanged] = useState(false);
 
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -179,11 +191,45 @@ function SongSearchForm({
                           }
 
                           // Pause the music player.
+                          // if (musicPlayer) {
+                          //   await musicPlayer.pause();
+                          // }
+                          let isSongSelectionDiff; // as of right now, selecting this song
+                          if (songSelection?.uri !== selectedSong.uri) {
+                            setUnsavedSongSelectionWasChanged(true);
+                            isSongSelectionDiff = true;
+                          }
+
                           if (musicPlayer) {
-                            await musicPlayer.pause();
+                            // Given there is a song selection saved for the entry
+                            if (savedSongSelection) {
+                              console.log("1");
+                              console.log("This should be true", unsavedSongSelectionWasChanged || isSongSelectionDiff);
+
+                              // If the selected song is not the one that is currently saved or it is but was changed in between, pause the player and reset the progress so the song just selected can be loaded up again by the player.
+                              if (selectedSong.uri !== savedSongSelection?.uri || (selectedSong.uri === savedSongSelection?.uri && (unsavedSongSelectionWasChanged || isSongSelectionDiff))) { /* RN IDEK WHAT MAKES THIS WORK AND WHAT DOESN'T. IT MAYBE BE THAT I DONT EVEN NEED "(selectedSong.uri === savedSongSelection?.uri && (unsavedSongSelectionWasChanged || isSongSelectionDiff))" THIS PART BUT I HAVE NO CLUE AND I DO NOT WANT TO MESS WITH IT AND BREAK IT B/C I DONT HAVE TESTS TO VERIFY ANYTHING AND THERE ARE TOO MANY SCENARIOS FOR ME TO REMEMBER TO RECREATE MANUALLY -- TEST AND TRY TAKING THAT PART OUT LATER */
+                                console.log("IT SHOULD BE IN HERE!");
+                                if (songToPlay?.uri !== selectedSong.uri) {
+                                  console.log("2");
+                                  await musicPlayer.pause();
+                                  await musicPlayer?.resetProgress();
+                                }
+                              }
+                            } else {
+                              // Given there isn't a song selection saved for the entry
+                              console.log("3");
+
+                              // If the song being played by the mini player is not the last (unsaved) selected song, pause the player and reset the progress so the song just selected can be loaded up by the player.
+                              if (songToPlay?.uri !== selectedSong.uri) {
+                                console.log("4");
+                                await musicPlayer.pause();
+                                await musicPlayer?.resetProgress();
+                              }
+                            }
                           }
                           setSongSelection(selectedSong);
-                          setSongToPlay(selectedSong);
+                          // console.log("is this what was set?", selectedSong.title);
+                          // setSongToPlay(selectedSong);
 
                           console.log(songTitle);
                           setIsSearching(false);

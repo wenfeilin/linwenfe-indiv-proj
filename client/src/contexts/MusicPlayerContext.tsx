@@ -7,8 +7,6 @@ type MusicPlayerContextType = {
   playerRef: React.RefObject<Spotify.Player | null>,
   deviceId: string | null;
   isReady: boolean;
-  // currentTrack: Song | null;
-  // setCurrentTrack: (song: Song | null) => void;
   isPlaying: boolean;
   setIsPlaying:(playing: boolean) => void;
   togglePlay: (song?: Song | null, context?: null) => Promise<void>;

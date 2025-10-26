@@ -9,22 +9,42 @@ import { useEffect } from "react";
 function MiniSpotifyPlayer({
   currentTrackToPlay,
   isAddSongBtnActive,
+  songSelection, // selected but unsaved (b/c in edit mode)
+  savedSongSelection,
 }: {
   currentTrackToPlay: Song | null;
   isAddSongBtnActive: boolean;
+  songSelection: Song | null;
+  savedSongSelection: Song | null;
 }) {
   const musicPlayer = useMusicPlayer();
   // musicPlayer?.setCurrentTrack(currentTrackToPlay);
 
   const albumImageSrc = currentTrackToPlay?.albumCoverUrls[2];
+  // console.log("orig album img", albumImageSrc);
 
   // When the song being played is changed, reset the visual and actual progress of the music if there is any.
-  useEffect(() => {
-    return () => {
-      // This makes the progress bar reset instantly with no animation.
-      musicPlayer?.resetProgress();
-    }
-  }, [albumImageSrc])
+  // useEffect(() => {
+  //   return () => {
+  //     console.log("in useEffect")
+  //     console.log("current track to play", currentTrackToPlay?.title)
+  //     console.log("saved song selection:", savedSongSelection?.title)
+  //     // Only reset the progress if the album cover is not for the saved song selection (if there is one) or is not for the unsaved song selection (if the entry does not have a saved song selection).
+  //     if (savedSongSelection) {
+  //       console.log("gotem")
+  //       console.log("song selected (unsaved):", songSelection!.title);
+  //       if (currentTrackToPlay?.uri !== savedSongSelection.uri || songSelection!.uri !== savedSongSelection.uri) {
+  //         // This makes the progress bar reset instantly with no animation.
+  //         musicPlayer?.resetProgress();
+  //       }
+  //     } else {
+  //       if (currentTrackToPlay?.uri !== songSelection?.uri || songSelection) {
+  //         // This makes the progress bar reset instantly with no animation.
+  //         musicPlayer?.resetProgress();
+  //       }
+  //     }
+  //   }
+  // }, [currentTrackToPlay])
 
   return (
     // MAKE SURE NOTHING IS PRESSABLE UNTIL THE PLAYER IS LOADED!! -- this behavior isn't determinate rn

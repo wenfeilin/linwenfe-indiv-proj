@@ -30,6 +30,9 @@ function SongSelection({
   setIsSearching,
   searchedSongToPlay,
   setSearchedSongToPlay,
+  savedSongSelection,
+  unsavedSongSelectionWasChanged,
+  setUnsavedSongSelectionWasChanged,
 }: {
   isEditing: boolean;
   isAddSongBtnActive: boolean;
@@ -46,6 +49,9 @@ function SongSelection({
   setIsSearching: (arg0: boolean) => void;
   searchedSongToPlay: Song | null;
   setSearchedSongToPlay: (searchedSongToPlay: Song | null) => void;
+  savedSongSelection: Song | null;
+  unsavedSongSelectionWasChanged: boolean;
+  setUnsavedSongSelectionWasChanged: (wasUnsavedSongSelectionChanged: boolean) => void;
 }) {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     const isLoggedInVal = localStorage.getItem("isSpotifyLoggedIn");
@@ -144,6 +150,11 @@ function SongSelection({
         setSongSelection={setSongSelection}
         setSongToPlay={setSearchedSongToPlay}
         setIsSearching={setIsSearching}
+        savedSongSelection={savedSongSelection}
+        songToPlay={searchedSongToPlay}
+        songSelection={songSelection}
+        unsavedSongSelectionWasChanged={unsavedSongSelectionWasChanged}
+        setUnsavedSongSelectionWasChanged={setUnsavedSongSelectionWasChanged}
       ></SongSearchForm>
     );
   }
@@ -155,6 +166,11 @@ function SongSelection({
         setSongSelection={setSongSelection}
         setSongToPlay={setSearchedSongToPlay}
         setIsSearching={setIsSearching}
+        savedSongSelection={savedSongSelection}
+        songToPlay={searchedSongToPlay}
+        songSelection={songSelection}
+        unsavedSongSelectionWasChanged={unsavedSongSelectionWasChanged}
+        setUnsavedSongSelectionWasChanged={setUnsavedSongSelectionWasChanged}
       ></SongSearchForm>
     );
 
@@ -162,9 +178,11 @@ function SongSelection({
 
     if (searchedSongToPlay) {
       playerComponent = (<MiniSpotifyPlayer
-          currentTrackToPlay={searchedSongToPlay}
-          isAddSongBtnActive={isAddSongBtnActive}
-        ></MiniSpotifyPlayer>)
+        currentTrackToPlay={searchedSongToPlay}
+        isAddSongBtnActive={isAddSongBtnActive}
+        songSelection={songSelection}
+        savedSongSelection={savedSongSelection}
+      ></MiniSpotifyPlayer>)
     }
   }
 
