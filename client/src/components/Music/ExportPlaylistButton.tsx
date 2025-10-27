@@ -53,7 +53,7 @@ function ExportPlaylistButton({ setPlaylistUrl, selectedMonth, setShowExportPlay
 
   return (
     <button
-      className="text-white bg-green-500 px-4 py-1 rounded-lg hover:cursor-pointer hover:bg-green-600 mr-2"
+      className="text-white bg-green-500 px-4 py-1 rounded-lg hover:cursor-pointer hover:bg-green-600 mr-2 lg:mr-0 lg:flex-1"
       onClick={() => {
         if (!selectedMonth) {
           return;

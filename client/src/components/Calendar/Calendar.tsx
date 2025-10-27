@@ -61,7 +61,7 @@ function Calendar({ setIsCalendarLoading, containerStyles }: { setIsCalendarLoad
 
       {/* Use full names for medium to larger screens */}
       {daysFullNames.map((day, i) => (
-        <p key={i} className={"bg-blue-100 py-1.5 text-center hidden md:block"}>
+        <p key={i} className={"bg-blue-100 py-1.5 text-[15px] tracking-wide text-center hidden md:block"}>
           {day}
         </p>
       ))}

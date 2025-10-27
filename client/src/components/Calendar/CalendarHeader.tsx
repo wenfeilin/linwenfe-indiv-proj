@@ -22,9 +22,11 @@ function CalendarHeader() {
       <Link className="" to={`/my-calendar/${prevYear}/${prevMonth}`}>
         <ArrowBigLeft className="fill-rose-200 stroke-yellow-900 w-6 md:w-8 h-auto" />
       </Link>
-      <h1 className="py-5 text-center text-xl md:text-2xl font-medium">
+
+      <h1 className="py-5 text-center text-xl md:text-2xl font-medium font-heading">
         {getMonthName(+month!)} {year}
       </h1>
+
       <Link className="" to={`/my-calendar/${nextYear}/${nextMonth}`}>
         <ArrowBigRight className="fill-rose-200 stroke-yellow-900 w-6 md:w-8 h-auto" />
       </Link>

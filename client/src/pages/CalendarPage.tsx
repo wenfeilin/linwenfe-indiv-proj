@@ -6,12 +6,16 @@ function CalendarPage() {
   const [isCalendarLoading, setIsCalendarLoading] = useState(true);
 
   return (
-    <div className="flex flex-col items-center justify-center h-full px-3 py-4 md:px-10 md:pt-4 md:pb-10 lg:px-36 lg:pb-18">
+    <div className="flex flex-col items-center justify-center h-full px-3 py-4 
+      md:px-10 md:pt-4 md:pb-10 
+      lg:grid lg:grid-cols-[1fr_5fr_1fr] lg:px-0 lg:items-start lg:py-6 xl:py-8">
       { isCalendarLoading && (
-          <ExportPlaylistComponent containerStyles="order-1 md:order-0 md:mb-4 md:w-full text-right" />
+          <ExportPlaylistComponent containerStyles="order-last lg:w-full text-center lg:col-start-3 lg:flex lg:justify-center" />
         ) 
       }
-      <Calendar setIsCalendarLoading={setIsCalendarLoading} containerStyles="mb-4 md:mb-0"></Calendar>
+      <div className="w-full md:flex lg:col-start-2 lg:h-full ">
+        <Calendar setIsCalendarLoading={setIsCalendarLoading} containerStyles="mb-4 lg:mb-0"></Calendar>
+      </div>
     </div>
   );
 }

@@ -1,10 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
+  @theme {
+    --font-heading: "Noto Sans", sans-serif;
+  }
 
 /* This file is for global resets/styles, default typography, custom classes. */
 
 /* :root (usually refers to <html> = highest-lvl element in the document) for global vars/styles 
    (theme colors, font families, global vars) */
 :root {
+
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;

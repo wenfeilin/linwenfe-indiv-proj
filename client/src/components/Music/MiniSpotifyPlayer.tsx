@@ -104,9 +104,10 @@ function MiniSpotifyPlayer({
       {/* Volume Bar */}
       {/* According to Spotify Web Playback SDK, mobile devices must control the volume through hardware, so don't render the volume bar! */}
       {!onMobileDevice && 
-      <VolumeBar
-        volume={musicPlayer!.volume}
-      ></VolumeBar>}
+        <VolumeBar
+          volume={musicPlayer!.volume}
+        ></VolumeBar>
+      }
       <div>{/* Get rid of the bangs later! */}</div>
     </div>
   );
