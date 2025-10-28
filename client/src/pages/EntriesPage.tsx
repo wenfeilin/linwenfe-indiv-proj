@@ -1,39 +1,11 @@
 import { useLocation } from "react-router";
-import { useEntries } from "../contexts/EntriesContext";
 import { useState } from "react";
-import { getDateParts } from "../utils/date";
 import EntriesList from "../components/Entry/EntriesList";
+import useEntriesSortedByDate from "../hooks/useEntriesSortedByDate";
 
 function EntriesPage() {
   // Sort entries by date.
-  const entries = useEntries();
-  const entriesSortedByDate = [...entries];
-
-  entriesSortedByDate.sort((a, b) => {
-    const [yearA, monthA, dayA] = getDateParts(a.date);
-    const [yearB, monthB, dayB] = getDateParts(b.date);
-
-    if (yearA < yearB) {
-      return -1;
-    } else if (yearA > yearB) {
-      return 1;
-    }
-
-    if (monthA < monthB) {
-      return -1;
-    } else if (monthA > monthB) {
-      return 1;
-    }
-
-    if (dayA < dayB) {
-      return -1;
-    } else if (dayA > dayB) {
-      return 1;
-    }
-
-    // Will never return 0 though because there can't be two of the same dates.
-    return 0;
-  });
+  const entriesSortedByDate = useEntriesSortedByDate();
 
   const entriesSortedAndNumbered = entriesSortedByDate.map((entry, i) => ({
     entryNum: i + 1,

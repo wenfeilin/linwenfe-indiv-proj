@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Calendar from "../components/Calendar/Calendar";
 import ExportPlaylistComponent from "../components/Music/ExportPlaylistComponent";
+import GlobalSpotifyPlayer from "../components/Music/GlobalSpotifyPlayer";
 
 function CalendarPage() {
   const [isCalendarLoading, setIsCalendarLoading] = useState(true);
@@ -10,12 +11,14 @@ function CalendarPage() {
       md:px-10 md:pt-4 md:pb-10 
       lg:grid lg:grid-cols-[1fr_5fr_1fr] lg:px-0 lg:items-start lg:py-6 xl:py-8">
       { isCalendarLoading && (
-          <ExportPlaylistComponent containerStyles="order-last lg:w-full text-center lg:col-start-3 lg:flex lg:justify-center" />
+          <ExportPlaylistComponent containerStyles="order-1 lg:w-full text-center lg:col-start-3 lg:flex lg:justify-center" />
         ) 
       }
       <div className="w-full md:flex lg:col-start-2 lg:h-full ">
         <Calendar setIsCalendarLoading={setIsCalendarLoading} containerStyles="mb-4 lg:mb-0"></Calendar>
       </div>
+      
+      <GlobalSpotifyPlayer containerStyles="order-last col-start-2" />
     </div>
   );
 }

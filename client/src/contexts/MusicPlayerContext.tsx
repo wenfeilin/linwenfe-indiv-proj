@@ -22,6 +22,12 @@ type MusicPlayerContextType = {
   isScrubbingProgress: RefObject<boolean>;
   setPlayerVolume: (newVolume: number) => Promise<void>;
   volume: number,
+  togglePlayGlobal: () => Promise<void>;
+  queueAndPlaySongs: (monthSongUris: string[]) => Promise<void>;
+  getCurrSong: () => Promise<Spotify.Track | null>;
+  currentSong: Spotify.Track | null;
+  playerMode: "calendar" | "entry";
+  setPlayerMode: (mode: "calendar" | "entry") => void;
 }
 
 // One single global music player to be used to play a single song and a playlist of songs
@@ -30,10 +36,10 @@ const MusicPlayerContext = createContext<MusicPlayerContextType | null>(null);
 // Handles music playing functionality
 export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   // On page load, there is no song to play yet.
-  // GET RID OF THESE LATER -- BEING REPLACED BY trackToPlay and currentContext prob.
   // const [currentTrack, setCurrentTrack] = useState<Song | null>(null);
   // const [searchedTrackToPlay, setSearchedTrackToPlay] = useState<Song | null>(null);
 
+  // For entry music players.
   // The song user wants to play
   const [trackToPlay, setTrackToPlay] = useState<Song | null>(null);
   // What is currently loaded in the music player
@@ -43,15 +49,19 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   // Initially false because no song being loaded.
   const [isLoadingSong, setIsLoadingSong] = useState(false);
 
+  // Indicates whether the entry player or calendar player is currently "active".
+  const [playerMode, setPlayerMode] = useState<"calendar" | "entry">("calendar");
+
 
   // console.log("Context's current song is", currentTrack?.title);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
   // Creates and connects a single global music player once when loading the Provider.
-  const { playerRef, deviceId, isReady } = useSpotifyPlayer();
+  const { playerRef, deviceId, isReady, currentSong } = useSpotifyPlayer();
 
   // Run once (on mount).
+  // Note: Should prob move this to useSpotifyPlayer.ts as an unmount fxn since it has to do w/ disconnecting.
   useEffect(() => {
     // const getPlayerVolume = async () => {
     //   if (playerRef.current) {
@@ -125,6 +135,55 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // for global player only
+  async function togglePlayGlobal() {
+    if (playerRef.current) {
+      setIsPlaying(!isPlaying);
+      await playerRef.current.togglePlay();
+    }
+  }
+
+  // For global player only (queue and play songs for the month selected)
+  async function queueAndPlaySongs(monthSongUris: string[]) {
+    setIsLoadingSong(true);
+    // Request API to queue up month's songs.
+    const apiUrl = import.meta.env.VITE_API_URL;
+
+    const reqBody = {
+      device_id: deviceId,
+      uris: monthSongUris,
+    };
+
+    try {
+      await fetch(`${apiUrl}/player/play`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reqBody),
+        credentials: "include",
+      });
+
+      if (playerRef.current) {
+        setIsLoadingSong(false);
+        await playerRef.current.resume();
+        setIsPlaying(true);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  // mainly for the global music player
+  async function getCurrSong() {
+    if (playerRef.current) {
+      const state = await playerRef.current?.getCurrentState();
+      return state?.track_window.current_track ?? null;
+    }
+
+    return null;
+  }
+
   async function pause() {
     if (playerRef.current) {
       await playerRef.current.pause();
@@ -196,7 +255,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
         setIsPlaying(false);
       }
     })
-  }, isPlaying && playerRef.current && isReady && !isLoadingSong && currentContext ? 1000 : null);
+  }, isPlaying && playerRef.current && isReady && !isLoadingSong && (currentContext || playerMode === "calendar") ? 1000 : null);
 
   const [volume, setVolume] = useState(1);
 
@@ -208,7 +267,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <MusicPlayerContext.Provider value={{playerRef, deviceId, isReady, /*currentTrack, setCurrentTrack,*/ isPlaying, setIsPlaying, togglePlay, progress, setProgress, resetProgress, trackToPlay, setTrackToPlay, isLoadingSong, pause, currentContext, seek, isScrubbingProgress, setPlayerVolume, volume}}>
+    <MusicPlayerContext.Provider value={{playerRef, deviceId, isReady, /*currentTrack, setCurrentTrack,*/ isPlaying, setIsPlaying, togglePlay, progress, setProgress, resetProgress, trackToPlay, setTrackToPlay, isLoadingSong, pause, currentContext, seek, isScrubbingProgress, setPlayerVolume, volume, togglePlayGlobal, queueAndPlaySongs, getCurrSong, currentSong, playerMode, setPlayerMode}}>
       { children }
     </MusicPlayerContext.Provider>
   )

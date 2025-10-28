@@ -10,6 +10,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 function ExportPlaylistComponent({ containerStyles = ""}: StyleProps) {
   const [playlistUrl, setPlaylistUrl] = useState("");
+  // Initialize to current month.
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(new Date());
   const [showExportPlaylistMsg, setShowExportPlaylistMsg] = useState(false);
   const [isExportPlaylistBtnActive, setIsExportPlaylistBtnActive] =

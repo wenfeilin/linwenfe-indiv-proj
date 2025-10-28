@@ -9,6 +9,9 @@ function useSpotifyPlayer() {
   const [deviceId, setDeviceId] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
 
+  // For the global music player.
+  const [currentSong, setCurrentSong] = useState<Spotify.Track | null>(null);
+
   const apiUrl = import.meta.env.VITE_API_URL;
 
   // Create a Spotify player once when the component mounts.
@@ -91,9 +94,9 @@ function useSpotifyPlayer() {
         },
       );
 
-      // player.addListener("player_state_changed", (state) => {
-        
-      // });
+      player.addListener("player_state_changed", (state) => {
+        setCurrentSong(state? state.track_window.current_track : null);
+      });
 
       // Error event listeners
       player.addListener(
@@ -139,6 +142,7 @@ function useSpotifyPlayer() {
     playerRef,
     deviceId, 
     isReady,
+    currentSong,
   };
 }
 

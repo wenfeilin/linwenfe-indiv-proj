@@ -1,5 +1,6 @@
 import Entry from "../components/Entry/Entry";
 import { Link, useLocation } from "react-router-dom";
+import GlobalSpotifyPlayer from "../components/Music/GlobalSpotifyPlayer";
 
 function EntryPage() {
   // Get the path the user came from.
@@ -34,6 +35,8 @@ function EntryPage() {
       <div className="flex flex-1 flex-col items-center">
         <Entry></Entry>
       </div>
+
+      <GlobalSpotifyPlayer containerStyles="order-last col-start-2" />
     </div>
   );
 }

@@ -58,8 +58,6 @@ function VolumeBar({volume}:{volume: number}) {
     volumeIcon = <VolumeX size={volumeIconSize} />
   }
 
-  console.log(volume);
-
   return(
     <div className="flex items-center gap-2">
       {/* Volume Icon */}
