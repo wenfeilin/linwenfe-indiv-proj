@@ -211,9 +211,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
       // If switching from entry to calendar player, requeue the songs for the calendar player and start playing the song the calendar last played.
       if (previouslyPlayedModeRef.current === "entry") {
         await queueAndPlaySongs(monthSongUris, currSongPos);
-        console.log("why tf are u here?")
       } else {
-        console.log("apparently im here?")
         // Otherwise, continue playing/pausing.
         setIsPlayingGlobal(!isPlayingGlobal);
         await playerRef.current.togglePlay();
@@ -337,12 +335,14 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     if (playerType === "entry") {
       setProgress(0);
     } else {
+      console.log("RESETTING");
       setProgressGlobal(0);
     }
     
     // Reset the actual progress of the song.
     if (playerRef.current) {
-      await playerRef.current.seek(0);
+      // THIS WAS THE CAUSE OF THE DAMNED BUG!! DO NOT UNCOMMENT. DELETE SOON PLS!!
+      // await playerRef.current.seek(0);
     }
   };
   

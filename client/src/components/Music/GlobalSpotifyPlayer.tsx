@@ -216,6 +216,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
                     musicPlayer.previouslyPlayedModeRef.current ="entry";
                   }
                   musicPlayer.playerModeRef.current = "calendar";
+                  musicPlayer.setIsPlaying(false);
                   musicPlayer.resetProgress("entry");
 
                   const monthSongUris = queuedSongsAndDates?.map((songAndDate) => songAndDate.songUri);

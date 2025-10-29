@@ -77,8 +77,13 @@ function RegularSpotifyPlayer({
                 musicPlayer.previouslyPlayedModeRef.current = "entry";
               }
 
-              console.log("mode before play", musicPlayer.previouslyPlayedModeRef.current)
+              console.log("mode before play", musicPlayer.previouslyPlayedModeRef.current);
+              console.log("curr mode", musicPlayer.playerModeRef.current);
+
+              
               musicPlayer.playerModeRef.current = "entry";
+              console.log("curr mode", musicPlayer.playerModeRef.current);
+
               musicPlayer.setIsPlayingGlobal(false);
               musicPlayer.resetProgress("calendar");
             
