@@ -90,7 +90,7 @@ function useSpotifyPlayer() {
       player.addListener(
         "not_ready",
         ({ device_id }: { device_id: string }) => {
-          // console.log("Device ID has gone offline ", device_id);
+          console.log("Device ID has gone offline ", device_id);
         },
       );
 

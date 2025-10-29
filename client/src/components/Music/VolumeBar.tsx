@@ -17,9 +17,19 @@ function VolumeBar({volume}:{volume: number}) {
   const musicPlayer = useMusicPlayer();
   const isScrubbingVolume = useRef(false);
 
+
+
+  // IF DOING TWO SEPARATE VOLUME BARS, CHANGE THIS TO MIRROR CHANGES MADE IN PROGRESSBAR
+  
+
   // Mouse down on the range input = started scrubbing.
   function handleMouseDown() {
     if (musicPlayer) {
+      if (musicPlayer.playerModeRef.current === "entry") {
+        musicPlayer.playerModeRef.current = "entry";
+      } else {
+        musicPlayer.playerModeRef.current = "calendar";
+      }
       isScrubbingVolume.current = true;
     }
   }

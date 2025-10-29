@@ -81,10 +81,14 @@ function MiniSpotifyPlayer({
               (<button className="hover:cursor-pointer hover:opacity-80"
                 disabled={currentTrackToPlay? false : true}
                 onClick={async () => {
+                  // Switch to entry player context and pause the calendar player.
+                  musicPlayer.previouslyPlayedModeRef.current = musicPlayer.playerModeRef.current;
+                  musicPlayer.playerModeRef.current = "entry";
+                  musicPlayer.resetProgress("calendar");
+                  musicPlayer.setIsPlayingGlobal(false);
+                  
                   // Resume/pause song.
-                  if (musicPlayer) {
-                    await musicPlayer.togglePlay();
-                  }
+                  await musicPlayer.togglePlay();
                 }}
               >
                 {musicPlayer!.isPlaying? <Pause fill="black" /> : <Play fill="black" />}
@@ -99,6 +103,8 @@ function MiniSpotifyPlayer({
       <ProgressBar
         progress={musicPlayer!.progress}
         songDuration={currentTrackToPlay ? currentTrackToPlay.durationMS : 1}
+        playerType="entry"
+        isDisabled={false}
       ></ProgressBar>
 
       {/* Volume Bar */}

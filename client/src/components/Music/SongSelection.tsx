@@ -72,7 +72,7 @@ function SongSelection({
       // console.log("Fetch was called.");
       
       setIsLoggedIn(authStatus.isLoggedIn);
-      console.log("is logged in?", authStatus.isLoggedIn);
+      // console.log("is logged in?", authStatus.isLoggedIn);
     } catch (err) {
       console.log(err);
     }

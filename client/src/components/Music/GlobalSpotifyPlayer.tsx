@@ -5,8 +5,13 @@ import { getDateParts, getMonthName } from "../../utils/date";
 import VolumeBar from "./VolumeBar";
 import ProgressBar from "./ProgressBar";
 import { ColorRing } from "react-loader-spinner";
-import { Pause, Play } from "lucide-react";
+import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
 import useEntriesSortedByDate from "../../hooks/useEntriesSortedByDate";
+
+export type SongsAndDates = {
+  songUri: string,
+  date: string,
+}[]
 
 function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
   // Don't initialize selected month as a month.
@@ -15,43 +20,73 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
   // The month that the player is playing (not necessarily the one selected but could be). (So this can be displayed on the player and saved for later?)
   const [monthPlaying, setMonthPlaying] = useState<Date | null>(null);
 
+  const [currSong, setCurrSong] = useState<Spotify.Track | null>(null);
   // For if songs were queued properly.
   const [errorMsg, setErrorMsg] = useState("");
-  const [currSong, setCurrSong] = useState<Spotify.Track | null>(null);
+
+  const [currSongEntryDate, setCurrSongEntryDate] = useState<string | null>(null);
+  const [queuedSongsAndDates, setQueuedSongsAndDates] = useState<SongsAndDates | null>(null);
 
   const musicPlayer = useMusicPlayer();
   const entriesByDate = useEntriesSortedByDate();
 
   // Initially disable this player if either entry player is being used or the user has not selected a month's songs to play.
-  const [isPlayingDisabled, setIsPlayingDisabled] = useState<boolean>((musicPlayer? musicPlayer.playerMode === "entry" : true) || selectedMonth? false : true);
+  const [isPlayingDisabled, setIsPlayingDisabled] = useState<boolean>((musicPlayer? musicPlayer.playerModeRef.current === "entry" : true) || monthPlaying? false : true);
   
   async function queueAndPlaySongs() {
-    if (selectedMonth) {
-      // Filter for selected month's songs.
-      const monthSongs = entriesByDate.filter((entry) => {
-        const dateParts = getDateParts(entry.date);
-        const entryMonth = dateParts[1];
+    // Filter for selected month's songs.
+    const monthSongs = entriesByDate.filter((entry) => {
+      const dateParts = getDateParts(entry.date);
+      const entryMonth = dateParts[1];
 
-        return (entryMonth === selectedMonth.getMonth() + 1) && entry.songSelection;
-      });
+      return (entryMonth === selectedMonth!.getMonth() + 1) && entry.songSelection;
+    });
 
-      const monthSongUris = monthSongs.map((entry) => entry.songSelection!.uri);
-
-      if (monthSongUris.length === 0) {
-        setErrorMsg(`You have no songs for ${getMonthName(selectedMonth.getMonth() + 1)}.`);
-        setIsPlayingDisabled(true);
-        return;
-      }
-
-      if (musicPlayer) {
-        await musicPlayer.queueAndPlaySongs(monthSongUris);
-        setIsPlayingDisabled(false);
-      }
+    const monthSongUris = monthSongs.map((entry) => entry.songSelection!.uri);
+    
+    if (monthSongUris.length === 0) {
+      setErrorMsg(`You have no songs for ${getMonthName(selectedMonth!.getMonth() + 1)} ${selectedMonth!.getFullYear()}.`);
+      setIsPlayingDisabled(true);
+      return;
     }
+
+    // Get and save the song URIs and their associated entry dates.
+    const monthSongsAndDates = monthSongs.map((entry) => ({songUri: entry.songSelection!.uri, date: entry.date}));
+    setQueuedSongsAndDates(monthSongsAndDates);
+
+    await musicPlayer!.queueAndPlaySongs(monthSongUris, 0);
+    setIsPlayingDisabled(false);
   }
 
+  // let currSongEntryDate = ""
 
 
+
+
+
+  // CHECKPT: this don't work.
+
+
+  // Determine which entry the song being played is from.
+  useEffect(() => {
+    const getSongEntryDate = async () => {
+      if (musicPlayer?.playerModeRef.current === "calendar" && queuedSongsAndDates) {
+        try {
+          const songPosition = await musicPlayer.determineSongPosition();
+          // console.log("pos", songPosition)
+          if (typeof songPosition === "number") {
+            const currDate = queuedSongsAndDates? queuedSongsAndDates[songPosition].date : "";
+            const [year, month, day] = getDateParts(currDate);
+            setCurrSongEntryDate(`${month}/${day}/${year}`);
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    };
+
+    getSongEntryDate();
+  }, [musicPlayer])
 
   // INDICATE WHICH ENTRY THE SONG IS FROM SOMEHOW
 
@@ -63,8 +98,11 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
   // make this initially null so that it doesn't show the song from Spotify that the user was previously playing prior to using this app.
 
   useEffect(() => {
-    if (musicPlayer) {
-      setCurrSong(musicPlayer.currentSong ?? null);
+    // 
+    if (musicPlayer && monthPlaying) {
+      if (musicPlayer.playerModeRef.current === "calendar") {
+        setCurrSong(musicPlayer.currentSong ?? null);
+      }
     }
   }, [musicPlayer?.currentSong])
 
@@ -100,7 +138,27 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
         <button 
           disabled={selectedMonth? false : true}
           onClick={async () => {
-            await queueAndPlaySongs();
+            if (selectedMonth) {
+              setMonthPlaying(selectedMonth);
+              
+              // Switch to calendar player context and pause the entry player.
+              if (musicPlayer.playerModeRef.current === "calendar") {
+                musicPlayer.previouslyPlayedModeRef.current = "calendar";
+              } else {
+                musicPlayer.previouslyPlayedModeRef.current = "entry";
+              }
+
+              musicPlayer.playerModeRef.current = "calendar";
+              musicPlayer.setIsPlaying(false);
+              musicPlayer.resetProgress("entry");
+
+              // musicPlayer.setCurrentContext(null);
+
+              // Reset any error ("no songs this month") messages.
+              setErrorMsg("");
+
+              await queueAndPlaySongs();
+            }
           }}>
           START
         </button> : 
@@ -130,28 +188,62 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
         <div className="flex flex-col gap-1 pt-1 text-sm">
           <p>{currSong?.name}</p>
           <p className="text-gray-500">{currSongArtists}</p>
+          {currSongEntryDate && <p>from {currSongEntryDate} entry</p>}
         </div>
       </div>
 
-      <div className="flex justify-center">
-        {(musicPlayer?.isReady && !(musicPlayer?.isLoadingSong)) ?
+      <div className="flex justify-center items-center gap-4">
+        {(musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal)) ?
           // Play/Pause Button
-          (<button
-            className="p-1 hover:cursor-pointer hover:opacity-80"
-            disabled={isPlayingDisabled}
-            onClick={async () => {
-              await musicPlayer.togglePlayGlobal();
-            }}
-          >
-            {musicPlayer!.isPlaying ? <Pause fill="black" /> : <Play fill="black" />}
-          </button>) :
+          (<>
+            <button 
+              className="p-1 hover:cursor-pointer hover:opacity-80 disabled:hover:opacity-100"
+              disabled={isPlayingDisabled}
+              onClick={() => musicPlayer.prevSong()}
+            >
+              <SkipBack fill="black" />
+            </button>
+          
+            <button
+              className="p-1 hover:cursor-pointer hover:opacity-80 disabled:hover:opacity-100"
+              disabled={isPlayingDisabled}
+              onClick={async () => {
+                // only if the play/pause button is not disabled
+                if (!isPlayingDisabled) { 
+                  if (musicPlayer.playerModeRef.current === "calendar") {
+                    musicPlayer.previouslyPlayedModeRef.current ="calendar";
+                  } else {
+                    musicPlayer.previouslyPlayedModeRef.current ="entry";
+                  }
+                  musicPlayer.playerModeRef.current = "calendar";
+                  musicPlayer.resetProgress("entry");
+
+                  const monthSongUris = queuedSongsAndDates?.map((songAndDate) => songAndDate.songUri);
+                  await musicPlayer.togglePlayGlobal(monthSongUris!); // add currSongPos param
+                  // musicPlayer.setCurrentContext(null);
+                }
+              }}
+            >
+              {musicPlayer!.isPlayingGlobal ? <Pause fill="black" /> : <Play fill="black" />}
+            </button>
+            
+            <button 
+              className="p-1 hover:cursor-pointer hover:opacity-80 disabled:hover:opacity-100"
+              disabled={isPlayingDisabled}
+              onClick={() => musicPlayer.nextSong()}
+            >
+              <SkipForward fill="black" />
+            </button>
+          </>) :
           (<ColorRing colors={["#25c21d", "#25c21d", "#25c21d", "#25c21d", "#25c21d"]} height={42} />)
         }
       </div>
 
       <ProgressBar
-        progress={musicPlayer!.progress}
+        progress={musicPlayer!.progressGlobal}
         songDuration={currSong ? currSong.duration_ms : 1}
+        playerType="calendar"
+        isDisabled={monthPlaying? false : true}
       ></ProgressBar>
       
       {/* Volume Bar */}

@@ -33,7 +33,7 @@ function Entry() {
 
   const [unsavedSongSelectionWasChanged, setUnsavedSongSelectionWasChanged] = useState(false);
 
-  console.log("This entry's song selection is", songSelection?.title);
+  // console.log("This entry's song selection is", songSelection?.title);
 
   // Determine what buttons will be rendered for the entry based on if it's in Edit mode or not.
   let buttonsRow;
@@ -85,7 +85,7 @@ function Entry() {
             if (musicPlayer) {
               if (songSelectionBeforeEdit?.uri !== musicPlayer.currentContext?.uri) {
                 await musicPlayer.pause();
-                await musicPlayer.resetProgress();
+                await musicPlayer.resetProgress("entry");
               }
             }
           }}>
@@ -137,7 +137,7 @@ function Entry() {
       const cleanup = async () => {
         if(musicPlayer) {
           // Reset on unmount so the reset of the progress bar is not seen by the user while leaving the page.
-          await musicPlayer.resetProgress();
+          await musicPlayer.resetProgress("entry");
           await musicPlayer.pause();
         }
       }

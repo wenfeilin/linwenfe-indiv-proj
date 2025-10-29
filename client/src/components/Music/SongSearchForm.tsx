@@ -143,10 +143,14 @@ function SongSearchForm({
 
                         // Immediately queue up and play the song clicked on.
                         if (musicPlayer) {
+                          musicPlayer.previouslyPlayedModeRef.current = musicPlayer.playerModeRef.current;
+                          musicPlayer.playerModeRef.current = "entry";
+                          musicPlayer.resetProgress("calendar");
+
                           // Pass the track in b/c state doesn't update immediately but still need to update state for later references to it in togglePlay.
-                          musicPlayer.resetProgress(); // Always reset the progress when a song is clicked on.
+                          musicPlayer.resetProgress("entry"); // Always reset the progress when a song is clicked on.
                           await musicPlayer.togglePlay(clickedSong, null);
-                          musicPlayer?.setTrackToPlay(clickedSong);
+                          musicPlayer.setTrackToPlay(clickedSong);
                           // Need this for the player to look visually paused immediately.
                           musicPlayer.setIsPlaying(true);
                         }
@@ -212,7 +216,7 @@ function SongSearchForm({
                                 if (songToPlay?.uri !== selectedSong.uri) {
                                   console.log("2");
                                   await musicPlayer.pause();
-                                  await musicPlayer?.resetProgress();
+                                  await musicPlayer?.resetProgress("entry");
                                 }
                               }
                             } else {
@@ -223,7 +227,7 @@ function SongSearchForm({
                               if (songToPlay?.uri !== selectedSong.uri) {
                                 console.log("4");
                                 await musicPlayer.pause();
-                                await musicPlayer?.resetProgress();
+                                await musicPlayer?.resetProgress("entry");
                               }
                             }
                           }

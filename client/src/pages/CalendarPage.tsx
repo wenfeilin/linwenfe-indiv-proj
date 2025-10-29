@@ -17,8 +17,6 @@ function CalendarPage() {
       <div className="w-full md:flex lg:col-start-2 lg:h-full ">
         <Calendar setIsCalendarLoading={setIsCalendarLoading} containerStyles="mb-4 lg:mb-0"></Calendar>
       </div>
-      
-      <GlobalSpotifyPlayer containerStyles="order-last col-start-2" />
     </div>
   );
 }

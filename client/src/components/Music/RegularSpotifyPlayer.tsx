@@ -4,6 +4,7 @@ import ProgressBar from "./ProgressBar";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 import { ColorRing } from "react-loader-spinner";
 import VolumeBar from "./VolumeBar";
+import { useState } from "react";
 
 function RegularSpotifyPlayer({
   songSelection,
@@ -32,6 +33,8 @@ function RegularSpotifyPlayer({
   // IDK if this is the best place to check this; maybe it should be higher up  (in the component tree, like when the musicPlayer is loaded) idk
   // Check the pointer type (coarse = touch input)
   const onMobileDevice = window.matchMedia("(pointer: coarse").matches;
+
+  // console.log(musicPlayer?.progress);
 
   return (
     <div className="mb-1 flex flex-col gap-6 rounded-lg border-2 p-2 pb-4">
@@ -67,11 +70,19 @@ function RegularSpotifyPlayer({
             className="p-1 hover:cursor-pointer hover:opacity-80"
             disabled={!(musicPlayer?.isReady)}
             onClick={async () => {
-              if (musicPlayer) {
-                console.log("Currently playing", songSelection);
-
-                await musicPlayer.togglePlay();
+              // Switch to entry player context and pause the calendar player.
+              if (musicPlayer.playerModeRef.current === "calendar") {
+                musicPlayer.previouslyPlayedModeRef.current = "calendar";
+              } else {
+                musicPlayer.previouslyPlayedModeRef.current = "entry";
               }
+
+              console.log("mode before play", musicPlayer.previouslyPlayedModeRef.current)
+              musicPlayer.playerModeRef.current = "entry";
+              musicPlayer.setIsPlayingGlobal(false);
+              musicPlayer.resetProgress("calendar");
+            
+              await musicPlayer.togglePlay();
             }}
           >
             {musicPlayer!.isPlaying ? <Pause fill="black" /> : <Play fill="black" />}
@@ -83,6 +94,8 @@ function RegularSpotifyPlayer({
       <ProgressBar
         progress={musicPlayer!.progress}
         songDuration={songSelection ? songSelection.durationMS : 1}
+        playerType="entry"
+        isDisabled={false}
       ></ProgressBar>
       
       {/* Volume Bar */}

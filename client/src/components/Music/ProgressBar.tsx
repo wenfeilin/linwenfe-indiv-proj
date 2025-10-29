@@ -1,6 +1,6 @@
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 
-function ProgressBar({progress, songDuration}:{progress: number, songDuration: number}) {
+function ProgressBar({progress, songDuration, playerType, isDisabled}:{progress: number, songDuration: number, playerType: "entry" | "calendar", isDisabled: boolean}) {
   // const progressPercentage = (progress / songDuration) * 100;
   
   const progressDurationInSeconds = progress / 1000;
@@ -32,7 +32,11 @@ function ProgressBar({progress, songDuration}:{progress: number, songDuration: n
   // Mouse down on the range input = started scrubbing.
   function handleMouseDown() {
     if (musicPlayer) {
-      musicPlayer.isScrubbingProgress.current = true;
+      if (playerType === "entry") {
+        musicPlayer.isScrubbingProgress.current = true;
+      } else {
+        musicPlayer.isScrubbingProgressGlobal.current = true;
+      }
     }
   }
 
@@ -41,18 +45,35 @@ function ProgressBar({progress, songDuration}:{progress: number, songDuration: n
     const newTime = +event.target.value;
 
     if (musicPlayer) {
-      // Update the progress time of the song.
-      musicPlayer.setProgress(newTime);
+      if (musicPlayer.playerModeRef.current === "entry") {
+        // Update the progress time of the song for the entry player.
+        musicPlayer.setProgress(newTime);
+      } else {
+        // Update the progress time of the song for the calendar player.
+        musicPlayer.setProgressGlobal(newTime);
+      }
     }
   }
+
+
+  // THE SEEK FXN MAY OR MAY NOT CAUSE PROBLEMS; I WANT TO SAVE THE VISUAL PROGRESS OF THE PLAYER!!
+
+
 
   // Mouse up = stopped scrubbing.
   function handleMouseUp () {
     if (musicPlayer) {
-      musicPlayer.isScrubbingProgress.current = false;
-      // Seek to this new position after scrubbing.
       const timeToSeekTo = progress;
-      musicPlayer.seek(timeToSeekTo);
+      
+      if (musicPlayer.playerModeRef.current === "entry") {
+        musicPlayer.isScrubbingProgress.current = false;
+        // Seek to this new position after scrubbing.
+        musicPlayer.seek(timeToSeekTo, "entry");
+      } else {
+        musicPlayer.isScrubbingProgressGlobal.current = false;
+        // Seek to this new position after scrubbing.
+        musicPlayer.seek(timeToSeekTo, "calendar");
+      }
     }
   }
 
@@ -71,6 +92,7 @@ function ProgressBar({progress, songDuration}:{progress: number, songDuration: n
       onMouseUp={handleMouseUp} // for mouse (desktop/latop)
       onTouchStart={handleMouseDown} // for touchscreen (mobile devices)
       onTouchEnd={handleMouseUp} // for touchscreen (mobile devices)
+      disabled={isDisabled}
       />
 
       {/* <div className="flex-1 border-1 rounded-lg h-2">

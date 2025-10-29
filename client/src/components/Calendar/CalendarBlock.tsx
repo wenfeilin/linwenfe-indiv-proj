@@ -1,6 +1,6 @@
 import { useParams, Link, useLocation } from "react-router";
 import { useEntries } from "../../contexts/EntriesContext";
-import { Flower2 } from "lucide-react";
+import { Flower2, Music } from "lucide-react";
 
 function CalendarBlock({ blockDate }: { blockDate: Date }) {
   // Use date prop to find proper entry's song selection to render (and figure out if it is filled
@@ -37,6 +37,9 @@ function CalendarBlock({ blockDate }: { blockDate: Date }) {
   );
   const hasEntry = blockEntry ? true : false;
 
+  // Visually indicate if the entry has a song selection.
+  const hasSongSelection = blockEntry ? (blockEntry.songSelection ? true : false)  : false;
+
   return (
     // Clicking on it should link to the entry view of the entry associated w/ the date.
     <Link
@@ -60,7 +63,11 @@ function CalendarBlock({ blockDate }: { blockDate: Date }) {
 
         {/* Make every block have the icon so that even the gray ones at the end of the calendar have the same height as the other calendar blocks. */}
         <div className="row-start-2 flex justify-center items-center md:flex-col">
-          <Flower2 className={`w-4.5 h-auto md:w-6 lg:w-1/5 xl:w-1/6 fill-rose-200 stroke-pink-600 ${hasEntry && isInCurrMonth? "" : "invisible"}`} strokeWidth={1.75} />
+          {/* <div className="relative lg:w-full "> */}
+            <Flower2 className={`w-4.5 h-auto md:w-6 lg:w-1/5 xl:w-1/6 fill-rose-200 stroke-pink-600 ${hasEntry && isInCurrMonth? "" : "invisible"}`} strokeWidth={1.75} />
+
+            {/* <Music className={`w-3 h-auto md:w-4 lg:w-1/5 xl:w-1/6 stroke-purple-500 absolute -top-3.25 left-1/2 -translate-x-1/2 md:-top-3.75 md:translate-x-0 md:left-4.75 md:rotate-1  ${hasSongSelection && isInCurrMonth? "" : "invisible"}`} strokeWidth={2} /> */}
+          {/* </div> */}
         </div>
       </div>
     </Link>

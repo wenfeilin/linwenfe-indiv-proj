@@ -113,7 +113,7 @@ function SaveButton({
 
             if ((newSongSelectionUri === prevSavedSongSelectionUri && prevSavedSongSelectionUri !== currentlyPlayingSongUri) || newSongSelectionUri !== currentlyPlayingSongUri) {
               await musicPlayer.pause();
-              await musicPlayer.resetProgress();
+              await musicPlayer.resetProgress("entry");
             }
           }
 

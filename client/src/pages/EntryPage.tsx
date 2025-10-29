@@ -35,8 +35,6 @@ function EntryPage() {
       <div className="flex flex-1 flex-col items-center">
         <Entry></Entry>
       </div>
-
-      <GlobalSpotifyPlayer containerStyles="order-last col-start-2" />
     </div>
   );
 }
