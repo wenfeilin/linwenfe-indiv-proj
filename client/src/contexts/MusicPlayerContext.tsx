@@ -267,12 +267,28 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
 
     return null;
   }
+  
+
+  const prevSongUriRef = useRef<string | null>(null);
+  const songPositionRef = useRef(-1); // reset to -1 again when START is pressed (new playlist queued)
+  const prevOrNextPressed = useRef(false);
 
   async function prevSong() {
     if (playerRef.current) {
       resetProgress("calendar");
       await playerRef.current.previousTrack();
       setIsPlayingGlobal(true);
+
+      prevOrNextPressed.current = true;
+
+      if (songPositionRef.current === 0) {
+        await resetActualProgress();
+      }
+
+      if (songPositionRef.current > 0) {
+        songPositionRef.current = songPositionRef.current - 2;
+      } 
+      
     }
   }
 
@@ -281,7 +297,36 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
       resetProgress("calendar");
       await playerRef.current.nextTrack();
       setIsPlayingGlobal(true);
+
+      // const state = await playerRef.current.getCurrentState();
+      // prevSongUriRef.current = state!.track_window.current_track.uri;
+
     }
+  }
+  
+  if (playerRef.current) {
+    playerRef.current.addListener('player_state_changed', ({
+      position,
+      /*duration,*/
+      track_window: { current_track }
+    }) => {
+      // console.log('Currently Playing', current_track.name);
+      // console.log('Position in Song', position);
+      // console.log('Duration of Song', duration);
+      
+      if (isPlayingGlobal && (current_track.uri !== prevSongUriRef.current)) {
+        prevSongUriRef.current = current_track.uri;
+
+        if (songPositionRef.current == /*totalSongs*/12 - 1) {
+          songPositionRef.current = 0;
+        } else {
+          songPositionRef.current++;
+        }
+      }
+      
+      console.log(songPositionRef.current);
+    });
+
   }
 
   // Index (0-based)
@@ -301,7 +346,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
 
     return null; // ? or undefined?
   }
-
+  
   /***************************
    * Shared Player Functions *
    ***************************/
@@ -372,6 +417,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
       }
     }
   }
+
   
 
 
