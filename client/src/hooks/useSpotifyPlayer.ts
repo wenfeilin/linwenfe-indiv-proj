@@ -81,6 +81,21 @@ function useSpotifyPlayer() {
             setIsReady(true)
 
             // console.log("Playback has been transferred!");
+
+            // Reset the player context in case the user was playing something on Spotify prior to this connect.
+            const play_song_req_body = {
+              device_id: deviceId,
+              uris: [],
+            };
+
+            await fetch(`${apiUrl}/player/play`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(play_song_req_body),
+              credentials: "include",
+            });
           } catch (err) {
             console.log(err);
           }
@@ -93,6 +108,10 @@ function useSpotifyPlayer() {
           console.log("Device ID has gone offline ", device_id);
         },
       );
+
+
+      // Add a listener to see if the player is active (for my website); if not, switch from the user's to my website's whenever my website is focused??
+
 
       player.addListener("player_state_changed", (state) => {
         setCurrentSong(state? state.track_window.current_track : null);

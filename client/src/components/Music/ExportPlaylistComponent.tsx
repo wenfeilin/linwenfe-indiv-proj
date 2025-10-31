@@ -101,16 +101,18 @@ function ExportPlaylistComponent({ containerStyles = ""}: StyleProps) {
         <div className="w-auto flex flex-col text-center gap-2 lg:w-3/4">
           <div className="flex flex-col gap-1 mb-1 text-[15px] md:text-base ">
             {/* Date Picker */}
-            <DatePicker
-              className="rounded border-2 text-center inline-block lg:w-full"
-              selected={selectedMonth}
-              dateFormat="MMM yyyy"
-              showMonthYearPicker
-              popperPlacement="left-start"
-              popperClassName=""
+            <div className="">
+              <DatePicker
+                className="rounded border-2 text-center inline-block lg:w-full"
+                selected={selectedMonth}
+                dateFormat="MMM yyyy"
+                showMonthYearPicker
+                popperPlacement="left-start"
+                popperClassName=""
               
-              onChange={(date) => setSelectedMonth(date)}
-            ></DatePicker>
+                onChange={(date) => setSelectedMonth(date)}
+              ></DatePicker>
+            </div>
             
             <div className="flex justify-center lg:items-center lg:gap-1 lg:flex-wrap xl:flex-nowrap">
               {/* Export Button */}

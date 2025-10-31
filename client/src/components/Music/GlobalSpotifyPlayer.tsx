@@ -22,7 +22,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
 
   const [currSong, setCurrSong] = useState<Spotify.Track | null>(null);
   // For if songs were queued properly.
-  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("Pick a month to play from");
 
   const [currSongEntryDate, setCurrSongEntryDate] = useState<string | null>(null);
   const [queuedSongsAndDates, setQueuedSongsAndDates] = useState<SongsAndDates | null>(null);
@@ -45,7 +45,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
     const monthSongUris = monthSongs.map((entry) => entry.songSelection!.uri);
     
     if (monthSongUris.length === 0) {
-      setErrorMsg(`You have no songs for ${getMonthName(selectedMonth!.getMonth() + 1)} ${selectedMonth!.getFullYear()}.`);
+      setSuccessMsg(`No songs for ${getMonthName(selectedMonth!.getMonth() + 1)?.substring(0, 3)} ${selectedMonth!.getFullYear()}`);
       setIsPlayingDisabled(true);
       return;
     }
@@ -55,10 +55,12 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
     setQueuedSongsAndDates(monthSongsAndDates);
 
     await musicPlayer!.queueAndPlaySongs(monthSongUris, 0);
+    setSuccessMsg(`Now playing ${getMonthName(selectedMonth!.getMonth() + 1)?.substring(0, 3)} ${selectedMonth!.getFullYear()}`);
     setIsPlayingDisabled(false);
   }
 
   // let currSongEntryDate = ""
+  const isUnplayableMonth = successMsg.includes("Pick") || successMsg.includes("No songs");
 
 
 
@@ -120,98 +122,106 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
 
   // Check the pointer type (coarse = touch input)
   const onMobileDevice = window.matchMedia("(pointer: coarse").matches;
+
+  const playBtnStyles = "p-1 border-2 rounded hover:cursor-pointer hover:opacity-80 disabled:hover:cursor-default disabled:hover:opacity-100"
   
   return (
-    <div className={`${containerStyles}`}>
-      <DatePicker
-        className="rounded border-2 text-center inline-block lg:w-full"
-        selected={selectedMonth}
-        dateFormat="MMM yyyy"
-        showMonthYearPicker
-        popperPlacement="bottom"
-        popperClassName=""
-        
-        onChange={(date) => setSelectedMonth(date)}
-      ></DatePicker>
-
-      {musicPlayer?.isReady? 
-        <button 
-          disabled={selectedMonth? false : true}
-          onClick={async () => {
-            if (selectedMonth) {
-              setMonthPlaying(selectedMonth);
-              
-              // Switch to calendar player context (and pause the entry player).
-              musicPlayer.updatePlayerState("calendar");
-              // if (musicPlayer.playerModeRef.current === "calendar") {
-              //   musicPlayer.previouslyPlayedModeRef.current = "calendar";
-              // } else {
-              //   musicPlayer.previouslyPlayedModeRef.current = "entry";
-              // }
-
-              // musicPlayer.playerModeRef.current = "calendar";
-              // musicPlayer.setIsPlaying(false);
-              // musicPlayer.resetProgress("entry");
-
-              // musicPlayer.setCurrentContext(null);
-
-              // Reset any error ("no songs this month") messages.
-              setErrorMsg("");
-
-              await queueAndPlaySongs();
-            }
-          }}>
-          START
-        </button> : 
-        <ColorRing colors={["#25c21d", "#25c21d", "#25c21d", "#25c21d", "#25c21d"]} height={42} />}
-
-      {errorMsg && <p>{errorMsg}</p>}
-
-      <div className="flex gap-2">
-        {/* Album Cover */}
-        {
-          // FIX THIS EMPTY DIV SIZING WHEN THERE IS NO SONG SELECTED/PRESSED FOR PLAYING
-
+    <>
+      <div className={`${containerStyles} border-2 rounded-lg p-3`}>
+        <div className="flex mb-2 justify-between">
+          <div className="flex gap-2 items-center min-h-fit">
+            {/* Date Picker */}
+            <div className="">
+              <DatePicker
+                className="rounded border-2 text-center w-28"
+                selected={selectedMonth}
+                dateFormat="MMM yyyy"
+                showMonthYearPicker
+                popperPlacement="top-start"
+                popperClassName=""
+      
+                onChange={(date) => setSelectedMonth(date)}
+                ></DatePicker>
+            </div>
+      
+            {/* START button */}
+            <button
+            className="bg-green-600 px-4 py-0.75 rounded font-bold text-white disabled:text-gray-300  disabled:bg-gray-600 disabled:opacity-65"
+            disabled={musicPlayer?.isReady && selectedMonth? false : true}
+            onClick={async () => {
+              if (selectedMonth) {
+                setMonthPlaying(selectedMonth);
+      
+                // Switch to calendar player context (and pause the entry player).
+                musicPlayer!.updatePlayerState("calendar");
+                // if (musicPlayer.playerModeRef.current === "calendar") {
+                  //   musicPlayer.previouslyPlayedModeRef.current = "calendar";
+                  // } else {
+                    //   musicPlayer.previouslyPlayedModeRef.current = "entry";
+                    // }
+                    // musicPlayer.playerModeRef.current = "calendar";
+                    // musicPlayer.setIsPlaying(false);
+                    // musicPlayer.resetProgress("entry");
+                    // musicPlayer.setCurrentContext(null);
+                    // Reset any error ("no songs this month") messages.
+                    setSuccessMsg("");
+                    await queueAndPlaySongs();
+                  }
+                }}>
+              START
+            </button>
+          </div>
+          <div className="bg-gray-800 text-green-500 border-black text-sm border-2 rounded w-44 md:w-50 flex items-center justify-end pr-3">
+            <p className="">{successMsg}</p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          {/* Album Cover */}
           <div
-            className={`h-20 w-1/2 rounded border-2 ${!currSong && "bg-gray-100"}`}
+          className={`h-21 w-21 rounded border-2 flex-shrink-0 ${!currSong && "bg-gray-100"}`}
           >
             {currSong && (
               <img
-                src={currSong?.album.images[2].url} // I hope there is an image here.
-                alt={`Cover of the album ${currSong?.album}`}
-                className="rounded border-2 border-transparent"
+              src={currSong?.album.images[2].url} // I hope there is an image here.
+              alt={`Cover of the album ${currSong?.album}`}
+              className="rounded border-2 border-transparent"
               ></img>
             )}
           </div>
-        }
-
-        {/* Song Info */}
-        <div className="flex flex-col gap-1 pt-1 text-sm">
-          <p>{currSong?.name}</p>
-          <p className="text-gray-500">{currSongArtists}</p>
-          {currSongEntryDate && <p>from {currSongEntryDate} entry</p>}
-        </div>
-      </div>
-
-      <div className="flex justify-center items-center gap-4">
-        {(musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal)) ?
-          // Play/Pause Button
-          (<>
-            <button 
-              className="p-1 hover:cursor-pointer hover:opacity-80 disabled:hover:opacity-100"
-              disabled={isPlayingDisabled}
-              onClick={() => musicPlayer.prevSong()}
-            >
-              <SkipBack fill="black" />
-            </button>
-          
+      
+          <div className={`flex-1 min-w-0`}>
+            {/* Song Info */}
+            <div className="h-1/2 flex flex-col pt-1 text-sm flex-shrink-1 md:gap-1">
+              <p className="truncate flex-shrink-1">{currSong?.name}</p>
+              <p className="text-gray-500 truncate">{currSongArtists}</p>
+              {/* {currSongEntryDate && <p>from {currSongEntryDate} entry</p>} */}
+            </div>
+      
+            <ProgressBar
+              progress={musicPlayer!.progressGlobal}
+              songDuration={currSong ? currSong.duration_ms : 1}
+              playerType="calendar"
+              isDisabled={isUnplayableMonth}
+            ></ProgressBar>
+      
+            {/* Volume Bar */}
+            {/* According to Spotify Web Playback SDK, mobile devices must control the volume through hardware, so don't render the volume bar! */}
+            {!onMobileDevice &&
+              <VolumeBar
+                volume={musicPlayer!.volume}
+              ></VolumeBar>
+            }
+          </div>
+          {/* Playing Buttons */}
+          <div className="flex flex-col gap-2">
+            {/* Play/Pause Button */}
             <button
-              className="p-1 hover:cursor-pointer hover:opacity-80 disabled:hover:opacity-100"
-              disabled={isPlayingDisabled}
+              className={`${playBtnStyles} flex justify-center`}
+              disabled={musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled}
               onClick={async () => {
                 // only if the play/pause button is not disabled
-                if (!isPlayingDisabled) { 
-                  musicPlayer.updatePlayerState("calendar");
+                if (!isPlayingDisabled) {
+                  musicPlayer!.updatePlayerState("calendar");
                   // if (musicPlayer.playerModeRef.current === "calendar") {
                   //   musicPlayer.previouslyPlayedModeRef.current ="calendar";
                   // } else {
@@ -220,44 +230,47 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
                   // musicPlayer.playerModeRef.current = "calendar";
                   // musicPlayer.setIsPlaying(false);
                   // musicPlayer.resetProgress("entry");
-
                   const monthSongUris = queuedSongsAndDates?.map((songAndDate) => songAndDate.songUri);
-                  await musicPlayer.togglePlayGlobal(monthSongUris!); // add currSongPos param
+                  await musicPlayer!.togglePlayGlobal(monthSongUris!); // add currSongPos param
                   // musicPlayer.setCurrentContext(null);
                 }
               }}
             >
               {musicPlayer!.isPlayingGlobal ? <Pause fill="black" /> : <Play fill="black" />}
             </button>
-            
-            <button 
-              className="p-1 hover:cursor-pointer hover:opacity-80 disabled:hover:opacity-100"
-              disabled={isPlayingDisabled}
-              onClick={() => musicPlayer.nextSong()}
-            >
-              <SkipForward fill="black" />
-            </button>
-          </>) :
-          (<ColorRing colors={["#25c21d", "#25c21d", "#25c21d", "#25c21d", "#25c21d"]} height={42} />)
-        }
+      
+            <div className="flex gap-1">
+              {/* Skip Backward button */}
+              <button
+                className={`${playBtnStyles}`}
+                disabled={musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled}
+                onClick={() => musicPlayer!.prevSong()}
+              >
+                <SkipBack fill="black" />
+              </button>
+              {/* Skip Forward button */}
+              <button
+                className={`${playBtnStyles}`}
+                disabled={musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled}
+                onClick={() => musicPlayer!.nextSong()}
+              >
+                <SkipForward fill="black" />
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <ProgressBar
-        progress={musicPlayer!.progressGlobal}
-        songDuration={currSong ? currSong.duration_ms : 1}
-        playerType="calendar"
-        isDisabled={monthPlaying? false : true}
-      ></ProgressBar>
-      
-      {/* Volume Bar */}
-      {/* According to Spotify Web Playback SDK, mobile devices must control the volume through hardware, so don't render the volume bar! */}
-      {!onMobileDevice && 
-        <VolumeBar
-          volume={musicPlayer!.volume}
-        ></VolumeBar>
-      }
+      {/* The legs of the music player */}
+      <div className="flex justify-between px-5">
+        <div className="w-14 h-2 bg-yellow-900 rounded-b-xs">
+        </div>
 
-    </div>
+        <div className="w-14 h-2 bg-yellow-900 rounded-b-xs">
+        </div>
+      </div>
+    </>
+
   )
 }
 
