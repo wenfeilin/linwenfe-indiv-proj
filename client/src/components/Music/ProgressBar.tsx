@@ -77,6 +77,8 @@ function ProgressBar({progress, songDuration, playerType, isDisabled}:{progress:
     }
   }
 
+  console.log(progress);
+
   return(
     <div className="flex items-center gap-2">
       {/* Playing Timestamp */}

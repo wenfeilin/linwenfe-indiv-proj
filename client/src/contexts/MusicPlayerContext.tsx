@@ -13,7 +13,7 @@ type MusicPlayerContextType = {
   togglePlay: (song?: Song | null, context?: null) => Promise<void>;
   progress: number;
   setProgress: (progress: number) => void;
-  resetProgress: (playerType: PlayerType) => Promise<void>;
+  resetProgress: (playerType: PlayerType) => void;
   trackToPlay: Song | null;
   setTrackToPlay: (song: Song | null) => void;
   isLoadingSong: boolean;
@@ -40,6 +40,8 @@ type MusicPlayerContextType = {
   determineSongPosition: () => Promise<number | null>;
   setCurrentContext: (context: Song | null) => void;
   previouslyPlayedModeRef: RefObject<PlayerType | null>; 
+  updatePlayerState: (currMode: PlayerType) => Promise<void>;
+  resetActualProgress: () => Promise<void>;
 }
 
 type PlayerType = "calendar" | "entry";
@@ -71,6 +73,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   const isScrubbingProgress = useRef(false); // useRef so it doesn't trigger rerender; a flag to indicate if user is scrubbing so the progress can stop being updated while scrubbing is happening
   // The visual progress, which differs from the actual progress of the song, because it has to stay the same when a song is being resumed (being reloaded and seeking to the position it was last at) after switching from the calendar player.
   const [visualProgress, setVisualProgress] = useState<number>(progress); 
+  const isResettingRef = useRef(false); // for stopping the useInterval from updating the progress when resetting the entry player
   
   // For calendar music player:
   const [isPlayingGlobal, setIsPlayingGlobal] = useState(false);
@@ -79,6 +82,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   // Initially false because no song being loaded.
   const [isLoadingSongGlobal, setIsLoadingSongGlobal] = useState(false);
   const isScrubbingProgressGlobal = useRef(false); // useRef so it doesn't trigger rerender; a flag to indicate if user is scrubbing so the progress can stop being updated while scrubbing is happening (for the calendar player)
+  const isResettingGlobalRef = useRef(false); // for stopping the useInterval from updating the progress when resetting the entry player
 
   // Run once (on mount).
   // Note: Should prob move this to useSpotifyPlayer.ts as an unmount fxn since it has to do w/ disconnecting.
@@ -140,19 +144,19 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
         setIsPlaying(true);
         setIsLoadingSong(false);
 
-        console.log("am here 1")
+        // console.log("am here 1")
       } else if (songToPlay && context) {
         // For songs after the first play.
         
-        console.log("progress should not be 0:", progress)
-        console.log("prev played mode", previouslyPlayedModeRef)
-        console.log("is prev mode calendar", previouslyPlayedModeRef.current === "calendar")
-        console.log("is progress > 0", progress > 0)
+        // console.log("progress should not be 0:", progress)
+        // console.log("prev played mode", previouslyPlayedModeRef)
+        // console.log("is prev mode calendar", previouslyPlayedModeRef.current === "calendar")
+        // console.log("is progress > 0", progress > 0)
         
         // The user wants to resume/pause playing the same song.
         if (songToPlay.uri === context.uri && previouslyPlayedModeRef.current !== "calendar") {
-          console.log("am here 2")
-          console.log("context", context);
+          // console.log("am here 2")
+          // console.log("context", context);
           // Pause/resume music playing.
           await playerRef.current.togglePlay();
           setIsPlaying(!isPlaying);
@@ -205,8 +209,8 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
    ***************************/
   // currSongPos = where to start in the playlist
   async function togglePlayGlobal(monthSongUris: string[], currSongPos = 0) {
-    console.log("prev mode", previouslyPlayedModeRef.current);
-    console.log("curr mode", playerModeRef.current);
+    // console.log("prev mode", previouslyPlayedModeRef.current);
+    // console.log("curr mode", playerModeRef.current);
     if (playerRef.current) {
       // If switching from entry to calendar player, requeue the songs for the calendar player and start playing the song the calendar last played.
       if (previouslyPlayedModeRef.current === "entry") {
@@ -266,7 +270,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
 
   async function prevSong() {
     if (playerRef.current) {
-      await resetProgress("calendar");
+      resetProgress("calendar");
       await playerRef.current.previousTrack();
       setIsPlayingGlobal(true);
     }
@@ -274,7 +278,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
 
   async function nextSong() {
     if (playerRef.current) {
-      await resetProgress("calendar");
+      resetProgress("calendar");
       await playerRef.current.nextTrack();
       setIsPlayingGlobal(true);
     }
@@ -322,21 +326,19 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
       }
     }
   }
-
-
-
-  
-  
-  
   
   // Resets progress of music playing.
-  async function resetProgress(playerType: PlayerType) {
+  function resetProgress(playerType: PlayerType) {
     // Reset visual progress.
     if (playerType === "entry") {
+      isResettingRef.current = true;
       setProgress(0);
+      isResettingRef.current = false;
     } else {
       console.log("RESETTING");
+      isResettingGlobalRef.current = true;
       setProgressGlobal(0);
+      isResettingGlobalRef.current = false;
     }
     
     // Reset the actual progress of the song.
@@ -344,7 +346,32 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
       // THIS WAS THE CAUSE OF THE DAMNED BUG!! DO NOT UNCOMMENT. DELETE SOON PLS!!
       // await playerRef.current.seek(0);
     }
-  };
+  }
+
+  async function resetActualProgress() {
+    if (playerRef.current) {
+      await playerRef.current.seek(0);
+    }
+  }
+
+  async function updatePlayerState(currMode: PlayerType) {
+    // Save the previous mode that the player was in.
+    previouslyPlayedModeRef.current = playerModeRef.current;
+
+    // Update the current mode now that a change was made by the user. (User interacting with a player)
+    playerModeRef.current = currMode;
+
+    // Reset the other player's progress if needed (so it visually resets).
+    if (previouslyPlayedModeRef.current !== currMode) {
+      if (currMode === "entry") {
+        resetProgress("calendar");
+        setIsPlayingGlobal(false);
+      } else  {
+        resetProgress("entry");
+        setIsPlaying(false);
+      }
+    }
+  }
   
 
 
@@ -356,26 +383,27 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   // Update the progress of the song being played every second.
   useInterval(() => {
     if (playerModeRef.current === "entry") {
-      // Don't update the progress state while scrubbing is happening. (Otherwise, it'll be jumpy)
-      if (isScrubbingProgress.current) {
+      // Don't update the progress state while scrubbing is happening or while the entry player is resetting its (visual) progress. (Otherwise, it'll be jumpy)
+      if (isScrubbingProgress.current || isResettingRef.current) {
         return;
       }
-  
+      
       // Otherwise, update the progress.
       playerRef.current?.getCurrentState().then((state) => {
         setProgress(state!.position);
-  
+        
         // Stop playing once the song ends.
         if (state!.position === 0) {
           setIsPlaying(false);
         }
       })
     } else {
-      // Don't update the progress state while scrubbing is happening. (Otherwise, it'll be jumpy)
-      if (isScrubbingProgressGlobal.current) {
+      // Don't update the progress state while scrubbing is happening or while the calendar player is resetting its (visual) progress. (Otherwise, it'll be jumpy)
+      if (isScrubbingProgressGlobal.current || isResettingGlobalRef.current) {
+        console.log(isResettingGlobalRef.current)
         return;
       }
-  
+      
       // Otherwise, update the progress.
       playerRef.current?.getCurrentState().then((state) => {
         setProgressGlobal(state!.position);
@@ -390,7 +418,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
 
   // console.log("mode", playerMode);
 
-  const [volume, setVolume] = useState(1);
+  const [volume, setVolume] = useState(1); // Initial value of volume is 1 (out of 1).
 
   async function setPlayerVolume(newVolume: number) {
     if (playerRef.current) {
@@ -400,7 +428,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <MusicPlayerContext.Provider value={{playerRef, deviceId, isReady, /*currentTrack, setCurrentTrack,*/ isPlaying, setIsPlaying, togglePlay, progress, setProgress, resetProgress, trackToPlay, setTrackToPlay, isLoadingSong, pause, currentContext, seek, isScrubbingProgress, setPlayerVolume, volume, togglePlayGlobal, queueAndPlaySongs, getCurrSong, currentSong, playerModeRef, isPlayingGlobal, setIsPlayingGlobal, progressGlobal, setProgressGlobal, isLoadingSongGlobal, setIsLoadingSongGlobal, isScrubbingProgressGlobal, prevSong, nextSong, determineSongPosition, setCurrentContext, previouslyPlayedModeRef}}>
+    <MusicPlayerContext.Provider value={{playerRef, deviceId, isReady, /*currentTrack, setCurrentTrack,*/ isPlaying, setIsPlaying, togglePlay, progress, setProgress, resetProgress, trackToPlay, setTrackToPlay, isLoadingSong, pause, currentContext, seek, isScrubbingProgress, setPlayerVolume, volume, togglePlayGlobal, queueAndPlaySongs, getCurrSong, currentSong, playerModeRef, isPlayingGlobal, setIsPlayingGlobal, progressGlobal, setProgressGlobal, isLoadingSongGlobal, setIsLoadingSongGlobal, isScrubbingProgressGlobal, prevSong, nextSong, determineSongPosition, setCurrentContext, previouslyPlayedModeRef, updatePlayerState, resetActualProgress}}>
       { children }
     </MusicPlayerContext.Provider>
   )

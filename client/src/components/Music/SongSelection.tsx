@@ -89,7 +89,7 @@ function SongSelection({
   // On mount, ensure no music plays.
   useEffect(() => {
     const onMount = async () => {
-      if (musicPlayer) {
+      if (musicPlayer && musicPlayer.playerModeRef.current == "entry") {
         await musicPlayer.pause();
       }
     }

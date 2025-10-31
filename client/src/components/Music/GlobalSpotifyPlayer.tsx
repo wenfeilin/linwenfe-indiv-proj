@@ -141,16 +141,17 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
             if (selectedMonth) {
               setMonthPlaying(selectedMonth);
               
-              // Switch to calendar player context and pause the entry player.
-              if (musicPlayer.playerModeRef.current === "calendar") {
-                musicPlayer.previouslyPlayedModeRef.current = "calendar";
-              } else {
-                musicPlayer.previouslyPlayedModeRef.current = "entry";
-              }
+              // Switch to calendar player context (and pause the entry player).
+              musicPlayer.updatePlayerState("calendar");
+              // if (musicPlayer.playerModeRef.current === "calendar") {
+              //   musicPlayer.previouslyPlayedModeRef.current = "calendar";
+              // } else {
+              //   musicPlayer.previouslyPlayedModeRef.current = "entry";
+              // }
 
-              musicPlayer.playerModeRef.current = "calendar";
-              musicPlayer.setIsPlaying(false);
-              musicPlayer.resetProgress("entry");
+              // musicPlayer.playerModeRef.current = "calendar";
+              // musicPlayer.setIsPlaying(false);
+              // musicPlayer.resetProgress("entry");
 
               // musicPlayer.setCurrentContext(null);
 
@@ -210,14 +211,15 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
               onClick={async () => {
                 // only if the play/pause button is not disabled
                 if (!isPlayingDisabled) { 
-                  if (musicPlayer.playerModeRef.current === "calendar") {
-                    musicPlayer.previouslyPlayedModeRef.current ="calendar";
-                  } else {
-                    musicPlayer.previouslyPlayedModeRef.current ="entry";
-                  }
-                  musicPlayer.playerModeRef.current = "calendar";
-                  musicPlayer.setIsPlaying(false);
-                  musicPlayer.resetProgress("entry");
+                  musicPlayer.updatePlayerState("calendar");
+                  // if (musicPlayer.playerModeRef.current === "calendar") {
+                  //   musicPlayer.previouslyPlayedModeRef.current ="calendar";
+                  // } else {
+                  //   musicPlayer.previouslyPlayedModeRef.current ="entry";
+                  // }
+                  // musicPlayer.playerModeRef.current = "calendar";
+                  // musicPlayer.setIsPlaying(false);
+                  // musicPlayer.resetProgress("entry");
 
                   const monthSongUris = queuedSongsAndDates?.map((songAndDate) => songAndDate.songUri);
                   await musicPlayer.togglePlayGlobal(monthSongUris!); // add currSongPos param

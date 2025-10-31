@@ -81,11 +81,12 @@ function MiniSpotifyPlayer({
               (<button className="hover:cursor-pointer hover:opacity-80"
                 disabled={currentTrackToPlay? false : true}
                 onClick={async () => {
-                  // Switch to entry player context and pause the calendar player.
-                  musicPlayer.previouslyPlayedModeRef.current = musicPlayer.playerModeRef.current;
-                  musicPlayer.playerModeRef.current = "entry";
-                  musicPlayer.resetProgress("calendar");
-                  musicPlayer.setIsPlayingGlobal(false);
+                  // Switch to entry player context (and pause the calendar player).
+                  musicPlayer.updatePlayerState("entry");
+                  // musicPlayer.previouslyPlayedModeRef.current = musicPlayer.playerModeRef.current;
+                  // musicPlayer.playerModeRef.current = "entry";
+                  // musicPlayer.resetProgress("calendar");
+                  // musicPlayer.setIsPlayingGlobal(false);
                   
                   // Resume/pause song.
                   await musicPlayer.togglePlay();

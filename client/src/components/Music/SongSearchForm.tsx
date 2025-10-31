@@ -143,11 +143,14 @@ function SongSearchForm({
 
                         // Immediately queue up and play the song clicked on.
                         if (musicPlayer) {
-                          musicPlayer.previouslyPlayedModeRef.current = musicPlayer.playerModeRef.current;
-                          musicPlayer.playerModeRef.current = "entry";
-                          musicPlayer.resetProgress("calendar");
+                          // Switch context to entry.
+                          musicPlayer.updatePlayerState("entry");
+                          // musicPlayer.previouslyPlayedModeRef.current = musicPlayer.playerModeRef.current;
+                          // musicPlayer.playerModeRef.current = "entry";
+                          // musicPlayer.resetProgress("calendar");
 
                           // Pass the track in b/c state doesn't update immediately but still need to update state for later references to it in togglePlay.
+                          await musicPlayer.resetActualProgress();
                           musicPlayer.resetProgress("entry"); // Always reset the progress when a song is clicked on.
                           await musicPlayer.togglePlay(clickedSong, null);
                           musicPlayer.setTrackToPlay(clickedSong);
@@ -207,27 +210,29 @@ function SongSearchForm({
                           if (musicPlayer) {
                             // Given there is a song selection saved for the entry
                             if (savedSongSelection) {
-                              console.log("1");
-                              console.log("This should be true", unsavedSongSelectionWasChanged || isSongSelectionDiff);
+                              // console.log("1");
+                              // console.log("This should be true", unsavedSongSelectionWasChanged || isSongSelectionDiff);
 
                               // If the selected song is not the one that is currently saved or it is but was changed in between, pause the player and reset the progress so the song just selected can be loaded up again by the player.
                               if (selectedSong.uri !== savedSongSelection?.uri || (selectedSong.uri === savedSongSelection?.uri && (unsavedSongSelectionWasChanged || isSongSelectionDiff))) { /* RN IDEK WHAT MAKES THIS WORK AND WHAT DOESN'T. IT MAYBE BE THAT I DONT EVEN NEED "(selectedSong.uri === savedSongSelection?.uri && (unsavedSongSelectionWasChanged || isSongSelectionDiff))" THIS PART BUT I HAVE NO CLUE AND I DO NOT WANT TO MESS WITH IT AND BREAK IT B/C I DONT HAVE TESTS TO VERIFY ANYTHING AND THERE ARE TOO MANY SCENARIOS FOR ME TO REMEMBER TO RECREATE MANUALLY -- TEST AND TRY TAKING THAT PART OUT LATER */
-                                console.log("IT SHOULD BE IN HERE!");
+                                // console.log("IT SHOULD BE IN HERE!");
                                 if (songToPlay?.uri !== selectedSong.uri) {
-                                  console.log("2");
+                                  // console.log("2");
                                   await musicPlayer.pause();
-                                  await musicPlayer?.resetProgress("entry");
+                                  await musicPlayer.resetActualProgress();
+                                  musicPlayer.resetProgress("entry");
                                 }
                               }
                             } else {
                               // Given there isn't a song selection saved for the entry
-                              console.log("3");
+                              // console.log("3");
 
                               // If the song being played by the mini player is not the last (unsaved) selected song, pause the player and reset the progress so the song just selected can be loaded up by the player.
                               if (songToPlay?.uri !== selectedSong.uri) {
-                                console.log("4");
+                                // console.log("4");
                                 await musicPlayer.pause();
-                                await musicPlayer?.resetProgress("entry");
+                                await musicPlayer.resetActualProgress();
+                                musicPlayer.resetProgress("entry");
                               }
                             }
                           }
@@ -235,7 +240,7 @@ function SongSearchForm({
                           // console.log("is this what was set?", selectedSong.title);
                           // setSongToPlay(selectedSong);
 
-                          console.log(songTitle);
+                          // console.log(songTitle);
                           setIsSearching(false);
                         }}
                       >

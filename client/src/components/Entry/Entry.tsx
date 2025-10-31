@@ -85,7 +85,7 @@ function Entry() {
             if (musicPlayer) {
               if (songSelectionBeforeEdit?.uri !== musicPlayer.currentContext?.uri) {
                 await musicPlayer.pause();
-                await musicPlayer.resetProgress("entry");
+                musicPlayer.resetProgress("entry");
               }
             }
           }}>
@@ -135,9 +135,10 @@ function Entry() {
     // When the entry is unmounted, reset the visual and actual progress of music and pause music.
     return () => {
       const cleanup = async () => {
-        if(musicPlayer) {
+        if (musicPlayer && musicPlayer.playerModeRef.current === "entry") {
           // Reset on unmount so the reset of the progress bar is not seen by the user while leaving the page.
-          await musicPlayer.resetProgress("entry");
+          await musicPlayer.resetActualProgress();
+          musicPlayer.resetProgress("entry");
           await musicPlayer.pause();
         }
       }

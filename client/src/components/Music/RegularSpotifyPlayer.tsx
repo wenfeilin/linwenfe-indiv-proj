@@ -70,22 +70,23 @@ function RegularSpotifyPlayer({
             className="p-1 hover:cursor-pointer hover:opacity-80"
             disabled={!(musicPlayer?.isReady)}
             onClick={async () => {
-              // Switch to entry player context and pause the calendar player.
-              if (musicPlayer.playerModeRef.current === "calendar") {
-                musicPlayer.previouslyPlayedModeRef.current = "calendar";
-              } else {
-                musicPlayer.previouslyPlayedModeRef.current = "entry";
-              }
+              // Switch to entry player context (and pause the calendar player).
+              musicPlayer.updatePlayerState("entry");
+              // if (musicPlayer.playerModeRef.current === "calendar") {
+              //   musicPlayer.previouslyPlayedModeRef.current = "calendar";
+              // } else {
+              //   musicPlayer.previouslyPlayedModeRef.current = "entry";
+              // }
 
-              console.log("mode before play", musicPlayer.previouslyPlayedModeRef.current);
-              console.log("curr mode", musicPlayer.playerModeRef.current);
+              // console.log("mode before play", musicPlayer.previouslyPlayedModeRef.current);
+              // console.log("curr mode", musicPlayer.playerModeRef.current);
 
               
-              musicPlayer.playerModeRef.current = "entry";
-              console.log("curr mode", musicPlayer.playerModeRef.current);
+              // musicPlayer.playerModeRef.current = "entry";
+              // console.log("curr mode", musicPlayer.playerModeRef.current);
 
-              musicPlayer.setIsPlayingGlobal(false);
-              musicPlayer.resetProgress("calendar");
+              // musicPlayer.setIsPlayingGlobal(false);
+              // musicPlayer.resetProgress("calendar");
             
               await musicPlayer.togglePlay();
             }}
