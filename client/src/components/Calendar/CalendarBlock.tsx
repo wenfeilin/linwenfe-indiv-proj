@@ -54,8 +54,9 @@ function CalendarBlock({ blockDate }: { blockDate: Date }) {
     >
       <div
         data-testid="calendar-block"
-        className={`h-16 text-sm grid md:grid-rows-[1fr_auto_1fr] py-1 px-1.5 
-            md:h-full md:text-base md:py-0.5 md:pb-1 ${isInCurrMonth ? "bg-white text-gray-900 hover:bg-amber-200" : "bg-gray-500 text-gray-300 cursor-default"} ${isToday && "bg-yellow-300 hover:bg-yellow-400"}`}
+        className={`text-sm flex flex-col gap-5 py-2 px-1.5
+           md:text-base md:gap-3 md:py-0.5 md:pb-2
+          ${isInCurrMonth ? "bg-white text-gray-900 hover:bg-amber-200" : "bg-gray-500 text-gray-300 cursor-default"} ${isToday && "bg-yellow-300 hover:bg-yellow-400"}`}
       >
         <div data-testid="day-number" className={`inline-block row-start-1 text-center md:text-left`}>
           {blockDay}
@@ -63,11 +64,17 @@ function CalendarBlock({ blockDate }: { blockDate: Date }) {
 
         {/* Make every block have the icon so that even the gray ones at the end of the calendar have the same height as the other calendar blocks. */}
         <div className="row-start-2 flex justify-center items-center md:flex-col">
-          {/* <div className="relative lg:w-full "> */}
-            <Flower2 className={`w-4.5 h-auto md:w-6 lg:w-1/5 xl:w-1/6 fill-rose-200 stroke-pink-600 ${hasEntry && isInCurrMonth? "" : "invisible"}`} strokeWidth={1.75} />
+          <div className="relative 
+            lg:w-full lg:flex lg:justify-center">
 
-            {/* <Music className={`w-3 h-auto md:w-4 lg:w-1/5 xl:w-1/6 stroke-purple-500 absolute -top-3.25 left-1/2 -translate-x-1/2 md:-top-3.75 md:translate-x-0 md:left-4.75 md:rotate-1  ${hasSongSelection && isInCurrMonth? "" : "invisible"}`} strokeWidth={2} /> */}
-          {/* </div> */}
+            <Flower2 className={`w-5 h-auto lg:w-1/5 xl:w-1/6 fill-rose-200 stroke-pink-600 ${hasEntry && isInCurrMonth? "" : "invisible"}`} strokeWidth={1.75} />
+
+            <Music className={`w-3.5 h-auto stroke-purple-500 absolute -top-4 left-1/2 -translate-x-1/2 
+              md:w-4 md:-top-3.75 md:translate-x-0 md:left-4.75 md:rotate-1  
+              lg:w-4.5 lg:-top-5 lg:left-6/10 lg:rotate-1 
+              ${hasSongSelection && isInCurrMonth? "" : "invisible"}`} strokeWidth={2} />
+          </div>
+          
         </div>
       </div>
     </Link>

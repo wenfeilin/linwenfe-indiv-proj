@@ -52,8 +52,10 @@ function ExportPlaylistButton({ setPlaylistUrl, selectedMonth, setShowExportPlay
   }
 
   return (
+    // Note: This is the "Export" button after you press "Export Playlist". I am now realizing how confusing it is...
     <button
-      className="text-white bg-green-500 px-4 py-1 rounded-lg hover:cursor-pointer hover:bg-green-600 mr-2 lg:mr-0 lg:flex-1"
+      className="text-white bg-green-500 px-4 py-1 rounded-lg hover:cursor-pointer hover:bg-green-600 mr-2 
+      lg:mr-0 lg:flex-1"
       onClick={() => {
         if (!selectedMonth) {
           return;

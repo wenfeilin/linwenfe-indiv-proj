@@ -6,23 +6,29 @@ import { Outlet, useLocation } from "react-router";
 function PageLayout() {
   const location = useLocation();
   const path = location.pathname;
-  let containerStyles = ""
+
+  let containerStyles = "";
+  let parentContainerStyles = ""
 
   if (path.includes("calendar")) {
-    containerStyles = "order-last col-start-2";
+    containerStyles = "w-full md:w-3/4 lg:w-1/2 px-3";
+    parentContainerStyles = "order-last col-start-2 flex flex-col items-center";
   } else if (path.includes("entry")) {
     containerStyles = "";
+    parentContainerStyles = "";
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="">
       <PageHeader />
       {/* Renders content of the child route */}
-      <main className="flex-1">
+      <main className="">
         <Outlet />
 
         {/* Place calendar player here so it doesn't get unmounted on route changes*/}
-        <GlobalSpotifyPlayer containerStyles={containerStyles}/>
+        <div className={`${parentContainerStyles}`}>
+          <GlobalSpotifyPlayer containerStyles={`${containerStyles}`}/>
+        </div>
       </main>
     </div>
   );

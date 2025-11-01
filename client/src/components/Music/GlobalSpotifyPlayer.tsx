@@ -126,8 +126,8 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
   const playBtnStyles = "p-1 border-2 rounded hover:cursor-pointer hover:opacity-80 disabled:hover:cursor-default disabled:hover:opacity-100"
   
   return (
-    <>
-      <div className={`${containerStyles} border-2 rounded-lg p-3`}>
+    <div className={`${containerStyles}`}>
+      <div className={`border-2 rounded-lg p-3`}>
         <div className="flex mb-2 justify-between">
           <div className="flex gap-2 items-center min-h-fit">
             {/* Date Picker */}
@@ -191,7 +191,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
       
           <div className={`flex-1 min-w-0`}>
             {/* Song Info */}
-            <div className="h-1/2 flex flex-col pt-1 text-sm flex-shrink-1 md:gap-1">
+            <div className="h-1/2 flex flex-col pt-1 text-sm flex-shrink-1">
               <p className="truncate flex-shrink-1">{currSong?.name}</p>
               <p className="text-gray-500 truncate">{currSongArtists}</p>
               {/* {currSongEntryDate && <p>from {currSongEntryDate} entry</p>} */}
@@ -262,14 +262,14 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
       </div>
 
       {/* The legs of the music player */}
-      <div className="flex justify-between px-5">
+      <div className="flex justify-between px-5 w-full">
         <div className="w-14 h-2 bg-yellow-900 rounded-b-xs">
         </div>
 
         <div className="w-14 h-2 bg-yellow-900 rounded-b-xs">
         </div>
       </div>
-    </>
+    </div>
 
   )
 }

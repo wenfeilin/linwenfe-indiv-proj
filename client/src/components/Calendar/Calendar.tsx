@@ -46,7 +46,7 @@ function Calendar({ setIsCalendarLoading, containerStyles }: { setIsCalendarLoad
   ];
 
   return (
-    <div data-testid="calendar" className={`grid grid-cols-7 gap-0.5 bg-gray-300 border-2 border-gray-300 w-full ${containerStyles}`}>
+    <div data-testid="calendar" className={`grid grid-cols-7 gap-0.5 bg-gray-300 border-2 border-gray-300 ${containerStyles}`}>
       <CalendarHeader></CalendarHeader>
 
       {/* Calendar Body Section */}
@@ -54,14 +54,14 @@ function Calendar({ setIsCalendarLoading, containerStyles }: { setIsCalendarLoad
 
       {/* Use short names for smaller screens */}
       {daysShortNames.map((day, i) => (
-        <p key={i} className={"bg-blue-100 py-1.5 text-center text-sm md:hidden"}>
+        <p key={i} className={"bg-blue-100 py-1.5 text-center text-sm lg:hidden"}>
           {day}
         </p>
       ))}
 
       {/* Use full names for medium to larger screens */}
       {daysFullNames.map((day, i) => (
-        <p key={i} className={"bg-blue-100 py-1.5 text-[15px] tracking-wide text-center hidden md:block"}>
+        <p key={i} className={"bg-blue-100 py-1.5 text-[15px] tracking-wide text-center hidden lg:block"}>
           {day}
         </p>
       ))}

@@ -88,7 +88,9 @@ function ExportPlaylistComponent({ containerStyles = ""}: StyleProps) {
       {!isExportPlaylistBtnActive && (
         // This button just opens the component -- doesn't do any exporting.
         <button
-          className="rounded-lg bg-blue-400 px-4 py-1 text-gray-100 hover:cursor-pointer hover:bg-blue-500 text-[15px] md:text-base"
+          className="rounded-lg bg-blue-400 px-4 py-1 text-gray-100 hover:cursor-pointer hover:bg-blue-500 text-[15px] 
+            md:text-base md:flex-0 md:px-5
+            lg:flex-initial lg:px-4"
           onClick={() => {
             setIsExportPlaylistBtnActive(true);
           }}
@@ -114,7 +116,9 @@ function ExportPlaylistComponent({ containerStyles = ""}: StyleProps) {
               ></DatePicker>
             </div>
             
-            <div className="flex justify-center lg:items-center lg:gap-1 lg:flex-wrap xl:flex-nowrap">
+            <div className="flex justify-center 
+              lg:items-center lg:gap-1 lg:flex-wrap 
+              xl:flex-nowrap">
               {/* Export Button */}
               <ExportPlaylistButton
                 setPlaylistUrl={setPlaylistUrl}
