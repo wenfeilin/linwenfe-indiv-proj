@@ -4,7 +4,6 @@ import DatePicker from "react-datepicker";
 import { getDateParts, getMonthName } from "../../utils/date";
 import VolumeBar from "./VolumeBar";
 import ProgressBar from "./ProgressBar";
-import { ColorRing } from "react-loader-spinner";
 import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
 import useEntriesSortedByDate from "../../hooks/useEntriesSortedByDate";
 
@@ -23,7 +22,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
   const [currSong, setCurrSong] = useState<Spotify.Track | null>(null);
   // For if songs were queued properly.
   const [successMsg, setSuccessMsg] = useState("Pick a month to play from");
-  const [prevSuccessMsg, setPrevSuccessMsg] = useState(successMsg);
+  const [prevSuccessMsg, setPrevSuccessMsg] = useState(successMsg); // a valid one (either "pick a month" or "now playing")
 
   const [currSongEntryDate, setCurrSongEntryDate] = useState<string | null>(null);
   const [queuedSongsAndDates, setQueuedSongsAndDates] = useState<SongsAndDates | null>(null);
@@ -33,6 +32,9 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
 
   // Initially disable this player if either entry player is being used or the user has not selected a month's songs to play.
   const [isPlayingDisabled, setIsPlayingDisabled] = useState<boolean>((musicPlayer? musicPlayer.playerModeRef.current === "entry" : true) || monthPlaying? false : true);
+
+  const [isPlayBtnsDisabled, setIsPlayBtnsDisabled] = useState(true);
+  const [isPlayerBarsDisabled, setIsPlayerBarsDisabled] = useState(true); // the progress and volume bars
   
   async function queueAndPlaySongs() {
     // Filter for selected month's songs.
@@ -46,7 +48,11 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
     const monthSongUris = monthSongs.map((entry) => entry.songSelection!.uri);
     
     if (monthSongUris.length === 0) {
-      setPrevSuccessMsg(successMsg);
+      // Only save th previous message if it was a valid one.
+      if (!successMsg.includes("No songs")) {
+        setPrevSuccessMsg(successMsg);
+      }
+
       setSuccessMsg(`No songs for ${getMonthName(selectedMonth!.getMonth() + 1)?.substring(0, 3)} ${selectedMonth!.getFullYear()}`);
       // setIsPlayingDisabled(true);
       return;
@@ -70,12 +76,12 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
   // console.log(isUnplayableMonth)
 
 
-  // Reset the status/success message after 10 seconds if it displayed that the attempt to queue a month w/ no songs was unsuccessful.
+  // Reset the status/success message after 5 seconds if it displayed that the attempt to queue a month w/ no songs was unsuccessful.
   useEffect(() => {
     if (isUnplayableMonth) {
       const timer = setTimeout(() => {
         setSuccessMsg(prevSuccessMsg);
-      }, 7000);
+      }, 5000);
 
       // Cleanup the timer on unmount.
       return () => clearTimeout(timer);
@@ -184,7 +190,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
               START
             </button>
           </div>
-          <div className="bg-gray-800 text-green-500 border-black text-sm border-2 rounded w-44 md:w-50 flex items-center justify-end pr-3">
+          <div className="bg-gray-800 text-green-500 border-black text-sm border-2 rounded w-47 md:w-50 flex items-center justify-end pr-3">
             <p className="">{successMsg}</p>
           </div>
         </div>

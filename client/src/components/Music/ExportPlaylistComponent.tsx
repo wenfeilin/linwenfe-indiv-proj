@@ -2,83 +2,46 @@ import { useEffect, useState } from "react";
 import ExportPlaylistButton from "./ExportPlaylistButton";
 import DatePicker from "react-datepicker";
 import { getMonthName } from "../../utils/date";
-import LoginButton from "./LoginButton";
 import { type StyleProps } from "../../utils/types";
 
 // Import datepicker CSS from package
 import "react-datepicker/dist/react-datepicker.css";
 
-function ExportPlaylistComponent({ containerStyles = ""}: StyleProps) {
+export type exportMsgType = {
+  before: string,
+  linkText?: string,
+  after?: string,
+}
+
+function ExportPlaylistComponent({ containerStyles = "", checkLoginStatus, setIsLoggedIn, isLoggedIn}: StyleProps & {checkLoginStatus: any, setIsLoggedIn: (isLoggedIn: boolean) => void, isLoggedIn: boolean}) {
+  // Check login status since user must be logged in to use majority of music features.
+  // Check login status on every re-render.
+  useEffect(() => {
+    checkLoginStatus(setIsLoggedIn);
+  });
+
   const [playlistUrl, setPlaylistUrl] = useState("");
   // Initialize to current month.
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(new Date());
   const [showExportPlaylistMsg, setShowExportPlaylistMsg] = useState(false);
+  const [exportPlaylistMsg, setExportPlaylistMsg] = useState<exportMsgType | null>(null);
   const [isExportPlaylistBtnActive, setIsExportPlaylistBtnActive] =
     useState(false);
-
-  // Repeated login logic from SongSelection.tsx
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    const isLoggedInVal = localStorage.getItem("isSpotifyLoggedIn");
-    return isLoggedInVal ? JSON.parse(isLoggedInVal) : false;
-  });
-
-  async function checkLoginStatus() {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/auth/status`,
-        { credentials: "include" },
-      ); // to send cookies w/ the request
-      const authStatus = await response.json();
-
-      // console.log("Fetch was called.");
-
-      setIsLoggedIn(authStatus.isLoggedIn);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  checkLoginStatus();
-
-  useEffect(() => {
-    localStorage.setItem("isSpotifyLoggedIn", JSON.stringify(isLoggedIn));
-  }, [isLoggedIn]);
 
   let exportPlaylistResponse;
 
   if (playlistUrl && selectedMonth) {
-    const selectedMonthName = getMonthName(selectedMonth.getMonth() + 1);
-    const selectedYr = selectedMonth.getFullYear();
-
     if (playlistUrl === "N/A") {
       exportPlaylistResponse = (
-        <div className="relative">
-          <button
-            className="absolute -top-1.5 right-1 hover:cursor-pointer p-0.5 text-red-600 font-bold hover:text-red-500"
-            onClick={() => setShowExportPlaylistMsg(false)}
-          >
-            &times;
-          </button>
-          <p className="bg-blue-100 px-4 py-2 rounded pr-6.5 mb-2 text-sm lg:text-left">
-            You don't have any songs to export for {selectedMonthName}{" "}
-            {selectedYr}.
-          </p>
-        </div>
+        <p className="bg-blue-100 px-4 py-2 rounded pr-6.5 mb-2 text-sm lg:text-left">
+          {exportPlaylistMsg?.before}
+        </p>
       );
     } else {
       exportPlaylistResponse = (
-        <div className="relative">
-          <button
-            className="absolute -top-1.5 right-1 hover:cursor-pointer p-0.5 text-red-600 font-bold hover:text-red-500"
-            onClick={() => setShowExportPlaylistMsg(false)}
-          >
-            &times;
-          </button>
-          <p className="bg-blue-100 px-4 py-2 rounded pr-6.5 mb-2 text-sm lg:text-left">
-            Your {selectedMonthName} {selectedYr} playlist has been created on
-            your Spotify account (<span className="break-all">{playlistUrl}</span>).
-          </p>
-        </div>
+        <p className="bg-blue-100 px-4 py-2 rounded pr-6.5 mb-2 text-sm lg:text-left">
+          {exportPlaylistMsg?.before} <a href={`${playlistUrl}`} target="_blank" className="text-blue-500 hover:text-blue-600 active:underline">{exportPlaylistMsg?.linkText}</a> {exportPlaylistMsg?.after}.
+        </p>
       );
     }
   }
@@ -100,12 +63,12 @@ function ExportPlaylistComponent({ containerStyles = ""}: StyleProps) {
       )}
 
       {isExportPlaylistBtnActive && (isLoggedIn ? (
-        <div className="w-auto flex flex-col text-center gap-2 lg:w-3/4">
+        <div className="w-auto flex flex-col text-center gap-2 md:w-3/4">
           <div className="flex flex-col gap-1 mb-1 text-[15px] md:text-base ">
             {/* Date Picker */}
             <div className="">
               <DatePicker
-                className="rounded border-2 text-center inline-block lg:w-full"
+                className="rounded border-2 text-center inline-block md:w-full"
                 selected={selectedMonth}
                 dateFormat="MMM yyyy"
                 showMonthYearPicker
@@ -117,19 +80,24 @@ function ExportPlaylistComponent({ containerStyles = ""}: StyleProps) {
             </div>
             
             <div className="flex justify-center 
-              lg:items-center lg:gap-1 lg:flex-wrap 
+              md:items-center md:gap-1 md:flex-wrap 
               xl:flex-nowrap">
               {/* Export Button */}
               <ExportPlaylistButton
                 setPlaylistUrl={setPlaylistUrl}
                 selectedMonth={selectedMonth}
                 setShowExportPlaylistMsg={setShowExportPlaylistMsg}
+                setExportPlaylistMsg={setExportPlaylistMsg}
               ></ExportPlaylistButton>
 
               {/* Cancel Button */}
               <button
-                className="text-white rounded-lg bg-gray-400 px-4 py-1 hover:cursor-pointer hover:bg-gray-500 lg:flex-1"
-                onClick={() => setIsExportPlaylistBtnActive(false)}
+                className="text-white rounded-lg bg-gray-400 px-4 py-1 hover:cursor-pointer hover:bg-gray-500 md:flex-1"
+                onClick={() => {
+                  setIsExportPlaylistBtnActive(false);
+                  setShowExportPlaylistMsg(false);
+                  setSelectedMonth(new Date);
+                }}
               >
                 Cancel
               </button>
@@ -140,10 +108,17 @@ function ExportPlaylistComponent({ containerStyles = ""}: StyleProps) {
           {showExportPlaylistMsg && exportPlaylistResponse}
         </div>
       ) : (
-        <LoginButton
-          isLoggedIn={isLoggedIn}
-          checkLoginStatus={checkLoginStatus}
-        />
+        <div className="flex flex-col items-center gap-2 mx-4 border-2 p-1 rounded">
+          <p className="bg-blue-200 py-1 px-3">Log in to Spotify to use music features</p>
+
+          {/* Cancel Button */}
+          <button
+            className="text-white rounded-lg bg-gray-400 px-4 py-1 hover:cursor-pointer hover:bg-gray-500 lg:flex-1"
+            onClick={() => setIsExportPlaylistBtnActive(false)}
+          >
+            Cancel
+          </button>
+        </div>
       ))}
     </div>
   );

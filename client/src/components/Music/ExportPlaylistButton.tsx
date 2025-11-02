@@ -1,7 +1,8 @@
 import { useEntries } from "../../contexts/EntriesContext";
 import { getDateParts, getMonthName } from "../../utils/date";
+import type { exportMsgType } from "./ExportPlaylistComponent";
 
-function ExportPlaylistButton({ setPlaylistUrl, selectedMonth, setShowExportPlaylistMsg } : { setPlaylistUrl: (playlistUrl: string) => void, selectedMonth: Date | null, setShowExportPlaylistMsg: (showExportPlaylistMsg: boolean) => void }) {
+function ExportPlaylistButton({ setPlaylistUrl, selectedMonth, setShowExportPlaylistMsg, setExportPlaylistMsg } : { setPlaylistUrl: (playlistUrl: string) => void, selectedMonth: Date | null, setShowExportPlaylistMsg: (showExportPlaylistMsg: boolean) => void, setExportPlaylistMsg: (msg: exportMsgType | null) => void }) {
   const apiUrl = import.meta.env.VITE_API_URL;
   const entries = useEntries();
 
@@ -19,6 +20,9 @@ function ExportPlaylistButton({ setPlaylistUrl, selectedMonth, setShowExportPlay
     if (hasNoSongs) {
       setPlaylistUrl("N/A");
       setShowExportPlaylistMsg(true);
+      setExportPlaylistMsg({
+        before: `You don't have any songs to export for ${getMonthName(month)?.slice(0, 3)} ${year}.`,
+      });
       return; // should indicate to the parent component that there are no songs to be exported.
     }
 
@@ -46,6 +50,11 @@ function ExportPlaylistButton({ setPlaylistUrl, selectedMonth, setShowExportPlay
 
       setPlaylistUrl(playlistSpotifyUrl);
       setShowExportPlaylistMsg(true);
+      setExportPlaylistMsg({
+        before: "Your",
+        linkText: `${getMonthName(month)?.slice(0, 3)} ${year} playlist`,
+        after: "has been created on your Spotify account",
+      });
     } catch (err) {
       console.log(err);
     }
@@ -55,7 +64,7 @@ function ExportPlaylistButton({ setPlaylistUrl, selectedMonth, setShowExportPlay
     // Note: This is the "Export" button after you press "Export Playlist". I am now realizing how confusing it is...
     <button
       className="text-white bg-green-500 px-4 py-1 rounded-lg hover:cursor-pointer hover:bg-green-600 mr-2 
-      lg:mr-0 lg:flex-1"
+      md:mr-0 md:flex-1"
       onClick={() => {
         if (!selectedMonth) {
           return;

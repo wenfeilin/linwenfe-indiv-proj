@@ -35,6 +35,9 @@ function SongSelection({
   savedSongSelection,
   unsavedSongSelectionWasChanged,
   setUnsavedSongSelectionWasChanged,
+  checkLoginStatus, 
+  setIsLoggedIn,
+  isLoggedIn
 }: {
   isEditing: boolean;
   isAddSongBtnActive: boolean;
@@ -54,35 +57,15 @@ function SongSelection({
   savedSongSelection: Song | null;
   unsavedSongSelectionWasChanged: boolean;
   setUnsavedSongSelectionWasChanged: (wasUnsavedSongSelectionChanged: boolean) => void;
+  checkLoginStatus: any;
+  setIsLoggedIn: (isLoggedIn: boolean) => void;
+  isLoggedIn: boolean;
 }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    const isLoggedInVal = localStorage.getItem("isSpotifyLoggedIn");
-    return isLoggedInVal? JSON.parse(isLoggedInVal) : false;
-  });
-  // const [songToPlay, setSongToPlay] = useState(songSelection);
-  
-  async function checkLoginStatus() {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/auth/status`,
-        { credentials: "include" },
-      ); // to send cookies w/ the request
-      const authStatus = await response.json();
-      
-      // console.log("Fetch was called.");
-      
-      setIsLoggedIn(authStatus.isLoggedIn);
-      // console.log("is logged in?", authStatus.isLoggedIn);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  checkLoginStatus();
-
+  // Check login status since user must be logged in to use majority of music features.
+  // Check login status on every re-render.
   useEffect(() => {
-    localStorage.setItem("isSpotifyLoggedIn", JSON.stringify(isLoggedIn));
-  }, [isLoggedIn]);
+    checkLoginStatus(setIsLoggedIn);
+  });
 
   const musicPlayer = useMusicPlayer();
 
@@ -150,7 +133,7 @@ function SongSelection({
   // If the entry has a song selection or a song is being added to the entry, display the login button (when necessary) -- since song-related elements require Spotify access.
   if (isAddSongBtnActive) {
     loginBtnComponent = (
-      <LoginButton isLoggedIn={isLoggedIn} checkLoginStatus={checkLoginStatus} />
+      <p className="bg-blue-200 py-1 px-3">Log in to Spotify to use music features</p>
     );
   }
 
@@ -211,16 +194,12 @@ function SongSelection({
   }
 
   return (
-    <div className="relative h-108">
-      {/* <LoginButton
-        isLoggedIn={isLoggedIn}
-        checkLoginStatus={checkLoginStatus}
-        ></LoginButton> */}
+    <div className="relative flex flex-cols justify-center p-3 px-4 border-3 rounded-xl">
 
       {/* X Button */}
-      {isEditing && (songSelection || isAddSongBtnActive) && (
+      {isEditing && (
         <button
-          className="absolute -top-3 -right-2 rounded-xl bg-red-400 p-0.5 hover:cursor-pointer"
+          className="absolute -top-3 -right-2.5 rounded-xl bg-red-400 p-0.5 hover:cursor-pointer"
           onClick={async () => {
             setIsAddSongBtnActive(false);
 

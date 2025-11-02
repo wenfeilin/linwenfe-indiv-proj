@@ -4,7 +4,7 @@ import ProgressBar from "./ProgressBar";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 import { ColorRing } from "react-loader-spinner";
 import VolumeBar from "./VolumeBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function RegularSpotifyPlayer({
   songSelection,
@@ -21,10 +21,12 @@ function RegularSpotifyPlayer({
 }) {
   const musicPlayer = useMusicPlayer();
 
-  // Set track to play to queue it up when play is pressed
-  if (musicPlayer) {
-    musicPlayer?.setTrackToPlay(songSelection);
-  }
+  useEffect(() => {
+    // Set track to play to queue it up when play is pressed
+    if (musicPlayer) {
+      musicPlayer?.setTrackToPlay(songSelection);
+    }
+  }, [songSelection])
 
   // console.log("Currently going to play", musicPlayer?.currentTrack?.title, "by", musicPlayer?.currentTrack?.artists);
 
@@ -44,7 +46,7 @@ function RegularSpotifyPlayer({
           // FIX THIS EMPTY DIV SIZING WHEN THERE IS NO SONG SELECTED/PRESSED FOR PLAYING
 
           <div
-            className={`h-20 w-1/2 rounded border-2 ${!songSelection && "bg-gray-100"}`}
+            className={`w-1/3 rounded border-2 ${!songSelection && "bg-gray-100"}`}
           >
             {songSelection && (
               <img

@@ -11,7 +11,7 @@ import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 import { useBlocker } from "../../hooks/useBlocker";
 
 // The entry content (entry and song selection)
-function Entry() {
+function Entry({checkLoginStatus, setIsLoggedIn, isLoggedIn}: {checkLoginStatus: any, setIsLoggedIn: (isLoggedIn: boolean) => void, isLoggedIn: boolean}) {
   const entries = useEntries();
   const { year, month, day } = useParams();
 
@@ -26,6 +26,7 @@ function Entry() {
   );
   const [songNotes, setSongNotes] = useState(entry ? (entry.songNotes ?? "") : "");
   const [isEditing, setIsEditing] = useState(false);
+  // Note: assume that isAddSongBtnActive is only active or not in edit mode. In saved mode, it is never active.
   const [isAddSongBtnActive, setIsAddSongBtnActive] = useState(entry?.songSelection ? true : false);
   const [isSearching, setIsSearching] = useState(false);
 
@@ -50,59 +51,55 @@ function Entry() {
     );
   } else {
     buttonsRow = (
-      <div className="flex gap-2">
+      <div className="flex justify-between">
         {/* Add Song Button */}
         <AddSongButton isAddSongBtnActive={isAddSongBtnActive || (songSelection ? true : false)} setIsAddSongBtnActive={setIsAddSongBtnActive} setIsSearching={setIsSearching}></AddSongButton>
 
-        {/* Cancel Edits Button */}
-        <CancelButton
-          onCancel={async () => {
-            let songSelectionBeforeEdit;
-
-            if (entry !== undefined) {
-              songSelectionBeforeEdit = entry.songSelection
-                ? entry.songSelection
-                : null;
-            } else {
-              songSelectionBeforeEdit = null;
-            }
-
-            setIsEditing(false);
-            setIsSearching(false);
-
-            // Reset edits.
-            setEntryContent(entry ? entry.content : "");
-            setSongSelection(songSelectionBeforeEdit);
-            setSongNotes(entry ? entry.songNotes : "");
-
-            // Reset song for mini player.
-            if (!songSelectionBeforeEdit) {
-              setSearchedSongToPlay(null);
-              setIsAddSongBtnActive(false);
-            }
-
-            // Only stop playing music if the song being played is not the song selection before edit.
-            if (musicPlayer) {
-              if ((songSelectionBeforeEdit?.uri !== musicPlayer.currentContext?.uri) && musicPlayer.playerModeRef.current === "entry") {
-                await musicPlayer.pause();
-                musicPlayer.resetProgress("entry");
+        <div className="flex gap-2">
+          {/* Cancel Edits Button */}
+          <CancelButton
+            onCancel={async () => {
+              let songSelectionBeforeEdit;
+              if (entry !== undefined) {
+                songSelectionBeforeEdit = entry.songSelection
+                  ? entry.songSelection
+                  : null;
+              } else {
+                songSelectionBeforeEdit = null;
               }
-            }
-          }}>
-        </CancelButton>
-
-        {/* Save Edits Button */}
-        <SaveButton
-          newEntryContent={entryContent}
-          newSongSelection={songSelection}
-          newSongNotes={songNotes}
-          entryBeingSaved={entry} // The entry before being saved
-          setIsAddSongBtnActive={setIsAddSongBtnActive}
-          onSave={() => setIsEditing(false)}
-          setIsSearching={setIsSearching}
-          setSearchedSongToPlay={setSearchedSongToPlay}
-          unsavedSongSelectionWasChanged={unsavedSongSelectionWasChanged}
-        ></SaveButton>
+              setIsEditing(false);
+              setIsSearching(false);
+              // Reset edits.
+              setEntryContent(entry ? entry.content : "");
+              setSongSelection(songSelectionBeforeEdit);
+              setSongNotes(entry ? entry.songNotes : "");
+              // Reset song for mini player.
+              if (!songSelectionBeforeEdit) {
+                setSearchedSongToPlay(null);
+                setIsAddSongBtnActive(false);
+              }
+              // Only stop playing music if the song being played is not the song selection before edit.
+              if (musicPlayer) {
+                if ((songSelectionBeforeEdit?.uri !== musicPlayer.currentContext?.uri) && musicPlayer.playerModeRef.current === "entry") {
+                  await musicPlayer.pause();
+                  musicPlayer.resetProgress("entry");
+                }
+              }
+            }}>
+          </CancelButton>
+          {/* Save Edits Button */}
+          <SaveButton
+            newEntryContent={entryContent}
+            newSongSelection={songSelection}
+            newSongNotes={songNotes}
+            entryBeingSaved={entry} // The entry before being saved
+            setIsAddSongBtnActive={setIsAddSongBtnActive}
+            onSave={() => setIsEditing(false)}
+            setIsSearching={setIsSearching}
+            setSearchedSongToPlay={setSearchedSongToPlay}
+            unsavedSongSelectionWasChanged={unsavedSongSelectionWasChanged}
+          ></SaveButton>
+        </div>
       </div>
     );
   }
@@ -147,23 +144,32 @@ function Entry() {
     }
   }, [])
 
+  console.log(isAddSongBtnActive);
+
   return (
-    <div className="grid h-full w-full grid-cols-5 grid-rows-[auto_auto_1fr]">
-      <div className="col-start-2 col-end-5 row-start-1 mb-2 flex items-center justify-between">
+    <div className="w-9/10 flex flex-col gap-2 
+      md:px-20 
+      lg:px-0 lg:grid lg:grid-cols-[1fr_5fr_1fr] lg:grid-rows-[auto_auto_1fr]"> {/* grid h-full w-full grid-cols-5 grid-rows-[auto_auto_1fr] */}
+      <div className="flex flex-col gap-1
+        lg:col-start-2 lg:col-end-8 lg:row-start-1 lg:mb-2"> {/* col-start-2 col-end-5 row-start-1 mb-2 flex items-center justify-between */}
         {/* Date of Entry */}
         <h1 className="text-2xl font-bold">
           {getMonthName(+month!)} {day}, {year}{" "}
         </h1>
 
         {/* Edit/Cancel + Save buttons */}
-        {buttonsRow}
+
+        <div className="">
+          {buttonsRow}
+        </div>
       </div>
 
       {/* Entry Text Box */}
       {/* Change col-end back to 5 */}
-      <div className="col-start-2 col-end-4 row-start-2 row-end-4 flex h-full flex-col">
+      <div className="flex-1
+        lg:col-start-2 lg:col-end-8 lg:row-start-2 lg:row-end-4"> {/* col-start-2 col-end-4 row-start-2 row-end-4 flex h-full flex-col */}
         <textarea
-          className="h-2/3 resize-none overflow-y-auto rounded border-2 border-blue-400 p-4 focus:border-blue-500 focus:outline-none"
+          className="w-full h-70 resize-none overflow-y-auto rounded border-2 border-blue-400 p-4 focus:border-blue-500 focus:outline-none"
           readOnly={!isEditing}
           name="entry-content"
           id="entry-content"
@@ -177,8 +183,9 @@ function Entry() {
       {/* {isAddSongBtnActive && ( */}
         {/* Song Selection */}
         {/* Change col-start back to 5 */}
-        <div className="col-start-4 col-end-6 row-start-2 row-end-4 w-full">
-          <div className="m-auto flex w-4/5 flex-col gap-2">
+        {(songSelection || isAddSongBtnActive) && 
+          <div className="lg:col-start-6 lg:col-end-8 lg:row-start-2 "> {/* col-start-4 col-end-6 row-start-2 row-end-4 w-full */}
+          <div className="m-auto flex w-fit flex-col gap-2">
             <SongSelection
               isEditing={isEditing}
               isAddSongBtnActive={isAddSongBtnActive}
@@ -195,9 +202,12 @@ function Entry() {
               savedSongSelection={entry ? (entry.songSelection ?? null) : null} // the one in local storage
               unsavedSongSelectionWasChanged={unsavedSongSelectionWasChanged}
               setUnsavedSongSelectionWasChanged={setUnsavedSongSelectionWasChanged}
+              checkLoginStatus={checkLoginStatus} 
+              setIsLoggedIn={setIsLoggedIn}
+              isLoggedIn={isLoggedIn}
             ></SongSelection>
           </div>
-        </div>
+        </div>}
       {/* )} */}
     </div>
   );

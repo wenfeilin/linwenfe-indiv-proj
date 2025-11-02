@@ -1,8 +1,8 @@
+import { MoveLeft } from "lucide-react";
 import Entry from "../components/Entry/Entry";
 import { Link, useLocation } from "react-router-dom";
-import GlobalSpotifyPlayer from "../components/Music/GlobalSpotifyPlayer";
 
-function EntryPage() {
+function EntryPage({checkLoginStatus, setIsLoggedIn, isLoggedIn}: {checkLoginStatus: any, setIsLoggedIn: (isLoggedIn: boolean) => void, isLoggedIn: boolean}) {
   // Get the path the user came from.
   const location = useLocation();
   const prevPagePath = location.state ? location.state?.prevPage : null;
@@ -23,9 +23,12 @@ function EntryPage() {
       <div>
         <Link
           to={prevPagePath}
-          className={`ml-7 inline-block hover:text-[#E36414] ${!prevPagePath && "invisible"}`}
+          className={`inline-block ml-7 mb-4 hover:text-[#E36414] ${!prevPagePath && "invisible"}`}
         >
-          <span className="text-3xl">&larr;</span>Back to {prevPageLocation}
+          <div className="flex items-center gap-1">
+            <MoveLeft />
+            <span className="font-bold">Back to {prevPageLocation}</span>
+          </div>
         </Link>
       </div>
 
@@ -33,7 +36,7 @@ function EntryPage() {
 
       {/* Get the date from the routing params, based on what the user clicked on */}
       <div className="flex flex-1 flex-col items-center">
-        <Entry></Entry>
+        <Entry checkLoginStatus={checkLoginStatus} setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn}></Entry>
       </div>
     </div>
   );

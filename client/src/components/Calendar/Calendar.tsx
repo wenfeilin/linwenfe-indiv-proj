@@ -4,6 +4,7 @@ import { generateCalendarDates } from "../../utils/date";
 import CalendarHeader from "./CalendarHeader";
 import { RotatingLines } from "react-loader-spinner";
 import { type StyleProps } from "../../utils/types";
+import { useEffect } from "react";
 
 // & to union types
 function Calendar({ setIsCalendarLoading, containerStyles }: { setIsCalendarLoading: (isCalendarLoading: boolean) => void } & StyleProps) {
@@ -17,11 +18,16 @@ function Calendar({ setIsCalendarLoading, containerStyles }: { setIsCalendarLoad
   
   // Since the year and month (the URL params) are undefined until after the first render.
   if (!selectedYr || !selectedMonth) {
-    setIsCalendarLoading(false);
     return(
       <RotatingLines width={50} visible={true} />
     )
   }
+  
+  // On unmount, set calendar to loading.
+  useEffect(() => {
+    setIsCalendarLoading(false);
+    return () => setIsCalendarLoading(true);
+  }, []);
 
   const calendarDates = generateCalendarDates(selectedYr, selectedMonth);
 

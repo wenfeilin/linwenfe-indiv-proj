@@ -46,31 +46,31 @@ function EntriesPage() {
   }
 
   return (
-    <div className="flex h-full items-center justify-center">
-      <div className="flex h-6/7 w-3/4 bg-orange-100">
-        <div className="h-full w-1/2 border-r-6 border-orange-200"></div>
+    <div className="flex h-full items-center justify-center py-8">
+      <div className="flex h-full w-3/4 bg-orange-100">
+      
+        {/* Left Page */}
+        <div className="hidden lg:block lg:h-full lg:w-1/2 lg:border-r-6 lg:border-orange-200">
+        </div>
 
         {/* Right Page */}
-        <div className="h-full w-1/2 border-l-6 border-orange-200 px-16 py-5">
-          <div className="flex justify-between text-3xl">
-            {!isOnFirstPage && (
-              <button className="flex hover:text-orange-900 hover:cursor-pointer p-0.5" onClick={handlePrevPage}>
-                &larr;
-              </button>
-            )}
-            {hasMoreThanOnePg && !isOnLastPage && (
-              <div className={`${isOnFirstPage && "w-full flex justify-end"}`}>
-                <button className="flex hover:text-orange-900 hover:cursor-pointer p-0.5" onClick={handleNextPage}>
-                  &rarr;
-                </button>
-              </div>
-            )}
+        <div className="border-l-12 lg:h-full lg:w-1/2 lg:border-l-6 border-orange-200 px-16 py-6 w-full">
+          <div className="flex justify-between items-center text-3xl w-full mb-6">
+            {/* Prev Pg Button */}
+            <button className={`flex hover:text-orange-900 hover:cursor-pointer p-0.5 ${isOnFirstPage && "invisible"}`} onClick={handlePrevPage}>
+              &larr;
+            </button>
+            
+            {/* Title */}
+            <h1 className="text-xl md:text-2xl">My Entries</h1>
+            
+            {/* Next Pg Button */}
+            <button className={`flex hover:text-orange-900 hover:cursor-pointer p-0.5 ${isOnLastPage && "invisible"}`} onClick={handleNextPage}>
+              &rarr;
+            </button>
+            
           </div>
 
-          {/* Title */}
-          <div className="mb-8 flex items-center justify-center">
-            <h1 className="text-2xl">My Entries</h1>
-          </div>
 
           {/* Entries */}
           <div className="flex flex-col items-center gap-y-2">

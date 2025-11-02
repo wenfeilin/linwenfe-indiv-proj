@@ -29,9 +29,12 @@ function PageHeader() {
           {/* <li>
             <NavLink className={({ isActive }) => `inline-block px-4 py-8 hover:text-[#E36414] active:text-[#CC5803] ${isActive ? "text-[#4895EF]" : ""}`} to="/decorations">Decorations</NavLink>
           </li> */}
+          <li>
+            <NavLink className={({ isActive }) => `${linkStyles} ${isActive ? "text-[#4895EF]" : ""}`} to="/spotify-login">Spotify Login</NavLink>
+          </li> 
           {/* <li>
-            <NavLink className={({ isActive }) => `inline-block px-4 py-8 hover:text-[#E36414] active:text-[#CC5803] ${isActive ? "text-[#4895EF]" : ""}`} to="/settings">Settings</NavLink>
-          </li> */}
+            <NavLink className={({ isActive }) => `${linkStyles} ${isActive ? "text-[#4895EF]" : ""}`} to="/settings">Settings</NavLink>
+          </li>  */}
         </ul>
       </nav>
     </header>
