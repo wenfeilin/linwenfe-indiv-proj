@@ -109,6 +109,7 @@ function RegularSpotifyPlayer({
       {!onMobileDevice && 
         <VolumeBar
           volume={musicPlayer!.volume}
+          isDisabled={false}
         ></VolumeBar>
       }
 

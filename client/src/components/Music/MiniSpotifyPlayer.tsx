@@ -113,6 +113,7 @@ function MiniSpotifyPlayer({
       {!onMobileDevice && 
         <VolumeBar
           volume={musicPlayer!.volume}
+          isDisabled={false}
         ></VolumeBar>
       }
       <div>{/* Get rid of the bangs later! */}</div>

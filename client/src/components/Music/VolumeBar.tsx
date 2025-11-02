@@ -3,7 +3,7 @@ import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
 
 // volume = curr volume from music player
-function VolumeBar({volume}:{volume: number}) {
+function VolumeBar({volume, isDisabled}:{volume: number, isDisabled: boolean}) {
 
   // Check the pointer type (coarse = touch input)
   const onMobileDevice = window.matchMedia("(pointer: coarse").matches;
@@ -79,6 +79,7 @@ function VolumeBar({volume}:{volume: number}) {
       onChange={(event) => handleChange(event)}
       onMouseDown={handleMouseDown} // for mouse (desktop/latop)
       onMouseUp={handleMouseUp} // for mouse (desktop/latop)
+      disabled={isDisabled}
       />
     </div>
   )

@@ -216,7 +216,7 @@ function SongSearchForm({
                               // If the selected song is not the one that is currently saved or it is but was changed in between, pause the player and reset the progress so the song just selected can be loaded up again by the player.
                               if (selectedSong.uri !== savedSongSelection?.uri || (selectedSong.uri === savedSongSelection?.uri && (unsavedSongSelectionWasChanged || isSongSelectionDiff))) { /* RN IDEK WHAT MAKES THIS WORK AND WHAT DOESN'T. IT MAYBE BE THAT I DONT EVEN NEED "(selectedSong.uri === savedSongSelection?.uri && (unsavedSongSelectionWasChanged || isSongSelectionDiff))" THIS PART BUT I HAVE NO CLUE AND I DO NOT WANT TO MESS WITH IT AND BREAK IT B/C I DONT HAVE TESTS TO VERIFY ANYTHING AND THERE ARE TOO MANY SCENARIOS FOR ME TO REMEMBER TO RECREATE MANUALLY -- TEST AND TRY TAKING THAT PART OUT LATER */
                                 // console.log("IT SHOULD BE IN HERE!");
-                                if (songToPlay?.uri !== selectedSong.uri) {
+                                if (songToPlay?.uri !== selectedSong.uri && musicPlayer.playerModeRef.current === "entry") {
                                   // console.log("2");
                                   await musicPlayer.pause();
                                   await musicPlayer.resetActualProgress();
@@ -228,7 +228,7 @@ function SongSearchForm({
                               // console.log("3");
 
                               // If the song being played by the mini player is not the last (unsaved) selected song, pause the player and reset the progress so the song just selected can be loaded up by the player.
-                              if (songToPlay?.uri !== selectedSong.uri) {
+                              if (songToPlay?.uri !== selectedSong.uri && musicPlayer.playerModeRef.current === "entry") {
                                 // console.log("4");
                                 await musicPlayer.pause();
                                 await musicPlayer.resetActualProgress();

@@ -111,7 +111,7 @@ function SaveButton({
             console.log("prev song", prevSavedSongSelectionUri)
             console.log("new song", newSongSelectionUri)
 
-            if ((newSongSelectionUri === prevSavedSongSelectionUri && prevSavedSongSelectionUri !== currentlyPlayingSongUri) || newSongSelectionUri !== currentlyPlayingSongUri) {
+            if (((newSongSelectionUri === prevSavedSongSelectionUri && prevSavedSongSelectionUri !== currentlyPlayingSongUri) || newSongSelectionUri !== currentlyPlayingSongUri) && musicPlayer.playerModeRef.current === "entry") {
               await musicPlayer.pause();
               await musicPlayer.resetProgress("entry");
             }

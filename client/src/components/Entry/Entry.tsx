@@ -83,7 +83,7 @@ function Entry() {
 
             // Only stop playing music if the song being played is not the song selection before edit.
             if (musicPlayer) {
-              if (songSelectionBeforeEdit?.uri !== musicPlayer.currentContext?.uri) {
+              if ((songSelectionBeforeEdit?.uri !== musicPlayer.currentContext?.uri) && musicPlayer.playerModeRef.current === "entry") {
                 await musicPlayer.pause();
                 musicPlayer.resetProgress("entry");
               }

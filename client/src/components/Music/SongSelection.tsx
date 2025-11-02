@@ -235,7 +235,9 @@ function SongSelection({
 
             // Pause song playing.
             if (musicPlayer) {
-              await musicPlayer.pause();
+              if (musicPlayer.playerModeRef.current === "entry") {
+                await musicPlayer.pause();
+              }
             }
           }}
         >

@@ -23,6 +23,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
   const [currSong, setCurrSong] = useState<Spotify.Track | null>(null);
   // For if songs were queued properly.
   const [successMsg, setSuccessMsg] = useState("Pick a month to play from");
+  const [prevSuccessMsg, setPrevSuccessMsg] = useState(successMsg);
 
   const [currSongEntryDate, setCurrSongEntryDate] = useState<string | null>(null);
   const [queuedSongsAndDates, setQueuedSongsAndDates] = useState<SongsAndDates | null>(null);
@@ -45,8 +46,9 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
     const monthSongUris = monthSongs.map((entry) => entry.songSelection!.uri);
     
     if (monthSongUris.length === 0) {
+      setPrevSuccessMsg(successMsg);
       setSuccessMsg(`No songs for ${getMonthName(selectedMonth!.getMonth() + 1)?.substring(0, 3)} ${selectedMonth!.getFullYear()}`);
-      setIsPlayingDisabled(true);
+      // setIsPlayingDisabled(true);
       return;
     }
 
@@ -54,6 +56,10 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
     const monthSongsAndDates = monthSongs.map((entry) => ({songUri: entry.songSelection!.uri, date: entry.date}));
     setQueuedSongsAndDates(monthSongsAndDates);
 
+    // Switch to calendar player context (and pause the entry player).
+    await musicPlayer!.updatePlayerState("calendar");
+
+    setMonthPlaying(selectedMonth);
     await musicPlayer!.queueAndPlaySongs(monthSongUris, 0);
     setSuccessMsg(`Now playing ${getMonthName(selectedMonth!.getMonth() + 1)?.substring(0, 3)} ${selectedMonth!.getFullYear()}`);
     setIsPlayingDisabled(false);
@@ -61,9 +67,20 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
 
   // let currSongEntryDate = ""
   const isUnplayableMonth = successMsg.includes("Pick") || successMsg.includes("No songs");
+  // console.log(isUnplayableMonth)
 
 
+  // Reset the status/success message after 10 seconds if it displayed that the attempt to queue a month w/ no songs was unsuccessful.
+  useEffect(() => {
+    if (isUnplayableMonth) {
+      const timer = setTimeout(() => {
+        setSuccessMsg(prevSuccessMsg);
+      }, 7000);
 
+      // Cleanup the timer on unmount.
+      return () => clearTimeout(timer);
+    }
+  }, [successMsg]);
 
 
   // CHECKPT: this don't work.
@@ -150,10 +167,6 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
             disabled={musicPlayer?.isReady && selectedMonth? false : true}
             onClick={async () => {
               if (selectedMonth) {
-                setMonthPlaying(selectedMonth);
-      
-                // Switch to calendar player context (and pause the entry player).
-                musicPlayer!.updatePlayerState("calendar");
                 // if (musicPlayer.playerModeRef.current === "calendar") {
                   //   musicPlayer.previouslyPlayedModeRef.current = "calendar";
                   // } else {
@@ -201,7 +214,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
               progress={musicPlayer!.progressGlobal}
               songDuration={currSong ? currSong.duration_ms : 1}
               playerType="calendar"
-              isDisabled={isUnplayableMonth}
+              isDisabled={((musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current ==="entry") ?? true}
             ></ProgressBar>
       
             {/* Volume Bar */}
@@ -209,6 +222,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
             {!onMobileDevice &&
               <VolumeBar
                 volume={musicPlayer!.volume}
+                isDisabled={((musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current ==="entry") ?? true}
               ></VolumeBar>
             }
           </div>
