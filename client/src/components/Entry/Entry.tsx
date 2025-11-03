@@ -26,7 +26,7 @@ function Entry({checkLoginStatus, setIsLoggedIn, isLoggedIn}: {checkLoginStatus:
   );
   const [songNotes, setSongNotes] = useState(entry ? (entry.songNotes ?? "") : "");
   const [isEditing, setIsEditing] = useState(false);
-  // Note: assume that isAddSongBtnActive is only active or not in edit mode. In saved mode, it is never active.
+  // Note: assume that isAddSongBtnActive can be active also in saved mode (just depends if the song selection exists). (Um... the comment I wrote is not true -- i mean, just look at the initial value of this thing, but it works, so i'm not going to debug/rework the logic for now.)
   const [isAddSongBtnActive, setIsAddSongBtnActive] = useState(entry?.songSelection ? true : false);
   const [isSearching, setIsSearching] = useState(false);
 
@@ -144,7 +144,7 @@ function Entry({checkLoginStatus, setIsLoggedIn, isLoggedIn}: {checkLoginStatus:
     }
   }, [])
 
-  console.log(isAddSongBtnActive);
+  // console.log(isAddSongBtnActive);
 
   return (
     <div className="w-9/10 flex flex-col gap-2 

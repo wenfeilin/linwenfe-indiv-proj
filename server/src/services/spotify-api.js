@@ -39,11 +39,8 @@ async function startPlayback(device_id, songUris, accessToken) {
     position_ms: 0, // start playing from beginning of song for now
   };
 
-  console.log(device_id);
-  console.log(songUris);
-
   try {
-    console.log("Trying to request for playback to start for Night before the end");
+    console.log("Requesting start playback");
     const response = await axios.put(`${api_base_player_url}play?device_id=${device_id}`, req_body, {
       headers: {
         Authorization: "Bearer " + accessToken,
@@ -53,7 +50,8 @@ async function startPlayback(device_id, songUris, accessToken) {
 
     return response;
   } catch (err) {
-    console.log(err);
+    // console.log(err);
+    console.log("Failed to start playback")
   }
 }
 

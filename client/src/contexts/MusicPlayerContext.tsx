@@ -84,28 +84,6 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   const isScrubbingProgressGlobal = useRef(false); // useRef so it doesn't trigger rerender; a flag to indicate if user is scrubbing so the progress can stop being updated while scrubbing is happening (for the calendar player)
   const isResettingGlobalRef = useRef(false); // for stopping the useInterval from updating the progress when resetting the entry player
 
-  // Run once (on mount).
-  // Note: Should prob move this to useSpotifyPlayer.ts as an unmount fxn since it has to do w/ disconnecting.
-  useEffect(() => {
-    // const getPlayerVolume = async () => {
-    //   if (playerRef.current) {
-    //     const currVolume = await playerRef.current.getVolume();
-    //     setVolume(currVolume);
-    //   }
-    // }
-    
-    // getPlayerVolume();
-
-    // Disconnects the music player on unmount. (cleanup function that runs on app unmount since the Provider is the first direct child of the App component -- that means when the app gets reloaded or the tab/window is closed. 
-
-    // Note: if the app is navigated away from (navigate to another tab/window), the App is not unmounted, so the player is still connected. This may or may not be undesirable. If you want to change it, use a visibility change event listener that can determine if the website loses focus.
-    return () => {
-      if (playerRef.current) {
-        playerRef.current.disconnect();
-      }
-    }
-  }, []);
-
 
   /**************************
    * Entry Player Functions *
@@ -279,15 +257,26 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
       await playerRef.current.previousTrack();
       setIsPlayingGlobal(true);
 
-      prevOrNextPressed.current = true;
+      // prevOrNextPressed.current = true;
 
-      if (songPositionRef.current === 0) {
-        await resetActualProgress();
+      const state = await playerRef.current.getCurrentState();
+
+      if (state) {
+        console.log(state.track_window.previous_tracks);
+        if (state.track_window.previous_tracks.length === 0) {
+          await resetActualProgress();
+          await playerRef.current.resume();
+          setIsPlayingGlobal(true);
+        }
       }
 
-      if (songPositionRef.current > 0) {
-        songPositionRef.current = songPositionRef.current - 2;
-      } 
+      // if (songPositionRef.current === 0) {
+      //   await resetActualProgress();
+      // }
+
+      // if (songPositionRef.current > 0) {
+      //   songPositionRef.current = songPositionRef.current - 2;
+      // } 
       
     }
   }
@@ -304,30 +293,30 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     }
   }
   
-  if (playerRef.current) {
-    playerRef.current.addListener('player_state_changed', ({
-      position,
-      /*duration,*/
-      track_window: { current_track }
-    }) => {
-      // console.log('Currently Playing', current_track.name);
-      // console.log('Position in Song', position);
-      // console.log('Duration of Song', duration);
+  // if (playerRef.current) {
+  //   playerRef.current.addListener('player_state_changed', ({
+  //     position,
+  //     /*duration,*/
+  //     track_window: { current_track }
+  //   }) => {
+  //     // console.log('Currently Playing', current_track.name);
+  //     // console.log('Position in Song', position);
+  //     // console.log('Duration of Song', duration);
       
-      if (isPlayingGlobal && (current_track.uri !== prevSongUriRef.current)) {
-        prevSongUriRef.current = current_track.uri;
+  //     if (isPlayingGlobal && (current_track.uri !== prevSongUriRef.current)) {
+  //       prevSongUriRef.current = current_track.uri;
 
-        if (songPositionRef.current == /*totalSongs*/12 - 1) {
-          songPositionRef.current = 0;
-        } else {
-          songPositionRef.current++;
-        }
-      }
+  //       if (songPositionRef.current == /*totalSongs*/12 - 1) {
+  //         songPositionRef.current = 0;
+  //       } else {
+  //         songPositionRef.current++;
+  //       }
+  //     }
       
-      console.log(songPositionRef.current);
-    });
+  //     console.log(songPositionRef.current);
+  //   });
 
-  }
+  // }
 
   // Index (0-based)
   async function determineSongPosition() {

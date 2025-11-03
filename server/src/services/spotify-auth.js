@@ -55,13 +55,30 @@ async function getAccessTokenInfo(req, res) {
     const params = new URLSearchParams({
       error: "state_mismatch",
     });
-    
+
+    // Go back to the original page.
+    console.log("State mismatch.");
+    return res.redirect(req.cookies["redirect_url"]);
   } else {
     // The request for an access token was valid.
 
     // Access was denied by user.
     if (!auth_code) {
-      return res.status(400).json({ error: req.query.error });
+      // Signal to FE that auth was denied by user in a search param in the URL.
+      // const redirectUrl = new URL(req.cookies["redirect_url"]);
+      // redirectUrl.searchParams.set("auth_denied", "true");
+      
+      // Go back to the original page.
+      console.log("Access denied.");
+      // // Clear all auth-related cookies
+      // res.clearCookie('access_token');
+      // res.clearCookie('refresh_token');
+      // res.clearCookie('expires_at');
+      // res.clearCookie('spotify_auth_state');
+      // res.clearCookie('redirect_url');
+
+      // return res.redirect(redirectUrl.toString());
+      return res.redirect(req.cookies["redirect_url"]);
     } else {
       // Access was granted by user.
       const req_body = new URLSearchParams({

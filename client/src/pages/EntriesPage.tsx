@@ -25,7 +25,7 @@ function EntriesPage() {
   const [page, setPage] = useState(0); // 0-indexed pages
   const start = page * entriesPerPg;
   const end = start + entriesPerPg > numEntries ? numEntries : start + entriesPerPg;
-  const lastPage = Math.ceil(numEntries / entriesPerPg) - 1; // 0-indexed
+  const lastPage = numEntries === 0? 0 : Math.ceil(numEntries / entriesPerPg) - 1; // 0-indexed
   const isOnFirstPage = page == 0;
   const isOnLastPage = page === lastPage;
 

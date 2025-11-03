@@ -103,7 +103,7 @@ function RegularSpotifyPlayer({
         progress={musicPlayer!.progress}
         songDuration={songSelection ? songSelection.durationMS : 1}
         playerType="entry"
-        isDisabled={false}
+        isDisabled={musicPlayer?.playerModeRef.current === "calendar" || musicPlayer?.playerModeRef.current === null}
       ></ProgressBar>
       
       {/* Volume Bar */}
@@ -111,7 +111,7 @@ function RegularSpotifyPlayer({
       {!onMobileDevice && 
         <VolumeBar
           volume={musicPlayer!.volume}
-          isDisabled={false}
+          isDisabled={musicPlayer?.playerModeRef.current === "calendar" || musicPlayer?.playerModeRef.current === null}
         ></VolumeBar>
       }
 

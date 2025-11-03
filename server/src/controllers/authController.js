@@ -17,8 +17,6 @@ function login(req, res) {
   const redirectUrl = process.env.FRONTEND_URL + req.query.prevPage;
   res.cookie("redirect_url", redirectUrl);
 
-  console.log(redirectUrl);
-
   // Get the URL for user authorization.
   const {authorizationUrl, state} = getAuthorizationUrl(req, res);
 
@@ -33,9 +31,9 @@ function login(req, res) {
 async function callbackHandler(req, res) {
   const token_info = await getAccessTokenInfo(req, res);
 
-  // 400 = Bad Request
-  if (!token_info) {
-    return res.status(400).json({ error: "Failed to get access token" });
+  // User denied authorization/login or state mismatch
+  if (!token_info || token_info.error) {
+    return;
   }
 
   // Set cookies.

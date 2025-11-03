@@ -33,8 +33,8 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
   // Initially disable this player if either entry player is being used or the user has not selected a month's songs to play.
   const [isPlayingDisabled, setIsPlayingDisabled] = useState<boolean>((musicPlayer? musicPlayer.playerModeRef.current === "entry" : true) || monthPlaying? false : true);
 
-  const [isPlayBtnsDisabled, setIsPlayBtnsDisabled] = useState(true);
-  const [isPlayerBarsDisabled, setIsPlayerBarsDisabled] = useState(true); // the progress and volume bars
+  // const [isPlayBtnsDisabled, setIsPlayBtnsDisabled] = useState(true);
+  // const [isPlayerBarsDisabled, setIsPlayerBarsDisabled] = useState(true); // the progress and volume bars
   
   async function queueAndPlaySongs() {
     // Filter for selected month's songs.
@@ -48,7 +48,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
     const monthSongUris = monthSongs.map((entry) => entry.songSelection!.uri);
     
     if (monthSongUris.length === 0) {
-      // Only save th previous message if it was a valid one.
+      // Only save the previous message if it was a valid one.
       if (!successMsg.includes("No songs")) {
         setPrevSuccessMsg(successMsg);
       }
@@ -93,25 +93,25 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
 
 
   // Determine which entry the song being played is from.
-  useEffect(() => {
-    const getSongEntryDate = async () => {
-      if (musicPlayer?.playerModeRef.current === "calendar" && queuedSongsAndDates) {
-        try {
-          const songPosition = await musicPlayer.determineSongPosition();
-          // console.log("pos", songPosition)
-          if (typeof songPosition === "number") {
-            const currDate = queuedSongsAndDates? queuedSongsAndDates[songPosition].date : "";
-            const [year, month, day] = getDateParts(currDate);
-            setCurrSongEntryDate(`${month}/${day}/${year}`);
-          }
-        } catch (err) {
-          console.log(err);
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const getSongEntryDate = async () => {
+  //     if (musicPlayer?.playerModeRef.current === "calendar" && queuedSongsAndDates) {
+  //       try {
+  //         const songPosition = await musicPlayer.determineSongPosition();
+  //         // console.log("pos", songPosition)
+  //         if (typeof songPosition === "number") {
+  //           const currDate = queuedSongsAndDates? queuedSongsAndDates[songPosition].date : "";
+  //           const [year, month, day] = getDateParts(currDate);
+  //           setCurrSongEntryDate(`${month}/${day}/${year}`);
+  //         }
+  //       } catch (err) {
+  //         console.log(err);
+  //       }
+  //     }
+  //   };
 
-    getSongEntryDate();
-  }, [musicPlayer])
+  //   getSongEntryDate();
+  // }, [musicPlayer])
 
   // INDICATE WHICH ENTRY THE SONG IS FROM SOMEHOW
 
@@ -220,7 +220,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
               progress={musicPlayer!.progressGlobal}
               songDuration={currSong ? currSong.duration_ms : 1}
               playerType="calendar"
-              isDisabled={((musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current ==="entry") ?? true}
+              isDisabled={((musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current === "entry" || musicPlayer?.playerModeRef.current === null) ?? true}
             ></ProgressBar>
       
             {/* Volume Bar */}
@@ -228,7 +228,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
             {!onMobileDevice &&
               <VolumeBar
                 volume={musicPlayer!.volume}
-                isDisabled={((musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current ==="entry") ?? true}
+                isDisabled={((musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current === "entry" || musicPlayer?.playerModeRef.current === null) ?? true}
               ></VolumeBar>
             }
           </div>
@@ -237,7 +237,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
             {/* Play/Pause Button */}
             <button
               className={`${playBtnStyles} flex justify-center`}
-              disabled={musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled}
+              disabled={(musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current === null}
               onClick={async () => {
                 // only if the play/pause button is not disabled
                 if (!isPlayingDisabled) {
@@ -263,16 +263,17 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
               {/* Skip Backward button */}
               <button
                 className={`${playBtnStyles}`}
-                disabled={musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled}
-                onClick={() => musicPlayer!.prevSong()}
+                disabled={(musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current === null}
+                onClick={async () => await musicPlayer!.prevSong()}
               >
                 <SkipBack fill="black" />
               </button>
+
               {/* Skip Forward button */}
               <button
                 className={`${playBtnStyles}`}
-                disabled={musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled}
-                onClick={() => musicPlayer!.nextSong()}
+                disabled={(musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current === null}
+                onClick={async () => await musicPlayer!.nextSong()}
               >
                 <SkipForward fill="black" />
               </button>

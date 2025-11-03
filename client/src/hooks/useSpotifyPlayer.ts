@@ -23,7 +23,7 @@ function useSpotifyPlayer() {
     script.async = true;
     document.body.appendChild(script);
 
-    // `.onSpotifyWebPlaybackSDKReady` is a global hook defined by the SDK. It is automatically
+    // `.onSpotifyWebPlaybackSDKReady` is a global hook defined by the SDK. It is automatically run
     // when the SDK script finishes loading.
     window.onSpotifyWebPlaybackSDKReady = async () => {
       // Create a new Spotify device.
@@ -43,7 +43,8 @@ function useSpotifyPlayer() {
 
             token = data.access_token;
           } catch (err) {
-            console.log(err);
+            // console.log(err);
+            console.log("failed in useSpotifyPlayer hook, getting access token");
           }
 
           cb(token);
@@ -97,7 +98,8 @@ function useSpotifyPlayer() {
               credentials: "include",
             });
           } catch (err) {
-            console.log(err);
+            // console.log(err);
+            console.log("failed to reset context in useSpotifyPlayer hook?")
           }
         },
       );
@@ -155,6 +157,15 @@ function useSpotifyPlayer() {
         }
       });
     };
+
+    // Disconnects the music player on unmount. (cleanup function that runs on app unmount since the Provider is the first direct child of the App component -- that means when the app gets reloaded or the tab/window is closed. 
+  
+    // Note: if the app is navigated away from (navigate to another tab/window), the App is not unmounted, so the player is still connected. This may or may not be undesirable. If you want to change it, use a visibility change event listener that can determine if the website loses focus.
+    return () => {
+      if (playerRef.current) {
+        playerRef.current.disconnect();
+      }
+    }
   }, []);
 
   return {

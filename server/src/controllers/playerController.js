@@ -18,7 +18,8 @@ async function playSong(req, res) {
       res.sendStatus(400);
     }
   } catch (err) {
-    console.log(err);
+    // console.log(err);
+    console.log("Failed in playSong");
   }
 }
 
@@ -37,7 +38,8 @@ async function transferPlayback(req, res) {
       res.sendStatus(400);
     }
   } catch (err) {
-    console.log(err);
+    // console.log(err);
+    console.log("Failed in transferPlayback")
   }
 
 }

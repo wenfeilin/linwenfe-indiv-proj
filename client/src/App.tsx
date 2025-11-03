@@ -11,6 +11,7 @@ import { EntriesProvider } from "./contexts/EntriesContext";
 import { MusicPlayerProvider } from "./contexts/MusicPlayerContext";
 import { useEffect, useState } from "react";
 import GlobalSpotifyPlayer from "./components/Music/GlobalSpotifyPlayer";
+import ConditionalMusicProvider from "./components/Music/ConditionalMusicProvider";
 
 // This defines the overall page layout.
 function App() {
@@ -20,6 +21,22 @@ function App() {
   });
   
   async function checkLoginStatus(setIsLoggedIn: (isLoggedIn: boolean) => void) {
+    // const params = new URLSearchParams(window.location.search);
+
+    // // Check if access was denied by user on mount (this page gets mounted/redirected to if the login btn was pressed)
+    // if (params.get("auth_denied")) {
+    //   // Update login status
+    //   setIsLoggedIn(false);
+    //   console.log("user denied access");
+    //   console.log(isLoggedIn);
+    //   // Reset the URL
+    //   // window.history.replaceState({}, "", window.location.pathname);
+    //   return;
+
+    // }
+
+    // console.log("trying to fetch auth status")
+
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/auth/status`,
@@ -30,16 +47,17 @@ function App() {
       // console.log("Fetch was called.");
       
       setIsLoggedIn(authStatus.isLoggedIn);
-      // console.log("is logged in?", authStatus.isLoggedIn);
     } catch (err) {
       console.log(err);
     }
   }
   
-  // Check login status on every re-render.
+  // Check login status on mount.
   useEffect(() => {
     checkLoginStatus(setIsLoggedIn);
-  });
+  }, []);
+
+  console.log(isLoggedIn);
 
   // For when the app is reloaded.
   useEffect(() => {
@@ -75,7 +93,7 @@ function App() {
 
   return (
     // Set up single global music player.
-    <MusicPlayerProvider>
+    <ConditionalMusicProvider isLoggedIn={isLoggedIn}>
       <EntriesProvider>
         {/* Set up routes for pages. */}
         <BrowserRouter>
@@ -109,16 +127,8 @@ function App() {
 
         </BrowserRouter>
       </EntriesProvider>
-    </MusicPlayerProvider>
+    </ConditionalMusicProvider>
   );
 }
-
- /*
-  Place calendar player here so it doesn't get unmounted on route changes
-        {isLoggedIn && (isOnCalendarPg? !isCalendarLoading: true) &&
-          (<div className={`${parentContainerStyles}`}>
-            <GlobalSpotifyPlayer containerStyles={`${containerStyles}`}/>
-          </div>)}
-  */
 
 export default App;

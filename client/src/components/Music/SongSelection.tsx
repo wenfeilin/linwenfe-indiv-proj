@@ -61,11 +61,11 @@ function SongSelection({
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   isLoggedIn: boolean;
 }) {
-  // Check login status since user must be logged in to use majority of music features.
-  // Check login status on every re-render.
-  useEffect(() => {
-    checkLoginStatus(setIsLoggedIn);
-  });
+  // // Check login status since user must be logged in to use majority of music features.
+  // // Check login status on every re-render.
+  // useEffect(() => {
+  //   checkLoginStatus(setIsLoggedIn);
+  // });
 
   const musicPlayer = useMusicPlayer();
 

@@ -14,11 +14,11 @@ export type exportMsgType = {
 }
 
 function ExportPlaylistComponent({ containerStyles = "", checkLoginStatus, setIsLoggedIn, isLoggedIn}: StyleProps & {checkLoginStatus: any, setIsLoggedIn: (isLoggedIn: boolean) => void, isLoggedIn: boolean}) {
-  // Check login status since user must be logged in to use majority of music features.
-  // Check login status on every re-render.
-  useEffect(() => {
-    checkLoginStatus(setIsLoggedIn);
-  });
+  // // Check login status since user must be logged in to use majority of music features.
+  // // Check login status on every re-render.
+  // useEffect(() => {
+  //   checkLoginStatus(setIsLoggedIn);
+  // });
 
   const [playlistUrl, setPlaylistUrl] = useState("");
   // Initialize to current month.
@@ -72,7 +72,7 @@ function ExportPlaylistComponent({ containerStyles = "", checkLoginStatus, setIs
                 selected={selectedMonth}
                 dateFormat="MMM yyyy"
                 showMonthYearPicker
-                popperPlacement="left-start"
+                // popperPlacement="left-start" // find a way to make this responsive b/c this placement is bad for smaller screens
                 popperClassName=""
               
                 onChange={(date) => setSelectedMonth(date)}
