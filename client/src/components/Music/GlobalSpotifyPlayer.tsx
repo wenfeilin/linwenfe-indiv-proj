@@ -169,7 +169,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
       
             {/* START button */}
             <button
-            className="bg-green-600 px-4 py-0.75 rounded font-bold text-white disabled:text-gray-300  disabled:bg-gray-600 disabled:opacity-65"
+            className="bg-green-600 px-4 py-0.75 rounded font-bold text-white disabled:text-gray-300  disabled:bg-gray-600 disabled:opacity-65 hover:cursor-pointer hover:disabled:cursor-default"
             disabled={musicPlayer?.isReady && selectedMonth? false : true}
             onClick={async () => {
               if (selectedMonth) {

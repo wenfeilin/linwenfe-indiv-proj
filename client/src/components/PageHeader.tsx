@@ -1,4 +1,6 @@
 import { NavLink } from "react-router";
+import "../index.css"
+import logo from "../assets/music-journal-logo-cropped.png";
 
 function PageHeader() {
   const linkStyles = "inline-block text-[15px] md:text-base px-4 py-4.5 md:px-5 lg:py-7 hover:text-[#E36414] active:text-[#CC5803]";
@@ -13,10 +15,8 @@ function PageHeader() {
       {/* Logo */}
       {/* NavLinks can be styled based on if they're active or not */}
       <NavLink className="" to={`/my-calendar/${currYear}/${currMonth}`}>
-        {/* Credit for temporary icon: "https://www.flaticon.com/free-icons/smile" created by 
-        Illosalz */}
-        <img className="w-9 md:w-8 lg:w-7.5" src="/happy.png" alt="https://www.flaticon.com/free-icons/smile created by 
-        Illosalz"></img>
+        {/* Logo is made by me! */}
+        <img className="w-10 md:w-9 lg:w-8.5" src={logo} alt="music journal icon created by Wenfei Lin"></img>
       </NavLink>
 
       {/* Nav bar */}
