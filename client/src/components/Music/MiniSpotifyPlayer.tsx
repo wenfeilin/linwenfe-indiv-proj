@@ -54,7 +54,7 @@ function MiniSpotifyPlayer({
   return (
     // MAKE SURE NOTHING IS PRESSABLE UNTIL THE PLAYER IS LOADED!! -- this behavior isn't determinate rn
 
-    <div className="mb-1 rounded-lg border-2 p-2 pb-0 flex flex-col gap-2">
+    <div className="mb-1 rounded-lg border-2 p-2 pb-0 flex flex-col gap-2 ">
       <div className="flex gap-2 pr-2">
         {/* Album Cover */}
         <div
@@ -94,7 +94,7 @@ function MiniSpotifyPlayer({
               >
                 {musicPlayer!.isPlaying? <Pause fill="black" /> : <Play fill="black" />}
               </button>) : 
-              (<ColorRing colors={["#25c21d", "#25c21d", "#25c21d", "#25c21d", "#25c21d"]} height={42} />)
+              (<ColorRing colors={["#25c21d", "#25c21d", "#25c21d", "#25c21d", "#25c21d"]} width={30} height={30}/>)
             }
           </div>
         </div>
@@ -105,7 +105,7 @@ function MiniSpotifyPlayer({
         progress={musicPlayer!.progress}
         songDuration={currentTrackToPlay ? currentTrackToPlay.durationMS : 1}
         playerType="entry"
-        isDisabled={false}
+        isDisabled={musicPlayer?.playerModeRef.current === "calendar" || musicPlayer?.playerModeRef.current === null}
       ></ProgressBar>
 
       {/* Volume Bar */}
@@ -113,7 +113,7 @@ function MiniSpotifyPlayer({
       {!onMobileDevice && 
         <VolumeBar
           volume={musicPlayer!.volume}
-          isDisabled={false}
+          isDisabled={musicPlayer?.playerModeRef.current === "calendar" || musicPlayer?.playerModeRef.current === null}
         ></VolumeBar>
       }
       <div>{/* Get rid of the bangs later! */}</div>

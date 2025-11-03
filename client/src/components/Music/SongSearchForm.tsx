@@ -74,7 +74,13 @@ function SongSearchForm({
         {/* The search bar and button */}
         <form onSubmit={handleFormSubmit} className="relative flex gap-4">
           {/* Search Bar */}
-          <Search size={22} className="absolute top-2 left-2.5" />
+          <button
+            type="submit"
+            className="absolute top-0 left-0 rounded-l-3xl px-3 py-2 hover:cursor-pointer"
+          >
+            <Search size={20} className="text-black" strokeWidth={2.25} />
+          </button>
+          
           <input
             type="text"
             value={searchContent}
@@ -84,16 +90,16 @@ function SongSearchForm({
             onChange={(event) => setSearchContent(event.target.value)}
             autoComplete="off"
             spellCheck={false}
-            className="w-full rounded-3xl border-2 px-5 pl-10"
+            className="w-full rounded-3xl border-2 px-5 pl-10 h-9"
           />
 
           {/* Search button */}
-          <button
+          {/* <button
             type="submit"
             className="rounded-3xl bg-blue-400 px-6 py-2 font-bold text-white hover:cursor-pointer hover:bg-blue-500"
           >
             Search
-          </button>
+          </button> */}
         </form>
 
         {searchResults && (

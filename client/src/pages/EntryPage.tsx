@@ -17,7 +17,7 @@ function EntryPage({checkLoginStatus, setIsLoggedIn, isLoggedIn}: {checkLoginSta
   }
 
   return (
-    <div className="flex h-full flex-col pt-3">
+    <div className="flex h-full flex-col pt-3 pb-10">
       {/* Depending on the prevPage pathname, conditionally render Back to Calendar or Back to 
       Entries? */}
       <div>

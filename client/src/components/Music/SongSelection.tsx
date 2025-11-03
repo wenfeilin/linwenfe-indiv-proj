@@ -111,45 +111,33 @@ function SongSelection({
         placeholder="Song Notes"
         readOnly={!isEditing}
         value={songNotes}
-        className="w-full resize-none overflow-y-auto rounded border-2 border-blue-300 p-1.5 focus:border-blue-400 focus:outline-none"
+        className="w-full resize-none overflow-y-auto rounded border-2 border-blue-300 p-1.5 focus:border-blue-400 focus:outline-none h-fit"
         onChange={(event) => onEdit(event, "song notes")}
       ></textarea>
     );
   }
 
-  // Render indicators of saved and selected songs (only when adding/editing a song selection).
-  if (isEditing && isAddSongBtnActive) {
-    savedSongComponent = <SavedSongIndicator savedSongSelection={savedSongSelection}/>;
-    selectedSongComponent = <SelectedSongIndicator songSelection={songSelection}/>;
-
-    songIndicatorsComponent = (
-      <div className="border-2 rounded-lg p-2 flex flex-col gap-2 mb-2">
-        {savedSongComponent}
-        {selectedSongComponent}
-      </div>
-    )
-  }
-
+  
   // If the entry has a song selection or a song is being added to the entry, display the login button (when necessary) -- since song-related elements require Spotify access.
   if (isAddSongBtnActive) {
     loginBtnComponent = (
       <p className="bg-blue-200 py-1 px-3">Log in to Spotify to use music features</p>
     );
   }
-
+  
   // Display song with regular music player if there is a song selection for this entry.
   if (songSelection) {
     playerComponent = (
       <RegularSpotifyPlayer
-        songSelection={songSelection}
-        isEditing={isEditing}
-        isAddSongBtnActive={isAddSongBtnActive}
-        setIsSearching={setIsSearching}
-        setSongToPlay={setSearchedSongToPlay}
+      songSelection={songSelection}
+      isEditing={isEditing}
+      isAddSongBtnActive={isAddSongBtnActive}
+      setIsSearching={setIsSearching}
+      setSongToPlay={setSearchedSongToPlay}
       ></RegularSpotifyPlayer>
     );
   }
-
+  
   // Render the song search form when the user is trying to add a song to the entry.
   if (isSearching && !songSelection) {
     searchFormComponent = (
@@ -162,14 +150,14 @@ function SongSelection({
         songSelection={songSelection}
         unsavedSongSelectionWasChanged={unsavedSongSelectionWasChanged}
         setUnsavedSongSelectionWasChanged={setUnsavedSongSelectionWasChanged}
-      ></SongSearchForm>
-    );
-  }
-
-  // Render the song search form and mini player when the user is trying to search for songs.
-  if (isEditing && isSearching && isAddSongBtnActive) {
-    searchFormComponent = (
-      <SongSearchForm
+        ></SongSearchForm>
+      );
+    }
+    
+    // Render the song search form and mini player when the user is trying to search for songs.
+    if (isEditing && isSearching && isAddSongBtnActive) {
+      searchFormComponent = (
+        <SongSearchForm
         setSongSelection={setSongSelection}
         setSongToPlay={setSearchedSongToPlay}
         setIsSearching={setIsSearching}
@@ -178,20 +166,34 @@ function SongSelection({
         songSelection={songSelection}
         unsavedSongSelectionWasChanged={unsavedSongSelectionWasChanged}
         setUnsavedSongSelectionWasChanged={setUnsavedSongSelectionWasChanged}
-      ></SongSearchForm>
-    );
-
-    console.log("searchedSongToPlay", searchedSongToPlay)
-
-    if (searchedSongToPlay) {
-      playerComponent = (<MiniSpotifyPlayer
-        currentTrackToPlay={searchedSongToPlay}
-        isAddSongBtnActive={isAddSongBtnActive}
-        songSelection={songSelection}
-        savedSongSelection={savedSongSelection}
-      ></MiniSpotifyPlayer>)
-    }
-  }
+        ></SongSearchForm>
+      );
+      
+      console.log("searchedSongToPlay", searchedSongToPlay)
+      
+      if (searchedSongToPlay) {
+        playerComponent = (<MiniSpotifyPlayer
+          currentTrackToPlay={searchedSongToPlay}
+          isAddSongBtnActive={isAddSongBtnActive}
+          songSelection={songSelection}
+          savedSongSelection={savedSongSelection}
+          ></MiniSpotifyPlayer>)
+        }
+      }
+      
+      // Render indicators of saved and selected songs (only when adding/editing a song selection).
+      if (isEditing && isAddSongBtnActive) {
+        savedSongComponent = <SavedSongIndicator savedSongSelection={savedSongSelection}/>;
+        selectedSongComponent = <SelectedSongIndicator songSelection={songSelection}/>;
+    
+        songIndicatorsComponent = (
+          <div className={`border-2 rounded-lg p-2 flex flex-col gap-2 mb-2
+             ${searchFormComponent? "row-start-1 col-start-2" : "row-start-2"}`}>
+            {savedSongComponent}
+            {selectedSongComponent}
+          </div>
+        )
+      }
 
   return (
     <div className="relative flex flex-cols justify-center p-3 px-4 border-3 rounded-xl">
@@ -225,12 +227,15 @@ function SongSelection({
       )}
 
       {isLoggedIn? 
-        <div>
-          {searchFormComponent}
-          {playerComponent}
-          {songIndicatorsComponent}
-          {songNotesComponent}
-        </div> :
+        <div className="grid grid-cols-[4fr_3fr] gap-x-3 lg:flex lg:flex-col"> {/* flex gap-3 lg:flex-col */}
+          {/* flex-1 */}
+            {searchFormComponent}
+           {/* flex-1 */}
+            {playerComponent}
+            {songIndicatorsComponent}
+            {songNotesComponent}
+          </div>
+         :
         loginBtnComponent
       }
     </div>

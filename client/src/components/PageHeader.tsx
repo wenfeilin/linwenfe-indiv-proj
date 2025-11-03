@@ -2,12 +2,17 @@ import { NavLink } from "react-router";
 
 function PageHeader() {
   const linkStyles = "inline-block text-[15px] md:text-base px-4 py-4.5 md:px-5 lg:py-7 hover:text-[#E36414] active:text-[#CC5803]";
+
+  // By default, the root and my-calendar routes should redirect user to the calendar for current month and year.
+  const now = new Date();
+  const currMonth = now.getMonth() + 1; // .getMonth() returns 0-based months.
+  const currYear = now.getFullYear();
   
   return (
     <header className="flex items-center justify-between shadow h-14 px-4 md:px-6 lg:px-10"> 
       {/* Logo */}
       {/* NavLinks can be styled based on if they're active or not */}
-      <NavLink className="" to={`/my-calendar/`}>
+      <NavLink className="" to={`/my-calendar/${currYear}/${currMonth}`}>
         {/* Credit for temporary icon: "https://www.flaticon.com/free-icons/smile" created by 
         Illosalz */}
         <img className="w-9 md:w-8 lg:w-7.5" src="/happy.png" alt="https://www.flaticon.com/free-icons/smile created by 
