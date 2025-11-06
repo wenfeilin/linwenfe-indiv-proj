@@ -1,11 +1,11 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "./src/server.js",
+  "main": "./src/server.js", 
   "scripts": {
     "test": "vitest",
-    "start": "node server",
-    "dev": "nodemon server"
+    "start": "node ./src/server.js",
+    "dev": "nodemon ./src/server.js"
   },
   "keywords": [],
   "author": "Wenfei Lin",
