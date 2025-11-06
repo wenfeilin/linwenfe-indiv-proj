@@ -23,7 +23,7 @@ function PageHeader() {
       <nav>
         <ul className="flex text-center md:text-base lg:text-lg">
           <li>
-            <NavLink className={({ isActive }) => `${linkStyles} ${isActive ? "text-[#4895EF]" : ""}`} to={`/my-calendar/`}>My Calendar</NavLink>
+            <NavLink className={({ isActive }) => `${linkStyles} ${isActive ? "text-[#4895EF]" : ""}`} to={`/my-calendar/${currYear}/${currMonth}`}>My Calendar</NavLink>
           </li>
           {/* <li>
             <NavLink className={({ isActive }) => `inline-block px-4 py-8 hover:text-[#E36414] active:text-[#CC5803] ${isActive ? "text-[#4895EF]" : ""}`} to="/my-journal">My Journal</NavLink>
