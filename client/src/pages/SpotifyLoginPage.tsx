@@ -24,7 +24,7 @@ function SpotifyLoginPage({checkLoginStatus, isLoggedIn, setIsLoggedIn}: {checkL
 
   return(
     <div className="flex flex-col items-center h-full pt-4">
-      <p className="w-4/5 mb-10 bg-blue-200 p-2 px-3 rounded"><span className="font-bold">Log in for the following music features:</span> add a song selection to your entry, export a playlist of the songs from a month's entries, and directly play the songs from a month's entries.</p>
+      <p className="w-4/5 mb-10 bg-blue-200 p-2 px-3 rounded"><span className="font-bold">Log in for the following music features:</span> add a song selection to your entry, export a playlist of the songs from a month's entries, and directly play the songs from a month's entries. Note: You must have a Spotify Premium account to specifically play music from this website.</p>
       <LoginButton isLoggedIn={isLoggedIn} checkLoginStatus={checkLoginStatus} />
     </div>
   );
