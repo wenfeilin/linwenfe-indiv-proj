@@ -449,7 +449,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
         }
       })
     }
-  }, (isPlaying || isPlayingGlobal) && playerRef.current && isReady && !isLoadingSong && (currentContext || playerModeRef.current === "calendar") ? 1000 : null); // may have to change `mode === "calendar"` part of condition to be more specifically when calendar player has a current song loaded up/shown
+  }, (isPlaying || isPlayingGlobal) && playerRef.current && isReady && (!isLoadingSong || !isLoadingSongGlobal) && (currentContext || playerModeRef.current === "calendar") ? 1000 : null); // may have to change `mode === "calendar"` part of condition to be more specifically when calendar player has a current song loaded up/shown
 
   // console.log("mode", playerMode);
 

@@ -16,7 +16,7 @@ function LoginButton({isLoggedIn, checkLoginStatus}: {isLoggedIn: boolean, check
         // Get rid of condition to allow user to deny access at any time.
         // Save the URL of this page so it is redirected to after login
         const prevPageUrl = encodeURIComponent(location.pathname);
-        // window.location.href for redirecting
+        // window.location.href for redirecting; could also have made a call to the auth login route on my own API but idk which is better
         window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/login?prevPage=${prevPageUrl}`;
         // }
       }}>Log in to Spotify!</button>

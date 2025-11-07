@@ -227,7 +227,7 @@ function SongSelection({
       )}
 
       {isLoggedIn? 
-        <div className="grid grid-cols-[4fr_3fr] gap-x-3 lg:flex lg:flex-col"> {/* flex gap-3 lg:flex-col */}
+        <div className={`grid gap-x-3 lg:flex lg:flex-col ${!isEditing && !songNotesComponent ? "grid-cols-1" : "grid-cols-[4fr_3fr]"}`}> {/* flex gap-3 lg:flex-col */}
           {/* flex-1 */}
             {searchFormComponent}
            {/* flex-1 */}

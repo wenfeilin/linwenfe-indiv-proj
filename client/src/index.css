@@ -1,23 +1,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
-  @theme {
-    --font-heading: "Noto Sans", sans-serif;
-  }
 
 /* This file is for global resets/styles, default typography, custom classes. */
 
 /* :root (usually refers to <html> = highest-lvl element in the document) for global vars/styles 
-   (theme colors, font families, global vars) */
+(theme colors, font families, global vars) */
 :root {
-
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
+  
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --bright-green: #a7c957;
+  --dark-green: #386641;
+  --coral-pink: #ff928b;
+  --muted-brown: #6d4c3d;
+}
+
+@theme inline {
+  --font-heading: "Noto Sans", sans-serif;
+  --color-primary: var(--bright-green);
+  --color-secondary: var(--dark-green);
+  --color-accent: var(--coral-pink);
+  --color-text-dark: var((--muted-brown););
 }
 
 /* #root = where React renders the component tree = the React app (wrapper)*/
