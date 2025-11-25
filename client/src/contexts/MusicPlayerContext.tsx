@@ -3,30 +3,31 @@ import useSpotifyPlayer from "../hooks/useSpotifyPlayer";
 import type { Song } from "../components/Music/SongSelection";
 import useInterval from "../hooks/useInterval";
 import type { SongsAndDates } from "../components/Music/GlobalSpotifyPlayer";
+import type MusicPlayer from "../interfaces/musicPlayer";
 
 type MusicPlayerContextType = {
   playerRef: React.RefObject<Spotify.Player | null>,
   deviceId: string | null;
-  isReady: boolean;
-  isPlaying: boolean;
-  setIsPlaying:(playing: boolean) => void;
-  togglePlay: (song?: Song | null, context?: null) => Promise<void>;
-  progress: number;
+  isReady: boolean; // used
+  isPlaying: boolean; // used
+  setIsPlaying:(playing: boolean) => void; 
+  togglePlay: (song?: Song | null, context?: null) => Promise<void>; // used
+  progress: number; // used
   setProgress: (progress: number) => void;
-  resetProgress: (playerType: PlayerType) => void;
-  trackToPlay: Song | null;
+  resetProgress: (playerType: PlayerType) => void; 
+  trackToPlay: Song | null; // NEED!!! ???
   setTrackToPlay: (song: Song | null) => void;
   isLoadingSong: boolean;
-  pause: () => Promise<void>;
+  pause: () => Promise<void>; // used
   currentContext: Song | null;
-  seek: (timeToSeekTo: number, playerSeeking: PlayerType) => Promise<void>; 
+  seek: (timeToSeekTo: number, playerSeeking: PlayerType) => Promise<void>; // used
   isScrubbingProgress: RefObject<boolean>;
-  setPlayerVolume: (newVolume: number) => Promise<void>;
-  volume: number,
+  setPlayerVolume: (newVolume: number) => Promise<void>; // used
+  volume: number, // used
   togglePlayGlobal: (monthSongUris: string[], currSongPos?: number) => Promise<void>;
   queueAndPlaySongs: (monthSongUris: string[], startSongPos: number) => Promise<void>;
   getCurrSong: () => Promise<Spotify.Track | null>;
-  currentSong: Spotify.Track | null;
+  currentSong: Spotify.Track | null; // used (but slightly diff type)
   playerModeRef: RefObject<PlayerType | null>;
   isPlayingGlobal: boolean;
   setIsPlayingGlobal: (isPlayingGlobal: boolean) => void;
@@ -35,8 +36,8 @@ type MusicPlayerContextType = {
   isLoadingSongGlobal: boolean;
   setIsLoadingSongGlobal: (isLoadingSongGlobal: boolean) => void;
   isScrubbingProgressGlobal: RefObject<boolean>;
-  prevSong: () => Promise<void>;
-  nextSong: () => Promise<void>;
+  prevSong: () => Promise<void>; // used
+  nextSong: () => Promise<void>; // used
   determineSongPosition: () => Promise<number | null>;
   setCurrentContext: (context: Song | null) => void;
   previouslyPlayedModeRef: RefObject<PlayerType | null>; 
