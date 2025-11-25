@@ -25,8 +25,8 @@ describe("CalendarHeader", () => {
     // Render a calendar header for January 2025.
     renderWithRouterAndEntries(<CalendarHeader />, JanuaryRenderOptions);
 
-    const prevMonthLink = screen.getByRole("link", { name: "◄"});
-    const nextMonthLink = screen.getByRole("link", { name: "►"});
+    const prevMonthLink = screen.getByTestId("prev-month-link");
+    const nextMonthLink = screen.getByTestId("next-month-link");
 
     // Assert that the navigation symbols render.
     expect(prevMonthLink).toBeInTheDocument();
@@ -45,8 +45,8 @@ describe("CalendarHeader", () => {
     // Render a calendar header for December 2025.
     renderWithRouterAndEntries(<CalendarHeader />, DecemberRenderOptions);
 
-    const prevMonthLink = screen.getByRole("link", { name: "◄"});
-    const nextMonthLink = screen.getByRole("link", { name: "►"});
+    const prevMonthLink = screen.getByTestId("prev-month-link");
+    const nextMonthLink = screen.getByTestId("next-month-link");
 
     // Assert that the navigation symbols render.
     expect(prevMonthLink).toBeInTheDocument();
@@ -57,13 +57,12 @@ describe("CalendarHeader", () => {
     expect(nextMonthLink).toHaveAttribute("href", "/my-calendar/2026/1");
   });
 
-
   it("navigates to previous and next months correctly", async () => {
     // Render a calendar header for December 2025.
     renderWithRouterAndEntries(<CalendarHeader />, DecemberRenderOptions);
     
-    const prevMonthLink = screen.getByRole("link", { name: "◄"});
-    const nextMonthLink = screen.getByRole("link", { name: "►"});
+    const prevMonthLink = screen.getByTestId("prev-month-link");
+    const nextMonthLink = screen.getByTestId("next-month-link");
     
     // Mock clicking ◄ to navigate to the previous month.
     await userEvent.click(prevMonthLink);

@@ -1,6 +1,6 @@
 import React from "react";
 import { screen, within } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { renderWithRouterAndEntries } from "../test-utils";
 import EntriesList from "../../src/components/Entry/EntriesList";
 import { EntryType } from "../../src/contexts/EntriesContext";

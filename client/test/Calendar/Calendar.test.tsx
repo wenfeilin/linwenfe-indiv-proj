@@ -66,7 +66,7 @@ describe("Calendar", () => {
   it("renders correct day labels in order", () => {
     renderWithRouterAndEntries(<Calendar setIsCalendarLoading={mockSetIsCalendarLoading} />, renderOptions);
     
-    const days = [
+    const daysFullNames = [
       "Sunday",
       "Monday",
       "Tuesday",
@@ -76,10 +76,29 @@ describe("Calendar", () => {
       "Saturday",
     ];
 
-    const dayLabels = screen.getAllByText(/Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday/);
+    const daysShortNames = [
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+    ];
+
+    let dayLabels = screen.getAllByText(/Sunday|Sun|Monday|Mon|Tuesday|Tue|Wednesday|Wed|Thursday|Thu|Friday|Fri|Saturday|Sat/);
+
+    // Only retrieve the displayed day labels.
+    dayLabels = dayLabels.filter((dayLabelEl) => !dayLabelEl.classList.contains("hidden"));
 
     // Assert that each label matches the order in the days array.
-    dayLabels.forEach((label, index) => expect(label).toHaveTextContent(days[index]));
+    dayLabels.forEach((label, index) => {
+      if (label.textContent.length === 3) {
+        expect(label).toHaveTextContent(daysShortNames[index]);
+      } else {
+        expect(label).toHaveTextContent(daysFullNames[index]);
+      }
+    });
   });
 
   it("renders components in correct order", () => {
@@ -89,10 +108,10 @@ describe("Calendar", () => {
     const children = calendar.children;
 
     // Assert the order of the child components.
-    expect(children).toHaveLength(1 + 7 + 42); // header + day labels + calendar blocks
+    expect(children).toHaveLength(1 + 14 + 42); // header + day labels + calendar blocks
     expect(children[0]).toHaveAttribute("data-testid", "calendar-header");
-    expect(children[1]).toHaveTextContent("Sunday");
-    expect(children[8]).toHaveAttribute("data-testid", "calendar-block");
+    expect(children[1]).toHaveTextContent(/Sunday|Sun/);
+    expect(children[15]).toHaveAttribute("data-testid", "calendar-block");
   });
 
   it("shows a loading spinner when calendar is first rendered", () => {
@@ -149,7 +168,7 @@ describe("Calendar", () => {
     expect(blocks[41]).toHaveTextContent("2025-2-8")
   });
 
-  it("doesn't set loading state to false when URL params are valid", () => {
+  it("doesn't show loading spinner when URL params are valid", () => {
     // Mock return values of useParams to mirror what the URL params are on renders after the first one.
     vi.mocked(useParams).mockReturnValue({
       year: "2025",
@@ -158,8 +177,10 @@ describe("Calendar", () => {
 
     renderWithRouterAndEntries(<Calendar setIsCalendarLoading={mockSetIsCalendarLoading} />, renderOptions);
 
-    // Assert that the calendar is loading.
-    expect(mockSetIsCalendarLoading).not.toHaveBeenCalled();
+    const loadingSpinner = screen.queryByTestId("loading-spinner");
+
+    // Assert that the calendar is not loading.
+    expect(loadingSpinner).toBe(null);
   });
 
   it("sets loading state to false when URL params are undefined", () => {
@@ -171,7 +192,9 @@ describe("Calendar", () => {
 
     renderWithRouterAndEntries(<Calendar setIsCalendarLoading={mockSetIsCalendarLoading} />, renderOptions);
 
+    const loadingSpinner = screen.getByTestId("loading-spinner");
+
     // Assert that the calendar is loading.
-    expect(mockSetIsCalendarLoading).toHaveBeenCalledWith(false);
+    expect(loadingSpinner).toBeInTheDocument();
   });
 });

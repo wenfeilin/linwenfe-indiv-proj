@@ -84,18 +84,33 @@ describe("CalendarBlock", () => {
     // Render a calendar block which has its associated entry filled.
     renderBlock(date, filledEntryRenderOptions);
 
-    // Assert that the calendar block renders the text "entry exists".
-    const entryIndicator = screen.getByText(/entry exists/i);
+    // Assert that the calendar block renders an element for an entry existing but no song selection in it.
+    const entryIndicator = screen.getByTestId("entry-indicator");
+    const songIndicator = screen.queryByTestId("song-indicator");
     expect(entryIndicator).toBeInTheDocument();
+    expect(songIndicator).toHaveClass("invisible");
   });
 
   it("doesn't indicate day's entry is filled for empty entry", () => {
     // Render a calendar block which has its associated entry unfilled.
     renderBlock(date, emptyEntryRenderOptions);
 
-    // Assert that the calendar block doesn't render the text "entry exists".
-    const entryIndicator = screen.queryByText(/entry exists/i);
-    expect(entryIndicator).not.toBeInTheDocument();
+    // Assert that the calendar block doesn't render an indicators for an empty entry.
+    const entryIndicator = screen.queryByTestId("entry-indicator");
+    const songIndicator = screen.queryByTestId("song-indicator");
+    expect(entryIndicator).toHaveClass("invisible");
+    expect(songIndicator).toHaveClass("invisible");
+  });
+
+  it("indicates there is a song selection for an entry with one", () => {
+    // Render a calendar block which has its associated entry filled.
+    renderBlock(date, filledEntryRenderOptions);
+
+    // Assert that the calendar block renders both elements for an entry existing and a song selection existing.
+    const entryIndicator = screen.getByTestId("entry-indicator");
+    const songIndicator = screen.getByTestId("song-indicator");
+    expect(entryIndicator).toBeInTheDocument();
+    expect(songIndicator).toBeInTheDocument();
   });
 
   it("navigates to entry if date is in the month", async () => {

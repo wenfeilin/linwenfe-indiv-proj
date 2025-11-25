@@ -1,4 +1,4 @@
-// Providers helper functions (Router, Entries context)
+// Provides helper functions (Router, Entries context)
 
 import React from "react";
 import { render } from "@testing-library/react";

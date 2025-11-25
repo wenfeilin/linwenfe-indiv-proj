@@ -6,49 +6,58 @@ import AddSongButton from "../../src/components/Entry/AddSongButton";
 import "@testing-library/jest-dom/vitest";
 
 describe("AddSongButton", () => {
-  // Mock the setIsAddSongBtnActive function so it's callable in AddSongButton component.
+  // Mock the setIsAddSongBtnActive and setIsSearching functions so they're callable in AddSongButton component.
   const mockSetIsAddSongBtnActive = vi.fn();
+  const mockSetIsSearching = vi.fn();
 
   beforeEach(() => {
     // Clear information about mock function.
     mockSetIsAddSongBtnActive.mockClear();
   })
 
-  it("renders as clickable when not adding song", () => {
+  it(`renders with "Add Song" text and is clickable when not adding song`, () => {
     const isAddSongBtnActive = false; 
 
     // Render the button.
-    render(<AddSongButton isAddSongBtnActive={isAddSongBtnActive} setIsAddSongBtnActive={mockSetIsAddSongBtnActive}/>);
+    render(<AddSongButton isAddSongBtnActive={isAddSongBtnActive} setIsAddSongBtnActive={mockSetIsAddSongBtnActive} setIsSearching={mockSetIsSearching} />);
 
     // Assert that the button shows "Add Song" and isn't disabled.
     const button = screen.getByRole("button");
+    expect(button).toBeEnabled();
     expect(button).toHaveTextContent("Add Song");
-    expect(button).not.toHaveAttribute("disabled");
+
+    // Assert the button is not active (and so it's also not searching for songs).
+    expect(mockSetIsAddSongBtnActive).not.toHaveBeenCalled();
+    expect(mockSetIsSearching).not.toHaveBeenCalled();
   });
 
-  it("calls setIsAddSongBtnActive with true when clicked", async () => {
-    const isAddSongBtnActive = false; 
-
+  it("makes Add Song button active and indicates searching when clicked", async () => {
     // Render the button.
-    render(<AddSongButton isAddSongBtnActive={isAddSongBtnActive} setIsAddSongBtnActive={mockSetIsAddSongBtnActive}/>);
+    const { rerender } = render(<AddSongButton isAddSongBtnActive={false} setIsAddSongBtnActive={mockSetIsAddSongBtnActive} setIsSearching={mockSetIsSearching} />);
+    
+    const button = screen.getByRole("button");
+    expect(button).toBeEnabled();
     
     // Click the button.
-    const button = screen.getByRole("button");
     await userEvent.click(button);
 
-    // Assert that the button still shows "Add Song" and is disabled.
-    expect(button).toHaveTextContent("Add Song");
+    // Simulate the button being disabled.
+    rerender(<AddSongButton isAddSongBtnActive={true} setIsAddSongBtnActive={mockSetIsAddSongBtnActive} setIsSearching={mockSetIsSearching} />);
+
+    // Assert that the button and is disabled.
+    expect(button).toBeDisabled();
     expect(mockSetIsAddSongBtnActive).toHaveBeenCalledWith(true);
+    expect(mockSetIsSearching).toHaveBeenCalledWith(true);
   });
 
   it("renders as disabled when already adding song", () => {
     const isAddSongBtnActive = true; 
 
     // Render the button.
-    render(<AddSongButton isAddSongBtnActive={isAddSongBtnActive} setIsAddSongBtnActive={mockSetIsAddSongBtnActive}/>);
+    render(<AddSongButton isAddSongBtnActive={isAddSongBtnActive} setIsAddSongBtnActive={mockSetIsAddSongBtnActive} setIsSearching={mockSetIsSearching} />);
     
     // Assert that the button is disabled.
     const button = screen.getByRole("button");
-    expect(button).toHaveAttribute("disabled");
+    expect(button).toBeDisabled();
   });
 });
