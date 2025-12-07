@@ -1,6 +1,6 @@
 import { useEffect, useState, type ChangeEvent, type ChangeEventHandler } from "react";
 import SongSearchForm from "./SongSearchForm";
-import RegularSpotifyPlayer from "./RegularSpotifyPlayer";
+import RegularPlayer from "./RegularPlayer";
 import MiniSpotifyPlayer from "./MiniSpotifyPlayer";
 import LoginButton from "./LoginButton";
 import { X } from "lucide-react";
@@ -128,13 +128,13 @@ function SongSelection({
   // Display song with regular music player if there is a song selection for this entry.
   if (songSelection) {
     playerComponent = (
-      <RegularSpotifyPlayer
+      <RegularPlayer
       songSelection={songSelection}
       isEditing={isEditing}
       isAddSongBtnActive={isAddSongBtnActive}
       setIsSearching={setIsSearching}
       setSongToPlay={setSearchedSongToPlay}
-      ></RegularSpotifyPlayer>
+      ></RegularPlayer>
     );
   }
   

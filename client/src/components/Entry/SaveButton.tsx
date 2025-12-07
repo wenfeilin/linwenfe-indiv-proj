@@ -1,8 +1,5 @@
 import { useParams } from "react-router";
-import {
-  useEntriesDispatch,
-  type EntryType,
-} from "../../contexts/EntriesContext";
+import { useEntriesDispatch, type EntryType } from "../../contexts/EntriesContext";
 import type { MouseEventHandler } from "react";
 import type { Song } from "../Music/SongSelection";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
@@ -25,7 +22,7 @@ function SaveButton({
   entryBeingSaved: EntryType | undefined;
   newSongSelection: Song | null;
   newSongNotes: string;
-  setIsAddSongBtnActive: any,
+  setIsAddSongBtnActive: (isAddSongBtnActive: boolean) => void,
   onSave: MouseEventHandler<HTMLButtonElement>;
   setIsSearching: (arg0: boolean) => void;
   setSearchedSongToPlay: (searchedSongToPlay: Song | null) => void;
@@ -113,7 +110,7 @@ function SaveButton({
 
             if (((newSongSelectionUri === prevSavedSongSelectionUri && prevSavedSongSelectionUri !== currentlyPlayingSongUri) || newSongSelectionUri !== currentlyPlayingSongUri) && musicPlayer.playerModeRef.current === "entry") {
               await musicPlayer.pause();
-              await musicPlayer.resetProgress("entry");
+              musicPlayer.resetVisualProgress("entry");
             }
           }
 
@@ -125,7 +122,6 @@ function SaveButton({
           // Hides the add song search form / makes the player uneditable upon save.
           setIsAddSongBtnActive(false);
           setIsSearching(false);
-          
         }}
       >
         Save

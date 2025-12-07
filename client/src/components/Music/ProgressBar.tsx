@@ -61,18 +61,18 @@ function ProgressBar({progress, songDuration, playerType, isDisabled}:{progress:
 
 
   // Mouse up = stopped scrubbing.
-  function handleMouseUp () {
+  async function handleMouseUp () {
     if (musicPlayer) {
       const timeToSeekTo = progress;
       
       if (musicPlayer.playerModeRef.current === "entry") {
         musicPlayer.isScrubbingProgress.current = false;
         // Seek to this new position after scrubbing.
-        musicPlayer.seek(timeToSeekTo, "entry");
+        await musicPlayer.seek(timeToSeekTo, "entry");
       } else {
         musicPlayer.isScrubbingProgressGlobal.current = false;
         // Seek to this new position after scrubbing.
-        musicPlayer.seek(timeToSeekTo, "calendar");
+        await musicPlayer.seek(timeToSeekTo, "calendar");
       }
     }
   }

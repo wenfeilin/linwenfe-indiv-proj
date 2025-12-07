@@ -7,4 +7,4 @@ I was able to implement a skeleton of my website along with the calendar page wh
 I was not able to start implementing the backend, specifically my own API that accesses Spotify's API. Additionally, because I was learning React concepts while implementing the frontend, that slowed me down quite a bit. I also did not start coding anything for the project until Wednesday. I spent a significant amount of time on the project this sprint; it was worth it though.
 
 3. How can we improve for the next sprint?
-I should definitely coding earlier in the sprint. I need to work on my time management and balancing learning with implementation... we'll see how that goes.
+I should definitely start coding earlier in the sprint. I need to work on my time management and balancing learning with implementation... we'll see how that goes.

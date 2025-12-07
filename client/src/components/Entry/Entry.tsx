@@ -34,8 +34,6 @@ function Entry({checkLoginStatus, setIsLoggedIn, isLoggedIn}: {checkLoginStatus:
 
   const [unsavedSongSelectionWasChanged, setUnsavedSongSelectionWasChanged] = useState(false);
 
-  // console.log("This entry's song selection is", songSelection?.title);
-
   // Determine what buttons will be rendered for the entry based on if it's in Edit mode or not.
   let buttonsRow;
 
@@ -82,7 +80,7 @@ function Entry({checkLoginStatus, setIsLoggedIn, isLoggedIn}: {checkLoginStatus:
               if (musicPlayer) {
                 if ((songSelectionBeforeEdit?.uri !== musicPlayer.currentContext?.uri) && musicPlayer.playerModeRef.current === "entry") {
                   await musicPlayer.pause();
-                  musicPlayer.resetProgress("entry");
+                  musicPlayer.resetVisualProgress("entry");
                 }
               }
             }}>
@@ -135,7 +133,7 @@ function Entry({checkLoginStatus, setIsLoggedIn, isLoggedIn}: {checkLoginStatus:
         if (musicPlayer && musicPlayer.playerModeRef.current === "entry") {
           // Reset on unmount so the reset of the progress bar is not seen by the user while leaving the page.
           await musicPlayer.resetActualProgress();
-          musicPlayer.resetProgress("entry");
+          musicPlayer.resetVisualProgress("entry");
           await musicPlayer.pause();
         }
       }
@@ -144,30 +142,26 @@ function Entry({checkLoginStatus, setIsLoggedIn, isLoggedIn}: {checkLoginStatus:
     }
   }, [])
 
-  // console.log(isAddSongBtnActive);
-
   return (
     <div className="w-9/10 flex flex-col gap-2
       md:px-20 
-      lg:px-0 lg:grid lg:grid-cols-[1fr_5fr_3fr] lg:grid-rows-[auto_auto_1fr]"> {/* grid h-full w-full grid-cols-5 grid-rows-[auto_auto_1fr] */}
+      lg:px-0 lg:grid lg:grid-cols-[1fr_5fr_3fr] lg:grid-rows-[auto_auto_1fr]">
       <div className="flex flex-col gap-2
-        lg:col-start-2 lg:col-end-3 lg:row-start-1 lg:mb-2"> {/* col-start-2 col-end-5 row-start-1 mb-2 flex items-center justify-between */}
+        lg:col-start-2 lg:col-end-3 lg:row-start-1 lg:mb-2">
         {/* Date of Entry */}
         <h1 className="text-2xl font-bold">
           {getMonthName(+month!)} {day}, {year}{" "}
         </h1>
 
         {/* Edit/Cancel + Save buttons */}
-
         <div className="">
           {buttonsRow}
         </div>
       </div>
 
       {/* Entry Text Box */}
-      {/* Change col-end back to 5 */}
       <div className="flex-1
-        lg:col-start-2 lg:col-end-3 lg:row-start-2 lg:row-end-4 mb-2"> {/* col-start-2 col-end-4 row-start-2 row-end-4 flex h-full flex-col */}
+        lg:col-start-2 lg:col-end-3 lg:row-start-2 lg:row-end-4 mb-2">
         <textarea
           className="w-full h-70 resize-none overflow-y-auto rounded border-2 border-blue-400 p-4 focus:border-blue-500 focus:outline-none lg:h-83"
           readOnly={!isEditing}
@@ -178,14 +172,11 @@ function Entry({checkLoginStatus, setIsLoggedIn, isLoggedIn}: {checkLoginStatus:
         ></textarea>
       </div>
 
-
       {/* When in edit mode, if the Add Song button is pressed, render the song selection component.  */}
-      {/* {isAddSongBtnActive && ( */}
-        {/* Song Selection */}
-        {/* Change col-start back to 5 */}
-        {(songSelection || isAddSongBtnActive) && 
-          <div className="md:px-10 
-            lg:px-4 lg:col-start-3 lg:row-start-2"> {/* col-start-4 col-end-6 row-start-2 row-end-4 w-full */}
+      {/* Song Selection */}
+      {(songSelection || isAddSongBtnActive) && 
+        <div className="md:px-10 
+          lg:px-4 lg:col-start-3 lg:row-start-2">
           <div className="m-auto flex w-fit flex-col gap-2">
             <SongSelection
               isEditing={isEditing}
@@ -209,7 +200,6 @@ function Entry({checkLoginStatus, setIsLoggedIn, isLoggedIn}: {checkLoginStatus:
             ></SongSelection>
           </div>
         </div>}
-      {/* )} */}
     </div>
   );
 }

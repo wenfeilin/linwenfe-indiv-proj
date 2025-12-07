@@ -19,7 +19,7 @@ function CalendarHeader() {
 
   return (
     <div className="col-span-7 flex items-center justify-between bg-white px-4">
-      <Link className="" to={`/my-calendar/${prevYear}/${prevMonth}`}>
+      <Link data-testid="prev-month-link" to={`/my-calendar/${prevYear}/${prevMonth}`}>
         <ArrowBigLeft className="fill-rose-200 stroke-yellow-900 w-6 md:w-8 h-auto" />
       </Link>
 
@@ -27,7 +27,7 @@ function CalendarHeader() {
         {getMonthName(+month!)} {year}
       </h1>
 
-      <Link className="" to={`/my-calendar/${nextYear}/${nextMonth}`}>
+      <Link data-testid="next-month-link" to={`/my-calendar/${nextYear}/${nextMonth}`}>
         <ArrowBigRight className="fill-rose-200 stroke-yellow-900 w-6 md:w-8 h-auto" />
       </Link>
     </div>

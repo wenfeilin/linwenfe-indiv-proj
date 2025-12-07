@@ -67,9 +67,9 @@ function CalendarBlock({ blockDate }: { blockDate: Date }) {
           <div className="relative 
             lg:w-full lg:flex lg:justify-center">
 
-            <Flower2 className={`w-5 h-auto lg:w-1/5 xl:w-1/6 fill-rose-200 stroke-pink-600 ${hasEntry && isInCurrMonth? "" : "invisible"}`} strokeWidth={1.75} />
+            <Flower2 data-testid="entry-indicator" className={`w-5 h-auto lg:w-1/5 xl:w-1/6 fill-rose-200 stroke-pink-600 ${hasEntry && isInCurrMonth? "" : "invisible"}`} strokeWidth={1.75} />
 
-            <Music className={`w-3.5 h-auto stroke-purple-500 absolute -top-4 left-1/2 -translate-x-1/2 
+            <Music data-testid="song-indicator" className={`w-3.5 h-auto stroke-purple-500 absolute -top-4 left-1/2 -translate-x-1/2 
               md:w-4 md:-top-3.75 md:translate-x-0 md:left-4.75 md:rotate-1  
               lg:w-4.5 lg:-top-5 lg:left-6/10 lg:rotate-1 
               ${hasSongSelection && isInCurrMonth? "" : "invisible"}`} strokeWidth={2} />

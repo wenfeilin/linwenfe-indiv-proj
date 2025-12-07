@@ -2,12 +2,17 @@ const axios = require("axios");
 
 // Checks if access token is valid (exists and hasn't expired)
 function isAccessTokenValid(req) {
-  const accessToken = req.cookies ? req.cookies["access_token"] : null;
-  const expiresAt = req.cookies ? +req.cookies["expires_at"] : null;
-  const msInOneSecond = 1000;
-  const nowInSeconds = Math.floor(Date.now() / msInOneSecond);
+  // const isAccessDenied = req.cookies ? req.cookies["access_denied"] : true;
+  // if (!isAccessDenied) {
+    const accessToken = req.cookies ? req.cookies["access_token"] : null;
+    const expiresAt = req.cookies ? +req.cookies["expires_at"] : null;
+    const msInOneSecond = 1000;
+    const nowInSeconds = Math.floor(Date.now() / msInOneSecond);
+  
+    return accessToken && nowInSeconds < expiresAt;
+  // }
 
-  return accessToken && nowInSeconds < expiresAt;
+  // return false;
 }
 
 // Refreshes access token if necessary

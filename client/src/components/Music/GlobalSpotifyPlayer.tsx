@@ -63,10 +63,10 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
     setQueuedSongsAndDates(monthSongsAndDates);
 
     // Switch to calendar player context (and pause the entry player).
-    await musicPlayer!.updatePlayerState("calendar");
+    musicPlayer!.updatePlayerState("calendar");
 
     setMonthPlaying(selectedMonth);
-    await musicPlayer!.queueAndPlaySongs(monthSongUris, 0);
+    await musicPlayer!.togglePlayGlobal(monthSongUris, 0);
     setSuccessMsg(`Now playing ${getMonthName(selectedMonth!.getMonth() + 1)?.substring(0, 3)} ${selectedMonth!.getFullYear()}`);
     setIsPlayingDisabled(false);
   }
@@ -126,10 +126,10 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
     // 
     if (musicPlayer && monthPlaying) {
       if (musicPlayer.playerModeRef.current === "calendar") {
-        setCurrSong(musicPlayer.currentSong ?? null);
+        setCurrSong(musicPlayer.getCurrSong() ?? null);
       }
     }
-  }, [musicPlayer?.currentSong])
+  }, [musicPlayer?.getCurrSong()])
 
   // const currSong = musicPlayer?.currentSong;
   let currSongArtists = "";
@@ -180,7 +180,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
                     // }
                     // musicPlayer.playerModeRef.current = "calendar";
                     // musicPlayer.setIsPlaying(false);
-                    // musicPlayer.resetProgress("entry");
+                    // musicPlayer.resetVisualProgress("entry");
                     // musicPlayer.setCurrentContext(null);
                     // Reset any error ("no songs this month") messages.
                     setSuccessMsg("");
@@ -249,7 +249,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
                   // }
                   // musicPlayer.playerModeRef.current = "calendar";
                   // musicPlayer.setIsPlaying(false);
-                  // musicPlayer.resetProgress("entry");
+                  // musicPlayer.resetVisualProgress("entry");
                   const monthSongUris = queuedSongsAndDates?.map((songAndDate) => songAndDate.songUri);
                   await musicPlayer!.togglePlayGlobal(monthSongUris!); // add currSongPos param
                   // musicPlayer.setCurrentContext(null);

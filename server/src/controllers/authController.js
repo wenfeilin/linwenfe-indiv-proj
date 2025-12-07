@@ -33,6 +33,8 @@ async function callbackHandler(req, res) {
 
   // User denied authorization/login or state mismatch
   if (!token_info || token_info.error) {
+    // Indicate to FE that authorization failed.
+    res.cookie("access_denied", false);
     return;
   }
 
@@ -45,6 +47,9 @@ async function callbackHandler(req, res) {
     Math.floor(Date.now() / ms_in_one_sec) + token_info.expires_in // change to 5 for testing
   );
   res.cookie("refresh_token", token_info.refresh_token);
+
+  // Indicate to FE that authorization succeeded.
+  res.cookie("access_denied", false);
 
   // Redirect to the page that began the login/authorization flow.
   res.redirect(req.cookies["redirect_url"]);

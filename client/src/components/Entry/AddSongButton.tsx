@@ -3,7 +3,7 @@ function AddSongButton({ isAddSongBtnActive, setIsAddSongBtnActive, setIsSearchi
     <button
       onClick={() => {
         setIsAddSongBtnActive(true);
-        // Can only click this button if searching for songs
+        // Clicking this button means a song is being searched
         setIsSearching(true);
       }}
       className="rounded-md bg-yellow-500 px-6 py-2 font-bold text-white hover:cursor-pointer 

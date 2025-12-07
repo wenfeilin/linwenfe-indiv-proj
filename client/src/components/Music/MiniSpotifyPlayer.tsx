@@ -36,12 +36,12 @@ function MiniSpotifyPlayer({
   //       console.log("song selected (unsaved):", songSelection!.title);
   //       if (currentTrackToPlay?.uri !== savedSongSelection.uri || songSelection!.uri !== savedSongSelection.uri) {
   //         // This makes the progress bar reset instantly with no animation.
-  //         musicPlayer?.resetProgress();
+  //         musicPlayer?.resetVisualProgress();
   //       }
   //     } else {
   //       if (currentTrackToPlay?.uri !== songSelection?.uri || songSelection) {
   //         // This makes the progress bar reset instantly with no animation.
-  //         musicPlayer?.resetProgress();
+  //         musicPlayer?.resetVisualProgress();
   //       }
   //     }
   //   }
@@ -85,7 +85,7 @@ function MiniSpotifyPlayer({
                   musicPlayer.updatePlayerState("entry");
                   // musicPlayer.previouslyPlayedModeRef.current = musicPlayer.playerModeRef.current;
                   // musicPlayer.playerModeRef.current = "entry";
-                  // musicPlayer.resetProgress("calendar");
+                  // musicPlayer.resetVisualProgress("calendar");
                   // musicPlayer.setIsPlayingGlobal(false);
                   
                   // Resume/pause song.

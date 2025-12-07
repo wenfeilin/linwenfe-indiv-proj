@@ -11,7 +11,7 @@ export type EntryType = {
   content: string;
   songSelection: Song | null
   songNotes: string;
-};
+};2
 
 // Define the structure for an Action for the reducer.
 type Action =

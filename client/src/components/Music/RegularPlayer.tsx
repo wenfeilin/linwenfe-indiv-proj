@@ -6,7 +6,7 @@ import { ColorRing } from "react-loader-spinner";
 import VolumeBar from "./VolumeBar";
 import { useEffect, useState } from "react";
 
-function RegularSpotifyPlayer({
+function RegularPlayer({
   songSelection,
   isEditing,
   isAddSongBtnActive,
@@ -24,7 +24,7 @@ function RegularSpotifyPlayer({
   useEffect(() => {
     // Set track to play to queue it up when play is pressed
     if (musicPlayer) {
-      musicPlayer?.setTrackToPlay(songSelection);
+      musicPlayer.setTrackToPlay(songSelection);
     }
   }, [songSelection])
 
@@ -88,7 +88,7 @@ function RegularSpotifyPlayer({
               // console.log("curr mode", musicPlayer.playerModeRef.current);
 
               // musicPlayer.setIsPlayingGlobal(false);
-              // musicPlayer.resetProgress("calendar");
+              // musicPlayer.resetVisualProgress("calendar");
             
               await musicPlayer.togglePlay();
             }}
@@ -131,4 +131,4 @@ function RegularSpotifyPlayer({
   );
 }
 
-export default RegularSpotifyPlayer;
+export default RegularPlayer;

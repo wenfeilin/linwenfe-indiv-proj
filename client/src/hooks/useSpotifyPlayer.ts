@@ -77,18 +77,17 @@ function useSpotifyPlayer() {
               body: JSON.stringify(transfer_playback_req_body),
               credentials: "include", // so access token can be retrieved from cookies
             });
-
-            // The Spotify player is ready to play some music!
-            setIsReady(true)
-
+            
             // console.log("Playback has been transferred!");
-
+            // The Spotify player is ready to play some music!
+            setIsReady(true);
+            
             // Reset the player context in case the user was playing something on Spotify prior to this connect.
             const play_song_req_body = {
-              device_id: deviceId,
+              device_id: device_id,
               uris: [],
             };
-
+            
             await fetch(`${apiUrl}/player/play`, {
               method: "PUT",
               headers: {

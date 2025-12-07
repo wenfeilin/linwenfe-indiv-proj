@@ -24,10 +24,10 @@ function Calendar({ setIsCalendarLoading, containerStyles }: { setIsCalendarLoad
   }
   
   // On unmount, set calendar to loading.
-  useEffect(() => {
-    setIsCalendarLoading(false);
-    return () => setIsCalendarLoading(true);
-  }, []);
+  // useEffect(() => {
+  //   setIsCalendarLoading(false);
+  //   return () => setIsCalendarLoading(true);
+  // }, []);
 
   const calendarDates = generateCalendarDates(selectedYr, selectedMonth);
 
@@ -71,7 +71,7 @@ function Calendar({ setIsCalendarLoading, containerStyles }: { setIsCalendarLoad
           {day}
         </p>
       ))}
-
+ 
       {/* Render the calendar blocks for each date */}
       {calendarDates.map((date, i) => (
         <CalendarBlock key={i} blockDate={date}></CalendarBlock>
