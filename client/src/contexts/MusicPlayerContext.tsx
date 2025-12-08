@@ -1,7 +1,7 @@
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
+import { createContext, useContext, useRef, useState, type ReactNode, type RefObject } from "react";
 import type { Song } from "../components/Music/SongSelection";
 import useInterval from "../hooks/useInterval";
-import SpotifyMusicPlayer from "../classes/SpotifyMusicPlayer";
+import useSpotifyPlayer from "../hooks/useSpotifyPlayer";
 
 // Everything needed for components to render the entry and calendar player UI!
 type MusicPlayerUI = {
@@ -22,9 +22,10 @@ type MusicPlayerUI = {
   progressGlobal: number;
   isLoadingSongGlobal: boolean;
   isScrubbingProgressGlobal: RefObject<boolean>;
+  currentSong: Spotify.Track | null;
   
-  togglePlayGlobal: (monthSongUris: string[], currSongPos?: number) => Promise<void>;
-  getCurrSong: () => Spotify.Track | null;
+  togglePlayGlobal: (monthSongUris: string[]) => Promise<void>;
+  queueAndPlaySongs: (monthSongUris: string[]) => Promise<void>;
   setProgressGlobal: (progressGlobal: number) => void;
   setIsLoadingSongGlobal: (isLoadingSongGlobal: boolean) => void;
   prevSong: () => Promise<void>; // used
@@ -45,8 +46,6 @@ type MusicPlayerUI = {
   updatePlayerState: (currMode: PlayerType) => void;
   resetVisualProgress: (playerType: PlayerType) => void; 
   resetActualProgress: () => Promise<void>;
-
-  // currentSong: Spotify.Track | null; // used (but slightly diff type)
 }
 
 type PlayerType = "calendar" | "entry";
@@ -57,10 +56,8 @@ const MusicPlayerContext = createContext<MusicPlayerUI | null>(null);
 // Handles music playing functionality
 export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   // Initialize actual music player. (using Spotify Player in this case)
-  const musicPlayer = new SpotifyMusicPlayer();
+  const { isReady, currentSong, ...musicPlayer } = useSpotifyPlayer();
 
-  const isReady = musicPlayer.isReady;
-  // console.log("is ready?", isReady);
   // Indicates whether the mode of the player (entry or calendar) or none (if neither has 
   // been played yet).
   const playerModeRef = useRef<PlayerType | null>(null);
@@ -155,8 +152,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
       }
     }
   };
-  
-  // PRIVATE HELPER FXN:
+
   // Queues the current song to play.
   async function queueAndPlaySong(songToPlay: Song) {
     try {
@@ -174,11 +170,11 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
    * Global Player Functions *
    ***************************/
   // currSongPos = where to start in the playlist; not relevant rn tho b/c determine pos of song when playing queued songs
-  async function togglePlayGlobal(monthSongUris: string[], currSongPos = 0) {
+  async function togglePlayGlobal(monthSongUris: string[]) {
     // If switching from entry to calendar player, requeue the songs for the calendar player and start playing the song the calendar last played.
     if (previouslyPlayedModeRef.current === "entry") {
       try {
-        await queueAndPlaySongs(monthSongUris, currSongPos);
+        await queueAndPlaySongs(monthSongUris);
       } catch (err) {
         console.error(err);
       }
@@ -192,13 +188,28 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
       }
     }
   }
-
   
+  // For global player only (queue and play songs for the month selected)
+  async function queueAndPlaySongs(monthSongUris: string[]) {
+    setIsPlayingGlobal(false);
+    setIsLoadingSongGlobal(true);
+
+    try {
+      await musicPlayer.queueMonthOfSongs(monthSongUris);
+
+      setIsLoadingSongGlobal(false);
+      resetVisualProgress("calendar");
+      setIsPlayingGlobal(true);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   // Mainly used to know current song for calendar player (b/c UI can keep track of 
   // current song for entry player)
-  function getCurrSong() {
-    return musicPlayer.getCurrSong();
-  }
+  // function getCurrSong() {
+  //   return musicPlayer.getCurrSong();
+  // }
   
   async function prevSong() {
     try {
@@ -220,22 +231,6 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     }
   }
   
-  // PRIVATE HELPER FXN:
-  // For global player only (queue and play songs for the month selected)
-  async function queueAndPlaySongs(monthSongUris: string[], startSongPos: number) {
-    setIsPlayingGlobal(false);
-    setIsLoadingSongGlobal(true);
-
-    try {
-      await musicPlayer.queueMonthOfSongs(monthSongUris);
-
-      setIsLoadingSongGlobal(false);
-      resetVisualProgress("calendar");
-      setIsPlayingGlobal(true);
-    } catch (err) {
-      console.error(err);
-    }
-  }
 
   // Note: Tried implementing a function to determine song position for the calendar 
   // player (so that I could also display which entry the song is from, but I couldn't 
@@ -305,7 +300,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
 
   async function setPlayerVolume(newVolume: number) {
     try {
-      await musicPlayer.setVolume(newVolume);
+      await musicPlayer.setNewVolume(newVolume);
       setVolume(newVolume);
     } catch (err) {
       console.error(err);
@@ -315,8 +310,6 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   async function resetActualProgress() {
     await musicPlayer.seek(0);
   }
-  
-  // ================== (end) done changing =============================
 
 
   // Update the progress of the song being played every second.
@@ -345,38 +338,19 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
       
       // Otherwise, update the progress.
       updateProgress();
-      
-      // playerRef.current?.getCurrentState().then((state) => {
-      //   setProgress(await musicPlayer.getProgress);
-        
-      //   // Stop playing once the song ends.
-      //   if (state!.position === 0) {
-      //     setIsPlaying(false);
-      //   }
-      // })
     } else {
       // Don't update the progress state while scrubbing is happening or while the calendar player is resetting its (visual) progress. (Otherwise, it'll be jumpy)
       if (isScrubbingProgressGlobal.current || isResettingGlobalRef.current) {
-        console.log(isResettingGlobalRef.current)
         return;
       }
       
       // Otherwise, update the progress.
       updateProgressGlobal();
-
-      // playerRef.current?.getCurrentState().then((state) => {
-      //   setProgressGlobal(state!.position);
-  
-      //   // Stop playing once the song ends.
-      //   if (state!.position === 0) {
-      //     setIsPlayingGlobal(false);
-      //   }
-      // })
     }
   }, (isPlaying || isPlayingGlobal) && isReady && (!isLoadingSong || !isLoadingSongGlobal) && (currentContext || playerModeRef.current === "calendar") ? 1000 : null); // may have to change `mode === "calendar"` part of condition to be more specifically when calendar player has a current song loaded up/shown
 
   return (
-    <MusicPlayerContext.Provider value={{isReady, isPlaying, togglePlay, progress, setProgress, resetVisualProgress, trackToPlay, setTrackToPlay, isLoadingSong, pause, currentContext, seek, isScrubbingProgress, setPlayerVolume, volume, togglePlayGlobal, getCurrSong, playerModeRef, isPlayingGlobal, progressGlobal, setProgressGlobal, isLoadingSongGlobal, setIsLoadingSongGlobal, isScrubbingProgressGlobal, prevSong, nextSong, setCurrentContext, previouslyPlayedModeRef, updatePlayerState, resetActualProgress}}>
+    <MusicPlayerContext.Provider value={{isReady, isPlaying, togglePlay, progress, setProgress, resetVisualProgress, trackToPlay, setTrackToPlay, isLoadingSong, pause, currentContext, seek, isScrubbingProgress, setPlayerVolume, volume, togglePlayGlobal, playerModeRef, isPlayingGlobal, progressGlobal, setProgressGlobal, isLoadingSongGlobal, setIsLoadingSongGlobal, isScrubbingProgressGlobal, prevSong, nextSong, setCurrentContext, previouslyPlayedModeRef, updatePlayerState, resetActualProgress, currentSong, queueAndPlaySongs}}>
       { children }
     </MusicPlayerContext.Provider>
   )

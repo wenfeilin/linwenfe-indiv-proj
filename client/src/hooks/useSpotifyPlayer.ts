@@ -1,178 +1,214 @@
-// So Spotify is recognized as a type
-///  <reference types="@types/spotify-web-playback-sdk"/>
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import useSpotifySDKInit from "./useSpotifySDKInit";
+import type MusicPlayer from "../interfaces/musicPlayer";
 
-// Handles music player setup (connecting, disconnecting, listening to basic events)
-function useSpotifyPlayer() {
-  const playerRef = useRef<Spotify.Player | null>(null);
+// A hook that acts as an implementation of the MusicPlayer interface b/c it needs to be 
+// able to use a custom hook inside it and states, which a regular class doesn't allow.
+function useSpotifyPlayer(): MusicPlayer {
+  // Interface fields
+  const { playerRef, deviceId,  isReady, currentSong }  = useSpotifySDKInit();
+  // const [progress, setProgress] = useState(0);
+  const [volume, setVolume] = useState(1.0);
 
-  const [deviceId, setDeviceId] = useState<string | null>(null);
-  const [isReady, setIsReady] = useState(false);
-
-  // For the global music player.
-  const [currentSong, setCurrentSong] = useState<Spotify.Track | null>(null);
-
-  const apiUrl = import.meta.env.VITE_API_URL;
-
-  // Create a Spotify player once when the component mounts.
-  useEffect(() => {
-    // Load Spotify's SDK script. (Downloads the SDK code from Spotify's servers and makes it
-    // available as `window.Spotify`)
-    const script = document.createElement("script");
-    script.src = "https://sdk.scdn.co/spotify-player.js";
-    script.async = true;
-    document.body.appendChild(script);
-
-    // `.onSpotifyWebPlaybackSDKReady` is a global hook defined by the SDK. It is automatically run
-    // when the SDK script finishes loading.
-    window.onSpotifyWebPlaybackSDKReady = async () => {
-      // Create a new Spotify device.
-      const player = new window.Spotify.Player({
-        name: "Web Playback SDK",
-        // This callback provides the access token to Spotify.
-        getOAuthToken: async (cb: any) => {
-          const backendUrl = import.meta.env.VITE_BACKEND_URL;
-          let token = null;
-
-          try {
-            // Get the (valid) access token.
-            const response = await fetch(`${backendUrl}/auth/token`, {
-              credentials: "include",
-            }); // to send cookies w/ the request
-            const data = await response.json();
-
-            token = data.access_token;
-          } catch (err) {
-            // console.log(err);
-            console.log("failed in useSpotifyPlayer hook, getting access token");
-          }
-
-          cb(token);
-        },
-        volume: 1,
-      });
-
-      // Save the player.
-      playerRef.current = player;
-
-      // Add event listeners to signal state of the player.
-
-      player.addListener(
-        "ready",
-        async ({ device_id }: { device_id: string }) => {
-          // console.log("Ready with Device ID ", device_id);
-          setDeviceId(device_id);
-
-          // Transfer playback to this player so it's ready to play music.
-          try {
-            const transfer_playback_req_body = {
-              device_ids: [device_id],
-            };
-
-            await fetch(`${apiUrl}/player/device`, {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(transfer_playback_req_body),
-              credentials: "include", // so access token can be retrieved from cookies
-            });
-            
-            // console.log("Playback has been transferred!");
-            // The Spotify player is ready to play some music!
-            setIsReady(true);
-            
-            // Reset the player context in case the user was playing something on Spotify prior to this connect.
-            const play_song_req_body = {
-              device_id: device_id,
-              uris: [],
-            };
-            
-            await fetch(`${apiUrl}/player/play`, {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(play_song_req_body),
-              credentials: "include",
-            });
-          } catch (err) {
-            // console.log(err);
-            console.log("failed to reset context in useSpotifyPlayer hook?")
-          }
-        },
-      );
-
-      player.addListener(
-        "not_ready",
-        ({ device_id }: { device_id: string }) => {
-          console.log("Device ID has gone offline ", device_id);
-        },
-      );
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
 
-      // Add a listener to see if the player is active (for my website); if not, switch from the user's to my website's whenever my website is focused??
+// MIGHT NOT NEED THESE TWO: ESP IF UI SIDE IS NOT EVEN REFERENCING THESE
+  // isPlaying: boolean;
+  // isLoading: boolean; // for when queuing up songs
 
-
-      player.addListener("player_state_changed", (state) => {
-        setCurrentSong(state? state.track_window.current_track : null);
-      });
-
-      // Error event listeners
-      player.addListener(
-        "initialization_error",
-        ({ message }: { message: string }) => {
-          console.log(message);
-        },
-      );
-
-      player.addListener(
-        "authentication_error",
-        ({ message }: { message: string }) => {
-          console.log(message);
-        },
-      );
-
-      player.addListener(
-        "account_error",
-        ({ message }: { message: string }) => {
-          console.log(message);
-        },
-      );
-
-      player.addListener(
-        "playback_error",
-        ({ message }: { message: string }) => {
-          console.log(message);
-        },
-      );
-
-      // Connect the player.
-      player.connect().then((success) => {
-        if (success) {
-          console.log(
-            "The Web Playback SDK successfully connected to Spotify!",
-          );
-        }
-      });
-    };
-
-    // Disconnects the music player on unmount. (cleanup function that runs on app unmount since the Provider is the first direct child of the App component -- that means when the app gets reloaded or the tab/window is closed. 
-  
-    // Note: if the app is navigated away from (navigate to another tab/window), the App is not unmounted, so the player is still connected. This may or may not be undesirable. If you want to change it, use a visibility change event listener that can determine if the website loses focus.
-    return () => {
-      if (playerRef.current) {
-        playerRef.current.disconnect();
+  async function pause() {
+    if (playerRef.current && isReady) {
+      try {
+        await playerRef.current.pause();
+        setIsPlaying(false);
+      } catch (err) {
+        console.error(err);
       }
     }
-  }, []);
+  }
+
+  async function togglePlay() {
+    if (playerRef.current && isReady) {
+      try {
+        await playerRef.current.togglePlay();
+        setIsPlaying(!isPlaying);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
+  // For entry player (even tho it's named "queue", due to how the Spotify player works, it also inevitably starts playing the music as soon as it's queued up)
+  async function queueSong(songUri: string) {
+    if (playerRef.current && isReady) {
+      setIsLoading(true);
+      setIsPlaying(false);
+  
+      const apiUrl = import.meta.env.VITE_API_URL;
+  
+      try {
+        // Play the song specified by the URI when play is pressed.
+        const play_song_req_body = {
+          device_id: deviceId,
+          uris: [songUri],
+        };
+  
+        await fetch(`${apiUrl}/player/play`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(play_song_req_body),
+          credentials: "include",
+        });
+  
+        setIsLoading(false);
+        setIsPlaying(true);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
+  // For calendar player (even tho it's named "queue", due to how the Spotify player works, it also inevitably starts playing the music as soon as it's queued up)
+  async function queueMonthOfSongs(songUris: string[]) {
+    if (playerRef.current && isReady) {
+      setIsPlaying(false);
+      setIsLoading(true);
+  
+      // Request API to queue up month's songs.
+      const apiUrl = import.meta.env.VITE_API_URL;
+  
+      const reqBody = {
+        device_id: deviceId,
+        uris: songUris,
+      };
+
+      try {
+        await fetch(`${apiUrl}/player/play`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(reqBody),
+          credentials: "include",
+        });
+  
+        setIsLoading(false);
+        setIsPlaying(true);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
+  async function setNewVolume(newVolume: number) {
+    if (playerRef.current && isReady) {
+      try {
+        await playerRef.current.setVolume(newVolume);
+        setVolume(newVolume);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
+  async function seek(timeToSeekTo: number) {
+    if (playerRef.current && isReady) {
+      try {
+        await playerRef.current.seek(timeToSeekTo);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
+  async function playPrevSong() {
+    if (playerRef.current && isReady) {
+      try {
+        await playerRef.current.previousTrack();
+  
+        const state = await playerRef.current.getCurrentState();
+  
+        // If trying to play previous song when only one song is queued in context, play the same 
+        // song again from the start.
+        if (state) {
+          if (state.track_window.previous_tracks.length === 0) {
+            await resetActualProgress();
+            await playerRef.current.resume();
+            setIsPlaying(true);
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
+  async function playNextSong() {
+    if (playerRef.current && isReady) {
+      try {
+        await playerRef.current.nextTrack();
+        setIsPlaying(true);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
+  async function getCurrSong() {
+    if (playerRef.current && isReady) {
+      // return currentSong;
+      const state = await playerRef.current?.getCurrentState();
+      return state?.track_window.current_track ?? null;
+    }
+
+    return null;
+  }
+
+  async function getProgress() {
+    if (playerRef.current && isReady) {
+      try {
+        const state = await playerRef.current.getCurrentState();
+        return state?.position ?? -2; // random num to differentiate from -1
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    return -1; // let's hope this never gets returned...
+  }
+
+  async function resetActualProgress() {
+    if (playerRef.current && isReady) {
+      try {
+        await playerRef.current.seek(0);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
 
   return {
-    playerRef,
-    deviceId, 
-    isReady,
+    isReady, 
     currentSong,
-  };
+    isPlaying,
+    isLoading,
+    // progress,
+    volume,
+
+    pause,
+    togglePlay,
+    queueSong,
+    queueMonthOfSongs,
+    setNewVolume,
+    seek,
+    playPrevSong,
+    playNextSong,
+    getCurrSong,
+    getProgress
+  }
 }
 
 export default useSpotifyPlayer;
