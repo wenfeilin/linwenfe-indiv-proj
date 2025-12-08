@@ -1,48 +1,37 @@
-# This is a basic workflow to run tests with Actions
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+# add some comment for replication's sake
 
-name: Run tests for frontend
-# Note: Add part for backend later when testing for it is set up
 
-# Controls when the workflow will run
+name: Node.js CI
+
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "test"
-  test-frontend:
-    # The type of runner that the job will run on
+  build:
+
     runs-on: ubuntu-latest
-        
-    defaults:
-      run:
-        working-directory: client
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    strategy:
+      matrix:
+        node-version: [20.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-          cache: 'npm'
-          cache-dependency-path: client/package-lock.json
-          
-      - name: Install dependencies
-        run: npm ci
-
-      # - name: Build frontend
-      # run: npm run build --if-present
-
-      - name: Run tests
-        run: npm test
-  
-  # Note: Add job for backend testing later when testing for it is set up
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: ./frontend/package-lock.json
+    - run: npm ci
+      working-directory: ./frontend
+    - run: npm run build --if-present
+      working-directory: ./frontend
+    - run: npm test
+      working-directory: ./frontend
