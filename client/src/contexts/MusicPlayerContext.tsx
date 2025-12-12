@@ -6,13 +6,13 @@ import useSpotifyPlayer from "../hooks/useSpotifyPlayer";
 // Everything needed for components to render the entry and calendar player UI!
 type MusicPlayerUI = {
   // For entry player:
-  isReady: boolean; // used
-  isPlaying: boolean; // used
+  isReady: boolean;
+  isPlaying: boolean;
   isLoadingSong: boolean;
-  progress: number; // used
-  trackToPlay: Song | null; // NEED!!! ???
+  progress: number;
+  trackToPlay: Song | null;
   
-  togglePlay: (song?: Song | null, context?: null) => Promise<void>; // used
+  togglePlay: (song?: Song | null, context?: null) => Promise<void>;
   setProgress: (progress: number) => void;
   setTrackToPlay: (song: Song | null) => void;
   
@@ -28,21 +28,21 @@ type MusicPlayerUI = {
   queueAndPlaySongs: (monthSongUris: string[]) => Promise<void>;
   setProgressGlobal: (progressGlobal: number) => void;
   setIsLoadingSongGlobal: (isLoadingSongGlobal: boolean) => void;
-  prevSong: () => Promise<void>; // used
-  nextSong: () => Promise<void>; // used
+  prevSong: () => Promise<void>;
+  nextSong: () => Promise<void>;
   
   
   // For both players:
   playerModeRef: RefObject<PlayerType | null>;
   isScrubbingProgress: RefObject<boolean>;
-  volume: number, // used
+  volume: number,
   previouslyPlayedModeRef: RefObject<PlayerType | null>; 
   currentContext: Song | null;
   
   setCurrentContext: (context: Song | null) => void;
-  pause: () => Promise<void>; // used
-  seek: (timeToSeekTo: number, playerSeeking: PlayerType) => Promise<void>; // used
-  setPlayerVolume: (newVolume: number) => Promise<void>; // used
+  pause: () => Promise<void>;
+  seek: (timeToSeekTo: number, playerSeeking: PlayerType) => Promise<void>;
+  setPlayerVolume: (newVolume: number) => Promise<void>;
   updatePlayerState: (currMode: PlayerType) => void;
   resetVisualProgress: (playerType: PlayerType) => void; 
   resetActualProgress: () => Promise<void>;

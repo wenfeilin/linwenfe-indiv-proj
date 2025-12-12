@@ -1,6 +1,6 @@
 import { useState } from "react";
 import useSpotifySDKInit from "./useSpotifySDKInit";
-import type MusicPlayer from "../interfaces/musicPlayer";
+import type MusicPlayer from "../interfaces/MusicPlayer";
 
 // A hook that acts as an implementation of the MusicPlayer interface b/c it needs to be 
 // able to use a custom hook inside it and states, which a regular class doesn't allow.

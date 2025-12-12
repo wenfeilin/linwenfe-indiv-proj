@@ -32,7 +32,7 @@ export function useBlocker(shouldBlock: boolean) {
       }
     }
 
-    // Restore the original push function When effect is cleaned up.
+    // Restore the original push function when effect is cleaned up.
     return () => {
       navigator.push = push;
     }

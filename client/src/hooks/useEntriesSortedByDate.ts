@@ -1,6 +1,7 @@
 import { useEntries } from "../contexts/EntriesContext";
 import { getDateParts } from "../utils/date";
 
+// Sorts entries from least to most recent
 function useEntriesSortedByDate() {
   const entries = useEntries();
   const entriesSortedByDate = [...entries];

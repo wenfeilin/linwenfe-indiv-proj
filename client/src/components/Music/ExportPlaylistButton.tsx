@@ -12,7 +12,6 @@ function ExportPlaylistButton({ setPlaylistUrl, selectedMonth, setShowExportPlay
       return entryYear === year && entryMonth === month;
     })
     
-
     const thisMonthSongUris = thisMonthEntries.map((entry) => entry.songSelection?.uri ?? "");
 
     const hasNoSongs = thisMonthSongUris.every((songUri) => songUri === "");
@@ -22,7 +21,7 @@ function ExportPlaylistButton({ setPlaylistUrl, selectedMonth, setShowExportPlay
       setShowExportPlaylistMsg(true);
       setExportPlaylistMsg({
         before: `You don't have any songs to export for ${getMonthName(month)?.slice(0, 3)} ${year}.`,
-      });
+      }); // Note: using before, linkText, and after in playlist msg b/c no other way to differentiate link from rest of text so that the former can avoid being line broken
       return; // should indicate to the parent component that there are no songs to be exported.
     }
 
@@ -54,7 +53,7 @@ function ExportPlaylistButton({ setPlaylistUrl, selectedMonth, setShowExportPlay
         before: "Your",
         linkText: `${getMonthName(month)?.slice(0, 3)} ${year} playlist`,
         after: "has been created on your Spotify account",
-      });
+      }); // Note: using before, linkText, and after in playlist msg b/c no other way to differentiate link from rest of text so that the former can avoid being line broken
     } catch (err) {
       console.log(err);
     }

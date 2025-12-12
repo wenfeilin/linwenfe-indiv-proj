@@ -7,7 +7,7 @@ import { type StyleProps } from "../../utils/types";
 // Import datepicker CSS from package
 import "react-datepicker/dist/react-datepicker.css";
 
-export type exportMsgType = {
+export type ExportMsgType = {
   before: string,
   linkText?: string,
   after?: string,
@@ -24,12 +24,13 @@ function ExportPlaylistComponent({ containerStyles = "", checkLoginStatus, setIs
   // Initialize to current month.
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(new Date());
   const [showExportPlaylistMsg, setShowExportPlaylistMsg] = useState(false);
-  const [exportPlaylistMsg, setExportPlaylistMsg] = useState<exportMsgType | null>(null);
+  const [exportPlaylistMsg, setExportPlaylistMsg] = useState<ExportMsgType | null>(null);
   const [isExportPlaylistBtnActive, setIsExportPlaylistBtnActive] =
     useState(false);
 
   let exportPlaylistResponse;
 
+  // Resulting message from exporting playlist
   if (playlistUrl && selectedMonth) {
     if (playlistUrl === "N/A") {
       exportPlaylistResponse = (

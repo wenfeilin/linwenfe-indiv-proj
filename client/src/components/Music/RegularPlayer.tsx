@@ -4,7 +4,7 @@ import ProgressBar from "./ProgressBar";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 import { ColorRing } from "react-loader-spinner";
 import VolumeBar from "./VolumeBar";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 function RegularPlayer({
   songSelection,
@@ -27,10 +27,6 @@ function RegularPlayer({
       musicPlayer.setTrackToPlay(songSelection);
     }
   }, [songSelection])
-
-  // console.log("Currently going to play", musicPlayer?.currentTrack?.title, "by", musicPlayer?.currentTrack?.artists);
-
-  // console.log("is playing?", musicPlayer?.isPlaying)
 
   // IDK if this is the best place to check this; maybe it should be higher up  (in the component tree, like when the musicPlayer is loaded) idk
   // Check the pointer type (coarse = touch input)
@@ -74,22 +70,6 @@ function RegularPlayer({
             onClick={async () => {
               // Switch to entry player context (and pause the calendar player).
               musicPlayer.updatePlayerState("entry");
-              // if (musicPlayer.playerModeRef.current === "calendar") {
-              //   musicPlayer.previouslyPlayedModeRef.current = "calendar";
-              // } else {
-              //   musicPlayer.previouslyPlayedModeRef.current = "entry";
-              // }
-
-              // console.log("mode before play", musicPlayer.previouslyPlayedModeRef.current);
-              // console.log("curr mode", musicPlayer.playerModeRef.current);
-
-              
-              // musicPlayer.playerModeRef.current = "entry";
-              // console.log("curr mode", musicPlayer.playerModeRef.current);
-
-              // musicPlayer.setIsPlayingGlobal(false);
-              // musicPlayer.resetVisualProgress("calendar");
-            
               await musicPlayer.togglePlay();
             }}
           >
