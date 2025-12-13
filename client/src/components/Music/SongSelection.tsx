@@ -1,8 +1,7 @@
-import { useEffect, useState, type ChangeEvent, type ChangeEventHandler } from "react";
+import { useEffect, type ChangeEvent } from "react";
 import SongSearchForm from "./SongSearchForm";
 import RegularPlayer from "./RegularPlayer";
 import MiniSpotifyPlayer from "./MiniSpotifyPlayer";
-import LoginButton from "./LoginButton";
 import { X } from "lucide-react";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 import SavedSongIndicator from "./SavedSongIndicator";
@@ -35,8 +34,8 @@ function SongSelection({
   savedSongSelection,
   unsavedSongSelectionWasChanged,
   setUnsavedSongSelectionWasChanged,
-  checkLoginStatus, 
-  setIsLoggedIn,
+  /*checkLoginStatus, 
+  setIsLoggedIn,*/
   isLoggedIn
 }: {
   isEditing: boolean;

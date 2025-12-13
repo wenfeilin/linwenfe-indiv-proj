@@ -24,7 +24,6 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
   const [successMsg, setSuccessMsg] = useState("Pick a month to play from");
   const [prevSuccessMsg, setPrevSuccessMsg] = useState(successMsg); // a valid one (either "pick a month" or "now playing")
 
-  const [currSongEntryDate, setCurrSongEntryDate] = useState<string | null>(null);
   const [queuedSongsAndDates, setQueuedSongsAndDates] = useState<SongsAndDates | null>(null);
 
   const musicPlayer = useMusicPlayer();

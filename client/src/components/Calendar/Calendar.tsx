@@ -4,10 +4,9 @@ import { generateCalendarDates } from "../../utils/date";
 import CalendarHeader from "./CalendarHeader";
 import { RotatingLines } from "react-loader-spinner";
 import { type StyleProps } from "../../utils/types";
-import { useEffect } from "react";
 
 // & to union types
-function Calendar({ setIsCalendarLoading, containerStyles }: { setIsCalendarLoading: (isCalendarLoading: boolean) => void } & StyleProps) {
+function Calendar({ containerStyles }: { setIsCalendarLoading: (isCalendarLoading: boolean) => void } & StyleProps) {
   // Retrieve the year and month of the calendar (from the URL) the user navigated to.
   // The month here is not 0-indexed.
   let { year, month } = useParams();

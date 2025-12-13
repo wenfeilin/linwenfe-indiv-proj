@@ -1,8 +1,8 @@
 import { useEntries } from "../../contexts/EntriesContext";
 import { getDateParts, getMonthName } from "../../utils/date";
-import type { exportMsgType } from "./ExportPlaylistComponent";
+import type { ExportMsgType } from "./ExportPlaylistComponent";
 
-function ExportPlaylistButton({ setPlaylistUrl, selectedMonth, setShowExportPlaylistMsg, setExportPlaylistMsg } : { setPlaylistUrl: (playlistUrl: string) => void, selectedMonth: Date | null, setShowExportPlaylistMsg: (showExportPlaylistMsg: boolean) => void, setExportPlaylistMsg: (msg: exportMsgType | null) => void }) {
+function ExportPlaylistButton({ setPlaylistUrl, selectedMonth, setShowExportPlaylistMsg, setExportPlaylistMsg } : { setPlaylistUrl: (playlistUrl: string) => void, selectedMonth: Date | null, setShowExportPlaylistMsg: (showExportPlaylistMsg: boolean) => void, setExportPlaylistMsg: (msg: ExportMsgType | null) => void }) {
   const apiUrl = import.meta.env.VITE_API_URL;
   const entries = useEntries();
 

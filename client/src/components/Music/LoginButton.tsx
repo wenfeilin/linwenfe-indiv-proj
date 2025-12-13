@@ -1,6 +1,6 @@
 import { useLocation } from "react-router";
 
-function LoginButton({isLoggedIn, checkLoginStatus}: {isLoggedIn: boolean, checkLoginStatus: any}) {
+function LoginButton(/*{isLoggedIn, checkLoginStatus}: {isLoggedIn: boolean, checkLoginStatus: any}*/) {
   const location = useLocation();
 
   return(

@@ -3,7 +3,6 @@ import { useEntriesDispatch, type EntryType } from "../../contexts/EntriesContex
 import type { MouseEventHandler } from "react";
 import type { Song } from "../Music/SongSelection";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
-import SongSelection from "../Music/SongSelection";
 
 // Determines if changes were made and if so saves, updating the entries list context and updates
 // local storage too. Otherwise, doesn't update the entries list context.
@@ -16,7 +15,6 @@ function SaveButton({
   onSave,
   setIsSearching,
   setSearchedSongToPlay,
-  unsavedSongSelectionWasChanged,
 }: {
   newEntryContent: string;
   entryBeingSaved: EntryType | undefined;

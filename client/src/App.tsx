@@ -1,14 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import PageLayout from "./pages/PageLayout";
 import CalendarPage from "./pages/CalendarPage";
 import EntryPage from "./pages/EntryPage";
-import MyJournalPage from "./pages/MyJournalPage";
 import EntriesPage from "./pages/EntriesPage";
-import DecorationsPage from "./pages/DecorationsPage";
-import SettingsPage from "./pages/SettingsPage";
 import SpotifyLoginPage from "./pages/SpotifyLoginPage";
 import { EntriesProvider } from "./contexts/EntriesContext";
-import { MusicPlayerProvider } from "./contexts/MusicPlayerContext";
 import { useEffect, useState } from "react";
 import GlobalSpotifyPlayer from "./components/Music/GlobalSpotifyPlayer";
 import ConditionalMusicProvider from "./components/Music/ConditionalMusicProvider";
@@ -109,7 +105,7 @@ function App() {
                   <Route path="my-calendar/:year/:month" element={<CalendarPage checkLoginStatus={checkLoginStatus} setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn} isCalendarLoading={isCalendarLoading} setIsCalendarLoading={setIsCalendarLoading} />} />
                   <Route path="entry/:year/:month/:day" element={<EntryPage checkLoginStatus={checkLoginStatus} setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn} />} />
                   <Route path="my-entries" element={<EntriesPage />} />
-                  <Route path="spotify-login" element={<SpotifyLoginPage checkLoginStatus={checkLoginStatus} setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn} />} />
+                  <Route path="spotify-login" element={<SpotifyLoginPage /*checkLoginStatus={checkLoginStatus} setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn}*/ />} />
                   {/* <Route path="my-journal" element={<MyJournalPage />} />
                   <Route path="decorations" element={<DecorationsPage />} />
                   <Route path="settings" element={<SettingsPage />} /> */}

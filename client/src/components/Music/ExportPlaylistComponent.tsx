@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ExportPlaylistButton from "./ExportPlaylistButton";
 import DatePicker from "react-datepicker";
-import { getMonthName } from "../../utils/date";
 import { type StyleProps } from "../../utils/types";
 
 // Import datepicker CSS from package
@@ -13,7 +12,7 @@ export type ExportMsgType = {
   after?: string,
 }
 
-function ExportPlaylistComponent({ containerStyles = "", checkLoginStatus, setIsLoggedIn, isLoggedIn}: StyleProps & {checkLoginStatus: any, setIsLoggedIn: (isLoggedIn: boolean) => void, isLoggedIn: boolean}) {
+function ExportPlaylistComponent({ containerStyles = "", isLoggedIn}: StyleProps & {checkLoginStatus: any, setIsLoggedIn: (isLoggedIn: boolean) => void, isLoggedIn: boolean}) {
   // // Check login status since user must be logged in to use majority of music features.
   // // Check login status on every re-render.
   // useEffect(() => {

@@ -3,15 +3,14 @@ import { Pause, Play } from "lucide-react";
 import ProgressBar from "./ProgressBar";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 import { ColorRing } from "react-loader-spinner";
-import { useEffect } from "react";
 import VolumeBar from "./VolumeBar";
 
 // Handles UI rendering and UI-related functionality for music player in entry view
 function MiniSpotifyPlayer({
   currentTrackToPlay,
-  isAddSongBtnActive,
+  /*isAddSongBtnActive,
   songSelection, // selected but unsaved (b/c in edit mode)
-  savedSongSelection,
+  savedSongSelection,*/
 }: {
   currentTrackToPlay: Song | null;
   isAddSongBtnActive: boolean;

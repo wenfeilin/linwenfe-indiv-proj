@@ -17,11 +17,7 @@ function EntriesPage() {
 
   const numEntries = entriesSortedAndNumbered.length;
   const entriesPerPg = 10;
-  let hasMoreThanOnePg = false;
 
-  if (numEntries > entriesPerPg) {
-    hasMoreThanOnePg = true;
-  }
   const [page, setPage] = useState(0); // 0-indexed pages
   const start = page * entriesPerPg;
   const end = start + entriesPerPg > numEntries ? numEntries : start + entriesPerPg;

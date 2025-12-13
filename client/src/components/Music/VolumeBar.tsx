@@ -6,7 +6,7 @@ import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
 function VolumeBar({volume, isDisabled}:{volume: number, isDisabled: boolean}) {
 
   // Check the pointer type (coarse = touch input)
-  const onMobileDevice = window.matchMedia("(pointer: coarse").matches;
+  // const onMobileDevice = window.matchMedia("(pointer: coarse").matches;
 
   const minVolume = 0;
   const maxVolume = 1;

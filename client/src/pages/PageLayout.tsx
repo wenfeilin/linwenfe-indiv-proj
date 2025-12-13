@@ -1,5 +1,5 @@
 import PageHeader from "../components/PageHeader";
-import { Outlet, useLocation } from "react-router";
+import { Outlet } from "react-router";
 
 // This is a page wrapper, that always adds the header and the main content under it
 function PageLayout() {
