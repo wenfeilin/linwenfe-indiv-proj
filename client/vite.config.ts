@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  server: { // useful when i was using a backend in the beginning
+  server: { // for the FE dev server
     host: '127.0.0.1', // To allow the website to be accessed by http://127.0.0.1:5173/ on Windows; Linux is less picky
     port: 5173,
     proxy: {
