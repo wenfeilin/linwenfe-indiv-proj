@@ -4,9 +4,9 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { defaultMusicPlayerVal, MusicPlayerRenderOptions, renderWithMusicPlayer } from "../../test-utils"
 import "@testing-library/jest-dom/vitest";
-import MiniSpotifyPlayer from "../../../src/components/Music/MiniSpotifyPlayer";
+import MiniPlayer from "../../../src/components/Music/MiniPlayer";
 
-describe("MiniSpotifyPlayer", () => {
+describe("MiniPlayer", () => {
   vi.mock("react-loader-spinner", () => ({
     ColorRing: () => (
       <div data-testid="mini-player-loader"> Loading...</div>
@@ -26,7 +26,7 @@ describe("MiniSpotifyPlayer", () => {
   const noTrackToPlay = null;
   
   it("disables elements when there's no track to play", () => {
-    renderWithMusicPlayer(<MiniSpotifyPlayer currentTrackToPlay={noTrackToPlay} />);
+    renderWithMusicPlayer(<MiniPlayer currentTrackToPlay={noTrackToPlay} />);
 
     const albumCover = screen.queryByRole("img");
     const albumCoverWrapper = screen.getByTestId("album-cover-wrapper");
@@ -48,7 +48,7 @@ describe("MiniSpotifyPlayer", () => {
         }
       }
   
-      renderWithMusicPlayer(<MiniSpotifyPlayer currentTrackToPlay={noTrackToPlay} />, musicPlayerContextVal);
+      renderWithMusicPlayer(<MiniPlayer currentTrackToPlay={noTrackToPlay} />, musicPlayerContextVal);
   
       const loader = screen.getByTestId("mini-player-loader");
       expect(loader).toBeInTheDocument();    
@@ -62,7 +62,7 @@ describe("MiniSpotifyPlayer", () => {
         }
       }
   
-      renderWithMusicPlayer(<MiniSpotifyPlayer currentTrackToPlay={noTrackToPlay} />, musicPlayerContextVal);
+      renderWithMusicPlayer(<MiniPlayer currentTrackToPlay={noTrackToPlay} />, musicPlayerContextVal);
   
       const loader = screen.getByTestId("mini-player-loader");
       expect(loader).toBeInTheDocument();    
@@ -84,7 +84,7 @@ describe("MiniSpotifyPlayer", () => {
   };
 
   it("populates elements with appropriate details when there is a track to play", () => {
-    renderWithMusicPlayer(<MiniSpotifyPlayer currentTrackToPlay={currTrackToPlay} />);
+    renderWithMusicPlayer(<MiniPlayer currentTrackToPlay={currTrackToPlay} />);
 
     const albumCover = screen.getByRole("img");
     const albumCoverWrapper = screen.getByTestId("album-cover-wrapper");
@@ -106,7 +106,7 @@ describe("MiniSpotifyPlayer", () => {
         }
       };
 
-      renderWithMusicPlayer(<MiniSpotifyPlayer currentTrackToPlay={currTrackToPlay} />, musicPlayerContextVal);
+      renderWithMusicPlayer(<MiniPlayer currentTrackToPlay={currTrackToPlay} />, musicPlayerContextVal);
 
       const pauseBtn = screen.getByRole("button");
       const pauseIcon = pauseBtn.querySelector("svg");
@@ -117,7 +117,7 @@ describe("MiniSpotifyPlayer", () => {
 
     it("renders play button when music is not playing", () => {
 
-      renderWithMusicPlayer(<MiniSpotifyPlayer currentTrackToPlay={currTrackToPlay} />);
+      renderWithMusicPlayer(<MiniPlayer currentTrackToPlay={currTrackToPlay} />);
 
       const playBtn = screen.getByRole("button");
       const playIcon = playBtn.querySelector("svg");
@@ -141,7 +141,7 @@ describe("MiniSpotifyPlayer", () => {
         }
       };
 
-      renderWithMusicPlayer(<MiniSpotifyPlayer currentTrackToPlay={currTrackToPlay} />, musicPlayerContextVal);
+      renderWithMusicPlayer(<MiniPlayer currentTrackToPlay={currTrackToPlay} />, musicPlayerContextVal);
 
       const playBtn = screen.getByRole("button");
       await userEvent.click(playBtn);
@@ -160,7 +160,7 @@ describe("MiniSpotifyPlayer", () => {
         }
       };
 
-      renderWithMusicPlayer(<MiniSpotifyPlayer currentTrackToPlay={currTrackToPlay} />, musicPlayerContextVal);
+      renderWithMusicPlayer(<MiniPlayer currentTrackToPlay={currTrackToPlay} />, musicPlayerContextVal);
 
       const progressBar = screen.getByTestId("progress-bar");
       expect(progressBar).toBeDisabled();
@@ -174,7 +174,7 @@ describe("MiniSpotifyPlayer", () => {
         }
       };
 
-      renderWithMusicPlayer(<MiniSpotifyPlayer currentTrackToPlay={currTrackToPlay} />, musicPlayerContextVal);
+      renderWithMusicPlayer(<MiniPlayer currentTrackToPlay={currTrackToPlay} />, musicPlayerContextVal);
 
       const progressBar = screen.getByTestId("progress-bar");
       expect(progressBar).toBeDisabled();
@@ -183,7 +183,7 @@ describe("MiniSpotifyPlayer", () => {
 
   describe("volume bar state", () => {
     it("is rendered on non-mobile devices", () => {
-      renderWithMusicPlayer(<MiniSpotifyPlayer currentTrackToPlay={currTrackToPlay} />);
+      renderWithMusicPlayer(<MiniPlayer currentTrackToPlay={currTrackToPlay} />);
 
       const volumeBar = screen.getByTestId("volume-bar");
       expect(volumeBar).toBeInTheDocument();
@@ -197,7 +197,7 @@ describe("MiniSpotifyPlayer", () => {
         }
       };
       
-      renderWithMusicPlayer(<MiniSpotifyPlayer currentTrackToPlay={currTrackToPlay} />, musicPlayerContextVal);
+      renderWithMusicPlayer(<MiniPlayer currentTrackToPlay={currTrackToPlay} />, musicPlayerContextVal);
       
       const volumeBar = screen.getByTestId("volume-bar");
       expect(volumeBar).toBeDisabled();
@@ -211,7 +211,7 @@ describe("MiniSpotifyPlayer", () => {
         }
       };
       
-      renderWithMusicPlayer(<MiniSpotifyPlayer currentTrackToPlay={currTrackToPlay} />, musicPlayerContextVal);
+      renderWithMusicPlayer(<MiniPlayer currentTrackToPlay={currTrackToPlay} />, musicPlayerContextVal);
       
       const volumeBar = screen.getByTestId("volume-bar");
       expect(volumeBar).toBeDisabled();
@@ -221,7 +221,7 @@ describe("MiniSpotifyPlayer", () => {
     it("is not rendered on mobile devices", () => {
       mockIsMobileDevice.mockReturnValue(true); // on mobile device
 
-      renderWithMusicPlayer(<MiniSpotifyPlayer currentTrackToPlay={currTrackToPlay} />);
+      renderWithMusicPlayer(<MiniPlayer currentTrackToPlay={currTrackToPlay} />);
 
       const volumeBar = screen.queryByTestId("volume-bar");
       expect(volumeBar).toBe(null);

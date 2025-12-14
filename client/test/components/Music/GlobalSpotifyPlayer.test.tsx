@@ -1,13 +1,12 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { defaultMusicPlayerVal, renderWithRouterAndEntries, renderWithRouterEntriesMusicPlayer } from "../../test-utils"
 import "@testing-library/jest-dom/vitest";
-import GlobalSpotifyPlayer from "../../../src/components/Music/GlobalSpotifyPlayer";
+import GlobalPlayer from "../../../src/components/Music/GlobalPlayer";
 import { EntryType } from "../../../src/contexts/EntriesContext";
 
-describe("GlobalSpotifyPlayer", () => {
+describe("GlobalPlayer", () => {
   // Mock react date picker
   vi.mock("react-datepicker", () => ({
     default: ({ selected, onChange }: any) => (
@@ -83,7 +82,7 @@ describe("GlobalSpotifyPlayer", () => {
 
   it("shows initial state with no month selected", () => {
     const renderOptions = { initialEntries: mockEntries };
-    renderWithRouterEntriesMusicPlayer(<GlobalSpotifyPlayer containerStyles="" />, renderOptions);
+    renderWithRouterEntriesMusicPlayer(<GlobalPlayer containerStyles="" />, renderOptions);
 
     const statusMsg = screen.getByText(/pick a month to play from/i);
     const startBtn = screen.getByRole("button", { name: /start/i });
@@ -94,7 +93,7 @@ describe("GlobalSpotifyPlayer", () => {
 
   it("renders date picker for month selection", () => {
     const renderOptions = { initialEntries: mockEntries };
-    renderWithRouterEntriesMusicPlayer(<GlobalSpotifyPlayer containerStyles="" />, renderOptions);
+    renderWithRouterEntriesMusicPlayer(<GlobalPlayer containerStyles="" />, renderOptions);
 
     const datePicker = screen.getByTestId("date-picker");
     expect(datePicker).toBeInTheDocument();
@@ -102,7 +101,7 @@ describe("GlobalSpotifyPlayer", () => {
 
   it("renders empty album cover when no song is playing", () => {
     const renderOptions = { initialEntries: mockEntries };
-    renderWithRouterEntriesMusicPlayer(<GlobalSpotifyPlayer containerStyles="" />, renderOptions);
+    renderWithRouterEntriesMusicPlayer(<GlobalPlayer containerStyles="" />, renderOptions);
 
     // Find the album cover div (it should have bg-gray-100 class when empty)
     const albumCover = screen.getByTestId("album-wrapper-global-player");
@@ -113,7 +112,7 @@ describe("GlobalSpotifyPlayer", () => {
 
   it("renders play/pause button", () => {
     const renderOptions = { initialEntries: mockEntries };
-    renderWithRouterEntriesMusicPlayer(<GlobalSpotifyPlayer containerStyles="" />, renderOptions);
+    renderWithRouterEntriesMusicPlayer(<GlobalPlayer containerStyles="" />, renderOptions);
 
     const playPauseBtn = screen.getByTestId("play-pause-btn-global-player");
 
@@ -122,7 +121,7 @@ describe("GlobalSpotifyPlayer", () => {
 
   it("renders prev song button", () => {
     const renderOptions = { initialEntries: mockEntries };
-    renderWithRouterEntriesMusicPlayer(<GlobalSpotifyPlayer containerStyles="" />, renderOptions);
+    renderWithRouterEntriesMusicPlayer(<GlobalPlayer containerStyles="" />, renderOptions);
 
     const prevSongBtn = screen.getByTestId("prev-song-btn");
     
@@ -131,7 +130,7 @@ describe("GlobalSpotifyPlayer", () => {
 
   it("renders next song button", () => {
     const renderOptions = { initialEntries: mockEntries };
-    renderWithRouterEntriesMusicPlayer(<GlobalSpotifyPlayer containerStyles="" />, renderOptions);
+    renderWithRouterEntriesMusicPlayer(<GlobalPlayer containerStyles="" />, renderOptions);
 
     const nextSongBtn = screen.getByTestId("next-song-btn");
     
@@ -140,7 +139,7 @@ describe("GlobalSpotifyPlayer", () => {
 
   it("renders progress bar", () => {
     const renderOptions = { initialEntries: mockEntries };
-    renderWithRouterEntriesMusicPlayer(<GlobalSpotifyPlayer containerStyles="" />, renderOptions);
+    renderWithRouterEntriesMusicPlayer(<GlobalPlayer containerStyles="" />, renderOptions);
 
     const progressBar = screen.getByTestId("progress-bar");
     expect(progressBar).toBeInTheDocument();
@@ -150,7 +149,7 @@ describe("GlobalSpotifyPlayer", () => {
     mockIsMobileDevice.mockReturnValue(false);
     
     const renderOptions = { initialEntries: mockEntries };
-    renderWithRouterEntriesMusicPlayer(<GlobalSpotifyPlayer containerStyles="" />, renderOptions);
+    renderWithRouterEntriesMusicPlayer(<GlobalPlayer containerStyles="" />, renderOptions);
 
     const volumeBar = screen.getByTestId("volume-bar");
     expect(volumeBar).toBeInTheDocument();
@@ -160,7 +159,7 @@ describe("GlobalSpotifyPlayer", () => {
     mockIsMobileDevice.mockReturnValue(true);
     
     const renderOptions = { initialEntries: mockEntries };
-    renderWithRouterEntriesMusicPlayer(<GlobalSpotifyPlayer containerStyles="" />, renderOptions);
+    renderWithRouterEntriesMusicPlayer(<GlobalPlayer containerStyles="" />, renderOptions);
 
     const volumeBar = screen.queryByTestId("volume-bar");
     expect(volumeBar).not.toBeInTheDocument();
@@ -168,7 +167,7 @@ describe("GlobalSpotifyPlayer", () => {
 
   it("START button is disabled initially when no month is selected", () => {
     const renderOptions = { initialEntries: mockEntries };
-    renderWithRouterEntriesMusicPlayer(<GlobalSpotifyPlayer containerStyles="" />, renderOptions);
+    renderWithRouterEntriesMusicPlayer(<GlobalPlayer containerStyles="" />, renderOptions);
 
     const startBtn = screen.getByRole("button", { name: /start/i });
     expect(startBtn).toBeDisabled();
@@ -182,7 +181,7 @@ describe("GlobalSpotifyPlayer", () => {
         playerModeRef: { current: null },
       }
     };
-    renderWithRouterEntriesMusicPlayer(<GlobalSpotifyPlayer containerStyles="" />, renderOptions);
+    renderWithRouterEntriesMusicPlayer(<GlobalPlayer containerStyles="" />, renderOptions);
 
     const playPauseBtn = screen.getByTestId("play-pause-btn-global-player");
     
@@ -197,7 +196,7 @@ describe("GlobalSpotifyPlayer", () => {
         isReady: false
       }
     };
-    renderWithRouterEntriesMusicPlayer(<GlobalSpotifyPlayer containerStyles="" />, renderOptions);
+    renderWithRouterEntriesMusicPlayer(<GlobalPlayer containerStyles="" />, renderOptions);
 
     const playPauseBtn = screen.getByTestId("play-pause-btn-global-player");
     
@@ -212,7 +211,7 @@ describe("GlobalSpotifyPlayer", () => {
         isReady: false
       }
     };
-    renderWithRouterEntriesMusicPlayer(<GlobalSpotifyPlayer containerStyles="" />, renderOptions);
+    renderWithRouterEntriesMusicPlayer(<GlobalPlayer containerStyles="" />, renderOptions);
 
     const prevSongBtn = screen.getByTestId("prev-song-btn");
     const nextSongBtn = screen.getByTestId("next-song-btn");
@@ -229,7 +228,7 @@ describe("GlobalSpotifyPlayer", () => {
         isReady: false
       }
     };
-    renderWithRouterEntriesMusicPlayer(<GlobalSpotifyPlayer containerStyles="" />, renderOptions);
+    renderWithRouterEntriesMusicPlayer(<GlobalPlayer containerStyles="" />, renderOptions);
 
     const progressBar = screen.getByTestId("progress-bar");
     expect(progressBar).toBeDisabled();
@@ -243,7 +242,7 @@ describe("GlobalSpotifyPlayer", () => {
         isReady: false
       }
     };
-    renderWithRouterEntriesMusicPlayer(<GlobalSpotifyPlayer containerStyles="" />, renderOptions);
+    renderWithRouterEntriesMusicPlayer(<GlobalPlayer containerStyles="" />, renderOptions);
 
     const volumeBar = screen.getByTestId("volume-bar");
     expect(volumeBar).toBeDisabled();
@@ -251,7 +250,7 @@ describe("GlobalSpotifyPlayer", () => {
 
   it("shows empty song title and artist when no song is playing", () => {
     const renderOptions = { initialEntries: mockEntries };
-    renderWithRouterEntriesMusicPlayer(<GlobalSpotifyPlayer containerStyles="" />, renderOptions);
+    renderWithRouterEntriesMusicPlayer(<GlobalPlayer containerStyles="" />, renderOptions);
 
     // Find the song info area - it should render empty paragraphs
     const allParagraphs = screen.getAllByRole("generic").filter(el => 

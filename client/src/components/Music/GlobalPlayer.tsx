@@ -13,7 +13,7 @@ export type SongsAndDates = {
   date: string,
 }[]
 
-function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
+function GlobalPlayer({containerStyles}: {containerStyles: string}) {
   // Don't initialize selected month as a month.
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
 
@@ -295,4 +295,4 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
   )
 }
 
-export default GlobalSpotifyPlayer;
+export default GlobalPlayer;

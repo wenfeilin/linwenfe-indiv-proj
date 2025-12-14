@@ -1,7 +1,7 @@
 import { useEffect, type ChangeEvent } from "react";
 import SongSearchForm from "./SongSearchForm";
 import RegularPlayer from "./RegularPlayer";
-import MiniSpotifyPlayer from "./MiniSpotifyPlayer";
+import MiniPlayer from "./MiniPlayer";
 import { X } from "lucide-react";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 import SavedSongIndicator from "./SavedSongIndicator";
@@ -171,12 +171,12 @@ function SongSelection({
       console.log("searchedSongToPlay", searchedSongToPlay)
       
       if (searchedSongToPlay) {
-        playerComponent = (<MiniSpotifyPlayer
+        playerComponent = (<MiniPlayer
           currentTrackToPlay={searchedSongToPlay}
           /* isAddSongBtnActive={isAddSongBtnActive}
           songSelection={songSelection}
           savedSongSelection={savedSongSelection}*/
-          ></MiniSpotifyPlayer>)
+          ></MiniPlayer>)
         }
       }
       

@@ -7,7 +7,7 @@ import VolumeBar from "./VolumeBar";
 import { isMobileDevice } from "../../utils/device";
 
 // Handles UI rendering and UI-related functionality for music player in entry view
-function MiniSpotifyPlayer({
+function MiniPlayer({
   currentTrackToPlay,
   /*isAddSongBtnActive,
   songSelection, // selected but unsaved (b/c in edit mode)
@@ -119,4 +119,4 @@ function MiniSpotifyPlayer({
   );
 }
 
-export default MiniSpotifyPlayer;
+export default MiniPlayer;

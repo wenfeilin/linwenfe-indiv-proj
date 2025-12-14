@@ -6,7 +6,7 @@ import EntriesPage from "./pages/EntriesPage";
 import SpotifyLoginPage from "./pages/SpotifyLoginPage";
 import { EntriesProvider } from "./contexts/EntriesContext";
 import { useEffect, useState } from "react";
-import GlobalSpotifyPlayer from "./components/Music/GlobalSpotifyPlayer";
+import GlobalPlayer from "./components/Music/GlobalPlayer";
 import ConditionalMusicProvider from "./components/Music/ConditionalMusicProvider";
 
 // This defines the overall page layout.
@@ -116,7 +116,7 @@ function App() {
             {/* Place calendar player outside router's route tree so it doesn't unmount when the route changes since for every new route, components are recreated. */}
             {isLoggedIn && (isOnCalendarPg? !isCalendarLoading: true) &&
               (<div className={`${parentContainerStyles}`}>
-                <GlobalSpotifyPlayer containerStyles={`${containerStyles}`}/>
+                <GlobalPlayer containerStyles={`${containerStyles}`}/>
               </div>)}
 
           </div>

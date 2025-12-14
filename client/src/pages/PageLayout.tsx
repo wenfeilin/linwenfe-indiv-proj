@@ -14,7 +14,7 @@ function PageLayout() {
         {/* Place calendar player here so it doesn't get unmounted on route changes
         {isLoggedIn && (isOnCalendarPg? !isCalendarLoading: true) &&
           (<div className={`${parentContainerStyles}`}>
-            <GlobalSpotifyPlayer containerStyles={`${containerStyles}`}/>
+            <GlobalPlayer containerStyles={`${containerStyles}`}/>
           </div>)} */}
       </main>
     </div>

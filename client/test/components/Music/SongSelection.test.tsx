@@ -460,7 +460,7 @@ describe("SongSelection", () => {
     expect(searchInput).toBeInTheDocument();
   });
 
-  it("renders MiniSpotifyPlayer when searching and there's a searched song to play", () => {
+  it("renders MiniPlayer when searching and there's a searched song to play", () => {
     const searchedSong: Song = {
       id: "456",
       uri: "uri2",
