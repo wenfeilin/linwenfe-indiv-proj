@@ -262,7 +262,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
               <button
                 data-testid="prev-song-btn"
                 className={`${playBtnStyles}`}
-                disabled={(musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current === null || musicPlayer?.playerModeRef.current === "entry"}
+                disabled={!musicPlayer?.isReady || (musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current === null || musicPlayer?.playerModeRef.current === "entry"}
                 onClick={async () => await musicPlayer!.prevSong()}
               >
                 <SkipBack fill="black" />
@@ -272,7 +272,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
               <button
                 data-testid="next-song-btn"
                 className={`${playBtnStyles}`}
-                disabled={(musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current === null || musicPlayer?.playerModeRef.current === "entry"}
+                disabled={!musicPlayer?.isReady || (musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current === null || musicPlayer?.playerModeRef.current === "entry"}
                 onClick={async () => await musicPlayer!.nextSong()}
               >
                 <SkipForward fill="black" />
