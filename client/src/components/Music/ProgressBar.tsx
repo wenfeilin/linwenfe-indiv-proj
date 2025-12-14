@@ -87,7 +87,7 @@ function ProgressBar({progress, songDuration, playerType, isDisabled}:{progress:
       </p>
 
       {/* The actual bar */}
-      <input type="range" id="progressBar" min="0" max={songDuration} step="0.01" value={progress}
+      <input type="range" data-testid="progress-bar" id="progressBar" min="0" max={songDuration} step="0.01" value={progress}
       className="flex-1"
       onChange={(event) => handleChange(event)}
       onMouseDown={handleMouseDown} // for mouse (desktop/latop)

@@ -4,7 +4,7 @@ import useInterval from "../hooks/useInterval";
 import useSpotifyPlayer from "../hooks/useSpotifyPlayer";
 
 // Everything needed for components to render the entry and calendar player UI!
-type MusicPlayerUI = {
+export type MusicPlayerUI = {
   // For entry player:
   isReady: boolean;
   isPlaying: boolean;
@@ -51,7 +51,7 @@ type MusicPlayerUI = {
 type PlayerType = "calendar" | "entry";
 
 // One single global music player to be used to play a single song and a playlist of songs
-const MusicPlayerContext = createContext<MusicPlayerUI | null>(null);
+export const MusicPlayerContext = createContext<MusicPlayerUI | null>(null);
 
 // Handles music playing functionality
 export function MusicPlayerProvider({ children }: { children: ReactNode }) {

@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 
-// Grabbed this code from source online (I'll update the source later)
 function useInterval(callback: any, delay: number | null) {
   const savedCallback = useRef<any>(null);
  

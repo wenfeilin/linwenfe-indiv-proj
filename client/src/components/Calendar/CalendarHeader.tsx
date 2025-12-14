@@ -18,7 +18,7 @@ function CalendarHeader() {
   const nextYear = displayedMonth === 12 ? displayedYear + 1 : displayedYear;
 
   return (
-    <div className="col-span-7 flex items-center justify-between bg-white px-4">
+    <div data-testid="calendar-header" className="col-span-7 flex items-center justify-between bg-white px-4">
       <Link data-testid="prev-month-link" to={`/my-calendar/${prevYear}/${prevMonth}`}>
         <ArrowBigLeft className="fill-rose-200 stroke-yellow-900 w-6 md:w-8 h-auto" />
       </Link>

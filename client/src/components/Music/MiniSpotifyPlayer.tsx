@@ -4,6 +4,7 @@ import ProgressBar from "./ProgressBar";
 import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 import { ColorRing } from "react-loader-spinner";
 import VolumeBar from "./VolumeBar";
+import { isMobileDevice } from "../../utils/device";
 
 // Handles UI rendering and UI-related functionality for music player in entry view
 function MiniSpotifyPlayer({
@@ -13,9 +14,6 @@ function MiniSpotifyPlayer({
   savedSongSelection,*/
 }: {
   currentTrackToPlay: Song | null;
-  isAddSongBtnActive: boolean;
-  songSelection: Song | null;
-  savedSongSelection: Song | null;
 }) {
   const musicPlayer = useMusicPlayer();
   // musicPlayer?.setCurrentTrack(currentTrackToPlay);
@@ -48,7 +46,7 @@ function MiniSpotifyPlayer({
 
   // IDK if this is the best place to check this; maybe it should be higher up  (in the component tree, like when the musicPlayer is loaded) idk
   // Check the pointer type (coarse = touch input)
-  const onMobileDevice = window.matchMedia("(pointer: coarse").matches;
+  const onMobileDevice = isMobileDevice();
 
   return (
     // MAKE SURE NOTHING IS PRESSABLE UNTIL THE PLAYER IS LOADED!! -- this behavior isn't determinate rn
@@ -58,6 +56,7 @@ function MiniSpotifyPlayer({
         {/* Album Cover */}
         <div
           className={`h-15 w-20 rounded border-2 ${!currentTrackToPlay && "bg-gray-100"}`}
+          data-testid="album-cover-wrapper"
         >
           {currentTrackToPlay && (
             <img
@@ -67,11 +66,12 @@ function MiniSpotifyPlayer({
             ></img>
           )}
         </div>
+
         <div className="flex w-full justify-between">
           {/* Song Info */}
           <div className="flex flex-col text-sm">
-            <p>{currentTrackToPlay?.title}</p>
-            <p className="text-gray-500">{currentTrackToPlay?.artists}</p>
+            <p data-testid="mini-player-song-title">{currentTrackToPlay?.title}</p>
+            <p data-testid="mini-player-song-artist" className="text-gray-500">{currentTrackToPlay?.artists}</p>
           </div>
 
           <div className="flex items-center">
@@ -115,7 +115,6 @@ function MiniSpotifyPlayer({
           isDisabled={musicPlayer?.playerModeRef.current === "calendar" || musicPlayer?.playerModeRef.current === null}
         ></VolumeBar>
       }
-      <div>{/* Get rid of the bangs later! */}</div>
     </div>
   );
 }

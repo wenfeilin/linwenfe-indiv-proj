@@ -13,11 +13,6 @@ function useSpotifyPlayer(): MusicPlayer {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-
-// MIGHT NOT NEED THESE TWO: ESP IF UI SIDE IS NOT EVEN REFERENCING THESE
-  // isPlaying: boolean;
-  // isLoading: boolean; // for when queuing up songs
-
   async function pause() {
     if (playerRef.current && isReady) {
       try {

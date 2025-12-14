@@ -6,6 +6,7 @@ import VolumeBar from "./VolumeBar";
 import ProgressBar from "./ProgressBar";
 import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
 import useEntriesSortedByDate from "../../hooks/useEntriesSortedByDate";
+import { isMobileDevice } from "../../utils/device";
 
 export type SongsAndDates = {
   songUri: string,
@@ -147,7 +148,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
   }
 
   // Check the pointer type (coarse = touch input)
-  const onMobileDevice = window.matchMedia("(pointer: coarse").matches;
+  const onMobileDevice = isMobileDevice();
 
   const playBtnStyles = "p-1 border-2 rounded hover:cursor-pointer hover:opacity-80 disabled:hover:cursor-default disabled:hover:opacity-100"
   
@@ -200,6 +201,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
         <div className="flex gap-2">
           {/* Album Cover */}
           <div
+          data-testid="album-wrapper-global-player"
           className={`h-21 w-21 rounded border-2 flex-shrink-0 ${!currSong && "bg-gray-100"}`}
           >
             {currSong && (
@@ -239,8 +241,9 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
           <div className="flex flex-col gap-2">
             {/* Play/Pause Button */}
             <button
+              data-testid="play-pause-btn-global-player"
               className={`${playBtnStyles} flex justify-center`}
-              disabled={(musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current === null}
+              disabled={!musicPlayer?.isReady || (musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current === null}
               onClick={async () => {
                 // only if the play/pause button is not disabled
                 if (!isPlayingDisabled) {
@@ -257,6 +260,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
             <div className="flex gap-1">
               {/* Skip Backward button */}
               <button
+                data-testid="prev-song-btn"
                 className={`${playBtnStyles}`}
                 disabled={(musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current === null || musicPlayer?.playerModeRef.current === "entry"}
                 onClick={async () => await musicPlayer!.prevSong()}
@@ -266,6 +270,7 @@ function GlobalSpotifyPlayer({containerStyles}: {containerStyles: string}) {
 
               {/* Skip Forward button */}
               <button
+                data-testid="next-song-btn"
                 className={`${playBtnStyles}`}
                 disabled={(musicPlayer?.isReady && !(musicPlayer?.isLoadingSongGlobal) && isPlayingDisabled) || musicPlayer?.playerModeRef.current === null || musicPlayer?.playerModeRef.current === "entry"}
                 onClick={async () => await musicPlayer!.nextSong()}

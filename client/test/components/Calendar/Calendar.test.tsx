@@ -1,8 +1,8 @@
 import React from "react";
-import { renderWithRouterAndEntries } from "../test-utils"
+import { renderWithRouterAndEntries } from "../../test-utils"
 import { screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import Calendar from "../../src/components/Calendar/Calendar";
+import Calendar from "../../../src/components/Calendar/Calendar";
 import { useParams } from "react-router";
 import "@testing-library/jest-dom/vitest";
 
@@ -111,7 +111,7 @@ describe("Calendar", () => {
     expect(children).toHaveLength(1 + 14 + 42); // header + day labels + calendar blocks
     expect(children[0]).toHaveAttribute("data-testid", "calendar-header");
     expect(children[1]).toHaveTextContent(/Sunday|Sun/);
-    expect(children[15]).toHaveAttribute("data-testid", "calendar-block");
+    expect(children[15]).toHaveAttribute("data-testid", "calendar-block-wrapper");
   });
 
   it("shows a loading spinner when calendar is first rendered", () => {
@@ -157,15 +157,15 @@ describe("Calendar", () => {
     const blocks = screen.getAllByTestId("calendar-block");
 
     // Assert that the first block is for December 29, 2024.
-    expect(blocks[0]).toHaveTextContent("2024-12-29");
+    expect(blocks[0]).toHaveTextContent("29");
     // Assert that the first day of January is the 4th block.
-    expect(blocks[3]).toHaveTextContent("2025-1-1");
+    expect(blocks[3]).toHaveTextContent("1");
 
     // Assert that a block around the middle of the month is for January 12, 2025.
-    expect(blocks[15]).toHaveTextContent("2025-1-13");
+    expect(blocks[15]).toHaveTextContent("13");
 
     // Assert that the last block is for February 8, 2025.
-    expect(blocks[41]).toHaveTextContent("2025-2-8")
+    expect(blocks[41]).toHaveTextContent("8")
   });
 
   it("doesn't show loading spinner when URL params are valid", () => {

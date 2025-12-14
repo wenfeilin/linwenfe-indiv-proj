@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import EditButton from "../../src/components/Entry/EditButton";
+import EditButton from "../../../src/components/Entry/EditButton";
 import "@testing-library/jest-dom/vitest";
 
 describe("EditButton", () => {

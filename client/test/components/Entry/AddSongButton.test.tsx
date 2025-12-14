@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import AddSongButton from "../../src/components/Entry/AddSongButton";
+import AddSongButton from "../../../src/components/Entry/AddSongButton";
 import "@testing-library/jest-dom/vitest";
 
 describe("AddSongButton", () => {
@@ -13,7 +13,8 @@ describe("AddSongButton", () => {
   beforeEach(() => {
     // Clear information about mock function.
     mockSetIsAddSongBtnActive.mockClear();
-  })
+    mockSetIsSearching.mockClear();
+  });
 
   it(`renders with "Add Song" text and is clickable when not adding song`, () => {
     const isAddSongBtnActive = false; 

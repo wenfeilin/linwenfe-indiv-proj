@@ -1,9 +1,9 @@
 import React from "react";
-import { renderWithRouterAndEntries } from "../test-utils"
+import { renderWithRouterAndEntries } from "../../test-utils"
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect } from "vitest";
-import CalendarHeader from "../../src/components/Calendar/CalendarHeader";
+import CalendarHeader from "../../../src/components/Calendar/CalendarHeader";
 import "@testing-library/jest-dom/vitest";
 
 describe("CalendarHeader", () => {

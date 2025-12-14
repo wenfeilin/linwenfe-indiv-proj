@@ -74,6 +74,7 @@ function SongSearchForm({
         <form onSubmit={handleFormSubmit} className="relative flex gap-4">
           {/* Search Bar */}
           <button
+            data-testid="search-btn"
             type="submit"
             className="absolute top-0 left-0 rounded-l-3xl px-3 py-2 hover:cursor-pointer"
           >

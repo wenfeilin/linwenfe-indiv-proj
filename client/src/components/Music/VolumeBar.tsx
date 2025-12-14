@@ -59,22 +59,22 @@ function VolumeBar({volume, isDisabled}:{volume: number, isDisabled: boolean}) {
 
   // Determine volume icon
   if (volume >= 0.75) { // 75-100% = high volume
-    volumeIcon = <Volume2 size={volumeIconSize} />
+    volumeIcon = <Volume2 data-testid="high-vol-icon" size={volumeIconSize} />
   } else if (volume >= 0.25) { // 25-74% = medium volume
-    volumeIcon = <Volume1 size={volumeIconSize} />
+    volumeIcon = <Volume1 data-testid="med-vol-icon" size={volumeIconSize} />
   } else if (volume > 0) {// 1-24% = low volume
-    volumeIcon = <Volume size={volumeIconSize} />
+    volumeIcon = <Volume data-testid="low-vol-icon" size={volumeIconSize} />
   } else { // 0% = no volume
-    volumeIcon = <VolumeX size={volumeIconSize} />
+    volumeIcon = <VolumeX data-testid="muted-vol-icon" size={volumeIconSize} />
   }
 
   return(
-    <div className="flex items-center gap-2">
+    <div data-testid="volume-bar-container" className="flex items-center gap-2">
       {/* Volume Icon */}
       {volumeIcon}
 
       {/* The actual volume bar */}
-      <input type="range" id="volumeBar" min={minVolume} max={maxVolume} step="0.01" value={volume}
+      <input type="range" data-testid="volume-bar" id="volumeBar" min={minVolume} max={maxVolume} step="0.01" value={volume}
       className="flex-1"
       onChange={(event) => handleChange(event)}
       onMouseDown={handleMouseDown} // for mouse (desktop/latop)

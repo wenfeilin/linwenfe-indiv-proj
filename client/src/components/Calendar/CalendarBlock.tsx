@@ -45,6 +45,7 @@ function CalendarBlock({ blockDate }: { blockDate: Date }) {
     <Link
       to={`/entry/${blockYear}/${blockMonth}/${blockDay}`}
       state={{ prevPage: location.pathname }}
+      data-testid="calendar-block-wrapper"
       className=""
       onClick={(event) => {
         if (!isInCurrMonth) {

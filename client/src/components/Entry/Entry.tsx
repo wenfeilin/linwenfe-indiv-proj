@@ -160,9 +160,9 @@ function Entry({checkLoginStatus, setIsLoggedIn, isLoggedIn}: {checkLoginStatus:
       </div>
 
       {/* Entry Text Box */}
-      <div className="flex-1
+      <div  className="flex-1
         lg:col-start-2 lg:col-end-3 lg:row-start-2 lg:row-end-4 mb-2">
-        <textarea
+        <textarea data-testid="entry-content-text-box"
           className="w-full h-70 resize-none overflow-y-auto rounded border-2 border-blue-400 p-4 focus:border-blue-500 focus:outline-none lg:h-83"
           readOnly={!isEditing}
           name="entry-content"

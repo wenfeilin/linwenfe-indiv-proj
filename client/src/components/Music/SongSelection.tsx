@@ -173,9 +173,9 @@ function SongSelection({
       if (searchedSongToPlay) {
         playerComponent = (<MiniSpotifyPlayer
           currentTrackToPlay={searchedSongToPlay}
-          isAddSongBtnActive={isAddSongBtnActive}
+          /* isAddSongBtnActive={isAddSongBtnActive}
           songSelection={songSelection}
-          savedSongSelection={savedSongSelection}
+          savedSongSelection={savedSongSelection}*/
           ></MiniSpotifyPlayer>)
         }
       }
@@ -200,6 +200,7 @@ function SongSelection({
       {/* X Button */}
       {isEditing && (
         <button
+          data-testid="x-btn"
           className="absolute -top-3 -right-2.5 rounded-xl bg-red-400 p-0.5 hover:cursor-pointer"
           onClick={async () => {
             setIsAddSongBtnActive(false);

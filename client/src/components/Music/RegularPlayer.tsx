@@ -5,6 +5,7 @@ import { useMusicPlayer } from "../../contexts/MusicPlayerContext";
 import { ColorRing } from "react-loader-spinner";
 import VolumeBar from "./VolumeBar";
 import { useEffect } from "react";
+import { isMobileDevice } from "../../utils/device";
 
 function RegularPlayer({
   songSelection,
@@ -30,7 +31,7 @@ function RegularPlayer({
 
   // IDK if this is the best place to check this; maybe it should be higher up  (in the component tree, like when the musicPlayer is loaded) idk
   // Check the pointer type (coarse = touch input)
-  const onMobileDevice = window.matchMedia("(pointer: coarse").matches;
+  const onMobileDevice = isMobileDevice();
 
   // console.log(musicPlayer?.progress);
 
@@ -42,6 +43,7 @@ function RegularPlayer({
           // FIX THIS EMPTY DIV SIZING WHEN THERE IS NO SONG SELECTED/PRESSED FOR PLAYING
 
           <div
+            data-testid="album-cover-wrapper-reg-player"
             className={`w-1/3 rounded border-2 ${!songSelection && "bg-gray-100"}`}
           >
             {songSelection && (
@@ -56,8 +58,8 @@ function RegularPlayer({
 
         {/* Song Info */}
         <div className="flex flex-col gap-1 pt-1 text-sm">
-          <p>{songSelection?.title}</p>
-          <p className="text-gray-500">{songSelection?.artists}</p>
+          <p data-testid="title-reg-player">{songSelection?.title}</p>
+          <p data-testid="artist-reg-player" className="text-gray-500">{songSelection?.artists}</p>
         </div>
       </div>
 
@@ -65,6 +67,7 @@ function RegularPlayer({
         {(musicPlayer?.isReady && !(musicPlayer?.isLoadingSong)) ?
           // Play/Pause Button
           (<button
+            data-testid="play-pause-btn-reg-player"
             className="p-1 hover:cursor-pointer hover:opacity-80"
             disabled={!(musicPlayer?.isReady)}
             onClick={async () => {
@@ -73,7 +76,7 @@ function RegularPlayer({
               await musicPlayer.togglePlay();
             }}
           >
-            {musicPlayer!.isPlaying ? <Pause fill="black" /> : <Play fill="black" />}
+            {musicPlayer!.isPlaying ? <Pause data-testid="pause-icon-reg-player" fill="black" /> : <Play data-testid="play-icon-reg-player" fill="black" />}
           </button>) :
           (<ColorRing colors={["#25c21d", "#25c21d", "#25c21d", "#25c21d", "#25c21d"]} height={42} />)
         }
