@@ -71,7 +71,7 @@ function App() {
 
   let containerStyles = "";
   let parentContainerStyles = ""
-  let isOnCalendarPg = false;
+  // let isOnCalendarPg = false;
   
   // To not render the player or the calendar if the latter is not loaded yet.
   const [isCalendarLoading, setIsCalendarLoading] = useState(true);
@@ -80,7 +80,7 @@ function App() {
   if (path.includes("calendar")) {
     containerStyles = "w-full md:w-3/4 lg:w-1/2 px-3";
     parentContainerStyles = "order-last col-start-2 flex flex-col items-center";
-    isOnCalendarPg = true;
+    // isOnCalendarPg = true;
   } else {
     // Centered and a reasonable size (not too long)
     containerStyles = "w-full md:w-3/4 lg:w-1/2 px-3";
