@@ -114,7 +114,7 @@ function App() {
             </div>
 
             {/* Place calendar player outside router's route tree so it doesn't unmount when the route changes since for every new route, components are recreated. */}
-            {isLoggedIn && (isOnCalendarPg? !isCalendarLoading: true) &&
+            {isLoggedIn &&
               (<div className={`${parentContainerStyles}`}>
                 <GlobalPlayer containerStyles={`${containerStyles}`}/>
               </div>)}
