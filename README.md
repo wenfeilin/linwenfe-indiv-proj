@@ -11,18 +11,17 @@ This web app project incorporates a simple journal with music. By turning a jour
 - HTML
 - CSS
 - React
-- Typescript
+- TypeScript
 
 **Backend**
 
 - Node.js
-- Express
-- Javascript
+- Express.js
+- JavaScript
 
 **Testing**
 
 - Vitest
-- Supertest
 
 **Versions**
 
@@ -60,14 +59,10 @@ $ cd ../server
 $ npm run dev
 ```
 
-Test that both the frontend and backend work:
+Test that the frontend works:
 
 ```bash
 # Run tests on frontend.
 $ cd ../client
-$ npm test
-
-# Run tests on backend.
-$ cd ../server
 $ npm test
 ```
